@@ -2,225 +2,186 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import toast from "react-hot-toast"
+import Link from "next/link"
+import toast, { Toaster } from "react-hot-toast"
 import { EVENT_CONFIG } from "@/config/formFields"
-import CountdownTimer from "@/components/CountdownTimer"
+import AnimatedBackground from "@/components/AnimatedBackground"
 
-export default function Login() {
-  var router = useRouter()
-  var [rollNumber, setRollNumber] = useState("")
-  var [password, setPassword] = useState("")
-  var [showPassword, setShowPassword] = useState(false)
-  var [loading, setLoading] = useState(false)
-  var [blockedInfo, setBlockedInfo] = useState(null)
+export default function LoginPage() {
+  const router = useRouter()
+  const [rollNumber, setRollNumber] = useState("")
+  const [password, setPassword] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [blockedInfo, setBlockedInfo] = useState(null)
 
   function handleLogin(e) {
     e.preventDefault()
-    if (!rollNumber.trim()) {
-      toast.error("Please enter your roll number")
-      return
-    }
-    if (!password) {
-      toast.error("Please enter your password")
-      return
-    }
+    if (!rollNumber.trim()) { toast.error("Please enter your roll number"); return }
+    if (!password) { toast.error("Please enter your password"); return }
     setLoading(true)
     setBlockedInfo(null)
 
-    fetch("/api/auth/login", {
+    fetch("/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        rollNumber: rollNumber.trim().toUpperCase(),
-        password: password,
-      }),
+      body: JSON.stringify({ rollNumber: rollNumber.trim().toUpperCase(), password: password }),
     })
       .then(function (res) { return res.json() })
       .then(function (data) {
-        if (data.status === "team_member") {
-          setBlockedInfo({
-            type: "member",
-            teamNumber: data.teamNumber,
-            projectTitle: data.projectTitle,
-            memberName: data.memberName,
-            leaderName: data.leaderName,
-            leaderRoll: data.leaderRoll,
-          })
-        } else if (data.success) {
-          sessionStorage.setItem("ps_roll", rollNumber.trim().toUpperCase())
-          sessionStorage.setItem("ps_logged_in", "true")
-
-          if (data.status === "team_lead") {
-            sessionStorage.setItem("ps_is_leader", "true")
-            toast.success("Welcome back, Team Lead!")
-            router.push("/team-info/" + data.teamNumber)
-          } else {
-            toast.success("Login successful!")
-            router.push("/register")
-          }
-        } else {
-          toast.error(data.error || "Login failed")
+        if (data.status === "no_account") {
+          toast.error("No account found. Please create one first.")
+          setLoading(false)
+          return
         }
-        setLoading(false)
-      })
-      .catch(function () {
-        toast.error("Something went wrong")
-        setLoading(false)
-      })
-  }
 
-  function resetLogin() {
-    setBlockedInfo(null)
-    setRollNumber("")
-    setPassword("")
+        if (data.status === "team_member") {
+          setBlockedInfo(data)
+          setLoading(false)
+          return
+        }
+
+        if (data.success && data.status === "team_lead") {
+          toast.success("Welcome back, Team Lead!")
+          localStorage.setItem("ps_roll", rollNumber.trim().toUpperCase())
+          sessionStorage.setItem("ps_roll", rollNumber.trim().toUpperCase())
+          setTimeout(function () { router.push("/team-info/" + data.teamNumber) }, 800)
+          return
+        }
+
+        if (data.success && data.status === "new_user") {
+          if (data.registrationOpen) {
+            toast.success("Login successful! Register your team.")
+            localStorage.setItem("ps_roll", rollNumber.trim().toUpperCase())
+            sessionStorage.setItem("ps_roll", rollNumber.trim().toUpperCase())
+            setTimeout(function () { router.push("/register") }, 800)
+          } else {
+            toast.error("Registrations are currently closed.")
+            setLoading(false)
+          }
+          return
+        }
+
+        toast.error(data.error || "Login failed")
+        setLoading(false)
+      })
+      .catch(function () { toast.error("Something went wrong"); setLoading(false) })
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white overflow-hidden relative flex flex-col">
-      <div
-        className="absolute inset-0 opacity-[0.03]"
-        style={{
-          backgroundImage: "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)",
-          backgroundSize: "60px 60px",
-        }}
-      ></div>
-      <div className="absolute top-[-200px] left-[-200px] w-[600px] h-[600px] rounded-full bg-emerald-500/10 blur-[120px]"></div>
-      <div className="absolute bottom-[-200px] right-[-200px] w-[600px] h-[600px] rounded-full bg-cyan-500/10 blur-[120px]"></div>
+    <div className="ps-page">
+      <AnimatedBackground />
+      <Toaster position="top-center" toastOptions={{ style: { background: "#1a1a1a", color: "#fff", border: "1px solid rgba(255,60,30,0.2)" } }} />
 
-      <div className="relative z-50">
-        <CountdownTimer />
-      </div>
+      <style jsx>{`
+        .lg-wrapper { position:relative; z-index:10; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; }
+        .lg-card { width:100%; max-width:420px; padding:40px 32px; border-radius:22px; border:1px solid rgba(255,60,30,0.12); background:linear-gradient(165deg,rgba(35,12,8,0.7),rgba(18,6,4,0.85)); backdrop-filter:blur(15px); opacity:0; animation:psFadeIn 0.7s ease forwards; }
 
-      <div className="flex-1 flex items-center justify-center relative z-10">
-        <div className="w-full max-w-md px-6">
-          {/* Logo */}
-          <div className="text-center mb-10">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-400 to-cyan-400 flex items-center justify-center font-bold text-black text-2xl mx-auto mb-6">
-              PS
-            </div>
-            <h1 className="text-3xl font-bold mb-2">Welcome Back</h1>
-            <p className="text-gray-400">Login with your roll number and password</p>
+        .lg-logo { display:flex; align-items:center; gap:10px; justify-content:center; margin-bottom:6px; }
+        .lg-logo-icon { width:42px;height:42px; border-radius:12px; background:linear-gradient(135deg,#ff3020,#ff6040); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-weight:900; font-size:16px; color:#fff; }
+        .lg-logo-text { font-family:var(--font-display); font-size:22px; font-weight:800; color:#fff; letter-spacing:2px; text-transform:uppercase; }
+        .lg-subtitle { text-align:center; font-size:13px; color:rgba(255,255,255,0.3); margin-bottom:28px; }
+
+        .lg-form { display:flex; flex-direction:column; gap:14px; }
+        .lg-pw-wrap { position:relative; }
+        .lg-pw-toggle { position:absolute; right:14px; top:50%; transform:translateY(-50%); background:transparent; border:none; color:rgba(255,255,255,0.3); font-size:12px; cursor:pointer; font-family:var(--font-display); letter-spacing:1px; }
+        .lg-pw-toggle:hover { color:var(--accent-orange); }
+
+        .lg-link { text-align:center; font-size:12px; color:rgba(255,255,255,0.3); margin-top:16px; }
+        .lg-link a { color:var(--accent-orange); text-decoration:none; font-family:var(--font-display); letter-spacing:1px; }
+        .lg-link a:hover { text-decoration:underline; }
+
+        /* Blocked card */
+        .lg-blocked { padding:24px; border-radius:16px; border:1px solid rgba(255,50,50,0.2); background:rgba(255,50,50,0.04); text-align:center; }
+        .lg-blocked-icon { font-size:40px; margin-bottom:12px; display:block; }
+        .lg-blocked-title { font-family:var(--font-display); font-size:18px; font-weight:700; color:#ff5555; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:8px; }
+        .lg-blocked-msg { font-size:13px; color:rgba(255,255,255,0.4); margin-bottom:16px; line-height:1.6; }
+        .lg-blocked-info { padding:12px; border-radius:10px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); text-align:left; }
+        .lg-blocked-row { display:flex; justify-content:space-between; padding:4px 0; font-size:12px; }
+        .lg-blocked-label { color:rgba(255,255,255,0.3); }
+        .lg-blocked-value { color:#fff; font-family:var(--font-display); letter-spacing:1px; }
+
+        @media (max-width:500px) {
+          .lg-card { padding:28px 20px; }
+          .lg-logo-text { font-size:18px; }
+        }
+      `}</style>
+
+      <div className="lg-wrapper">
+        <div className="lg-card">
+          <div className="lg-logo">
+            <div className="lg-logo-icon">PS</div>
+            <div className="lg-logo-text">{EVENT_CONFIG.eventName}</div>
           </div>
+          <div className="lg-subtitle">Login to your account</div>
 
-          {/* Team Member Blocked */}
-          {blockedInfo && blockedInfo.type === "member" && (
-            <div className="p-6 rounded-2xl border border-yellow-500/30 bg-yellow-500/5 mb-6">
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-xl">⚠️</span>
-                <h3 className="font-semibold text-yellow-400">Already a Team Member</h3>
+          {/* Blocked Screen */}
+          {blockedInfo ? (
+            <div className="lg-blocked">
+              <span className="lg-blocked-icon">🚫</span>
+              <div className="lg-blocked-title">Access Restricted</div>
+              <div className="lg-blocked-msg">
+                You&apos;re registered as a team member in <strong style={{ color: "#fff" }}>{blockedInfo.teamNumber}</strong>. Only team leads can access the dashboard.
               </div>
-              <p className="text-sm text-gray-300 mb-4">
-                Hi <strong>{blockedInfo.memberName}</strong>, you are already registered as a member. Only team leads can login.
-              </p>
-              <div className="space-y-2 p-4 rounded-xl bg-black/30">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-400">Team Number</span>
-                  <span className="text-emerald-400 font-bold">{blockedInfo.teamNumber}</span>
+              <div className="lg-blocked-info">
+                <div className="lg-blocked-row">
+                  <span className="lg-blocked-label">Your Name</span>
+                  <span className="lg-blocked-value">{blockedInfo.memberName}</span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-400">Project</span>
-                  <span className="text-white">{blockedInfo.projectTitle}</span>
+                <div className="lg-blocked-row">
+                  <span className="lg-blocked-label">Team</span>
+                  <span className="lg-blocked-value">{blockedInfo.teamNumber}</span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-400">Team Lead</span>
-                  <span className="text-white">{blockedInfo.leaderName} ({blockedInfo.leaderRoll})</span>
+                <div className="lg-blocked-row">
+                  <span className="lg-blocked-label">Project</span>
+                  <span className="lg-blocked-value">{blockedInfo.projectTitle}</span>
+                </div>
+                <div className="lg-blocked-row">
+                  <span className="lg-blocked-label">Team Lead</span>
+                  <span className="lg-blocked-value">{blockedInfo.leaderName}</span>
+                </div>
+                <div className="lg-blocked-row">
+                  <span className="lg-blocked-label">Lead Roll</span>
+                  <span className="lg-blocked-value">{blockedInfo.leaderRoll}</span>
                 </div>
               </div>
-              <p className="text-xs text-gray-500 mt-3">Please ask your team lead to login for any changes.</p>
-              <button
-                onClick={resetLogin}
-                className="mt-4 w-full py-2 text-sm text-gray-400 hover:text-white border border-white/10 rounded-xl"
-              >
-                Try Different Roll Number
+              <button className="ps-btn ps-btn-secondary" style={{ width: "100%", marginTop: 16 }} onClick={function () { setBlockedInfo(null) }}>
+                ← Try Different Account
               </button>
             </div>
-          )}
-
-          {/* Login Card */}
-          {!blockedInfo && (
-            <div className="p-8 rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm">
-              <h2 className="text-xl font-semibold mb-2">Student Login</h2>
-              <p className="text-sm text-gray-400 mb-6">Enter your credentials to continue.</p>
-
-              <form onSubmit={handleLogin}>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Roll Number</label>
-                  <input
-                    type="text"
-                    value={rollNumber}
-                    onChange={function (e) { setRollNumber(e.target.value.toUpperCase()) }}
-                    placeholder="e.g. 22A31A0501"
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 uppercase"
-                    required
-                  />
-                </div>
-
-                <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Password</label>
-                  <div className="relative">
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      value={password}
-                      onChange={function (e) { setPassword(e.target.value) }}
-                      placeholder="Enter your password"
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 pr-16"
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={function () { setShowPassword(!showPassword) }}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 text-sm px-2 py-1 rounded-lg bg-white/5"
-                    >
-                      {showPassword ? "🙈 Hide" : "👁 Show"}
-                    </button>
-                  </div>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-cyan-500 text-black font-bold rounded-xl text-base hover:shadow-[0_0_40px_rgba(16,185,129,0.3)] disabled:opacity-50 transition-all"
-                >
-                  {loading ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                      </svg>
-                      Logging in...
-                    </span>
-                  ) : "Login →"}
+          ) : (
+            <form className="lg-form" onSubmit={handleLogin}>
+              <input
+                type="text"
+                value={rollNumber}
+                onChange={function (e) { setRollNumber(e.target.value.toUpperCase()) }}
+                placeholder="Roll Number (e.g. 22A31A0501)"
+                className="ps-input"
+                style={{ width: "100%", textAlign: "center", fontSize: 15, letterSpacing: 2, fontFamily: "var(--font-display)" }}
+                autoFocus
+              />
+              <div className="lg-pw-wrap">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={function (e) { setPassword(e.target.value) }}
+                  placeholder="Password"
+                  className="ps-input"
+                  style={{ width: "100%", paddingRight: 60 }}
+                />
+                <button type="button" className="lg-pw-toggle" onClick={function () { setShowPassword(!showPassword) }}>
+                  {showPassword ? "HIDE" : "SHOW"}
                 </button>
-              </form>
-
-              {/* Divider */}
-              <div className="flex items-center gap-4 my-6">
-                <div className="flex-1 h-px bg-white/10"></div>
-                <span className="text-xs text-gray-500">OR</span>
-                <div className="flex-1 h-px bg-white/10"></div>
               </div>
-
-              {/* Create Account Button */}
-              <button
-                onClick={function () { router.push("/register-account") }}
-                className="w-full py-3 border border-white/10 bg-white/[0.03] text-white font-medium rounded-xl text-sm hover:bg-white/[0.08] hover:border-emerald-500/30 transition-all"
-              >
-                Don't have an account? Create one →
+              <button type="submit" className="ps-btn ps-btn-primary" style={{ width: "100%" }} disabled={loading}>
+                {loading ? "Logging in..." : "Login →"}
               </button>
-            </div>
+            </form>
           )}
 
-          {/* Back to home */}
-          <div className="text-center mt-6">
-            <button
-              onClick={function () { router.push("/") }}
-              className="text-xs text-gray-600 hover:text-gray-400 transition-colors"
-            >
-              ← Back to Home
-            </button>
+          <div className="lg-link">
+            Don&apos;t have an account? <Link href="/register-account">Create Account</Link>
           </div>
-
-          <p className="text-center text-xs text-gray-600 mt-8">© 2026 {EVENT_CONFIG.organizationName}</p>
         </div>
       </div>
     </div>

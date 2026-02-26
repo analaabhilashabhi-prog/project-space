@@ -5,10 +5,7 @@ import { useParams, useRouter } from "next/navigation"
 import Link from "next/link"
 import { supabase } from "@/lib/supabase"
 import { EVENT_CONFIG, WHATSAPP_MESSAGE } from "@/config/formFields"
-import CountdownTimer from "@/components/CountdownTimer"
-import NotificationBell from "@/components/NotificationBell"
-import ScrollAnimate from "@/components/ScrollAnimate"
-import { SkeletonTeamInfo } from "@/components/Skeleton"
+import AnimatedBackground from "@/components/AnimatedBackground"
 
 export default function TeamInfoPage() {
   var params = useParams()
@@ -19,11 +16,13 @@ export default function TeamInfoPage() {
   var [loading, setLoading] = useState(true)
   var [loggedInRoll, setLoggedInRoll] = useState("")
   var [copied, setCopied] = useState(false)
+  var [foodDone, setFoodDone] = useState(false)
+  var [hasCart, setHasCart] = useState(false)
 
   useEffect(function () {
-    var roll = sessionStorage.getItem("ps_roll")
+    var roll = sessionStorage.getItem("ps_roll") || localStorage.getItem("ps_roll")
     if (!roll) {
-      router.push("/")
+      router.push("/login")
       return
     }
     setLoggedInRoll(roll)
@@ -45,6 +44,28 @@ export default function TeamInfoPage() {
           .order("is_leader", { ascending: false })
 
         setMembers(memberRes.data || [])
+
+        // Check if food selections are done (all 7 days)
+        var foodRes = await supabase
+          .from("food_selections")
+          .select("day_number")
+          .eq("team_id", teamRes.data.id)
+
+        if (foodRes.data) {
+          var days = new Set(foodRes.data.map(function (f) { return f.day_number }))
+          setFoodDone(days.size >= 7)
+        }
+
+        // Check if cart already exists
+        var cartRes = await supabase
+          .from("snack_cards")
+          .select("id")
+          .eq("team_id", teamRes.data.id)
+          .limit(1)
+
+        if (cartRes.data && cartRes.data.length > 0) {
+          setHasCart(true)
+        }
       }
       setLoading(false)
     }
@@ -54,7 +75,8 @@ export default function TeamInfoPage() {
 
   function handleLogout() {
     sessionStorage.clear()
-    router.push("/")
+    localStorage.removeItem("ps_roll")
+    router.push("/login")
   }
 
   function copyTeamNumber() {
@@ -79,27 +101,27 @@ export default function TeamInfoPage() {
 
       var gradient = ctx.createLinearGradient(0, 0, 800, 600)
       gradient.addColorStop(0, "#0a0a0a")
-      gradient.addColorStop(1, "#0f1f1a")
+      gradient.addColorStop(1, "#1a0a05")
       ctx.fillStyle = gradient
       ctx.fillRect(0, 0, 800, 600)
 
-      ctx.strokeStyle = "rgba(16, 185, 129, 0.3)"
+      ctx.strokeStyle = "rgba(255, 96, 64, 0.3)"
       ctx.lineWidth = 2
       ctx.roundRect(20, 20, 760, 560, 20)
       ctx.stroke()
 
       var headerGrad = ctx.createLinearGradient(0, 0, 800, 0)
-      headerGrad.addColorStop(0, "#10b981")
-      headerGrad.addColorStop(1, "#06b6d4")
+      headerGrad.addColorStop(0, "#ff3020")
+      headerGrad.addColorStop(1, "#ff6040")
       ctx.fillStyle = headerGrad
       ctx.roundRect(20, 20, 760, 80, [20, 20, 0, 0])
       ctx.fill()
 
-      ctx.fillStyle = "#000000"
+      ctx.fillStyle = "#ffffff"
       ctx.font = "bold 28px Arial"
       ctx.fillText(EVENT_CONFIG.eventName, 40, 70)
 
-      ctx.fillStyle = "#10b981"
+      ctx.fillStyle = "#ff6040"
       ctx.font = "bold 48px Arial"
       ctx.textAlign = "center"
       ctx.fillText(teamNumber, 400, 160)
@@ -113,13 +135,13 @@ export default function TeamInfoPage() {
       ctx.fillText((team.technologies || []).join(" | "), 400, 230)
 
       ctx.textAlign = "left"
-      ctx.fillStyle = "#6b7280"
+      ctx.fillStyle = "#ff8040"
       ctx.font = "bold 14px Arial"
       ctx.fillText("TEAM MEMBERS", 40, 280)
 
       members.forEach(function (m, i) {
         var y = 310 + i * 40
-        ctx.fillStyle = m.is_leader ? "#eab308" : "#ffffff"
+        ctx.fillStyle = m.is_leader ? "#ff8040" : "#ffffff"
         ctx.font = "bold 16px Arial"
         ctx.fillText(m.member_name, 40, y)
         ctx.fillStyle = "#6b7280"
@@ -144,197 +166,279 @@ export default function TeamInfoPage() {
   var currentMember = !loading && members.length > 0 ? members.find(function (m) { return m.member_roll_number === loggedInRoll }) : null
   var isLeader = currentMember ? currentMember.is_leader : false
 
+  if (loading) {
+    return (
+      <div className="ps-page">
+        <AnimatedBackground />
+        <div style={{ position: "relative", zIndex: 10, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <span className="ps-spinner" style={{ width: 32, height: 32 }} />
+        </div>
+      </div>
+    )
+  }
+
+  if (!team) {
+    return (
+      <div className="ps-page">
+        <AnimatedBackground />
+        <div style={{ position: "relative", zIndex: 10, minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 16 }}>
+          <div className="ps-page-title" style={{ fontSize: 28 }}>Team Not Found</div>
+          <button className="ps-btn ps-btn-secondary" onClick={function () { router.push("/") }}>← Back to Home</button>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
-      <CountdownTimer />
-      <div className="absolute top-[-200px] left-[-200px] w-[600px] h-[600px] rounded-full bg-emerald-500/10 blur-[120px]"></div>
-      <div className="absolute bottom-[-200px] right-[-200px] w-[600px] h-[600px] rounded-full bg-cyan-500/10 blur-[120px]"></div>
+    <div className="ps-page">
+      <AnimatedBackground />
 
-      {/* Header */}
-      <nav className="relative z-10 flex items-center justify-between px-8 py-6 max-w-3xl mx-auto fade-in">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-400 to-cyan-400 flex items-center justify-center font-bold text-black text-lg">PS</div>
-          <span className="text-xl font-semibold hidden sm:inline">{EVENT_CONFIG.eventName}</span>
-        </div>
-        <div className="flex items-center gap-3">
-          <NotificationBell />
-          <span className="text-sm text-gray-400 hidden sm:inline">{loggedInRoll}</span>
-          <button onClick={handleLogout} className="text-sm text-gray-400 hover:text-white px-3 py-1 glass rounded-lg btn-press">Logout</button>
-        </div>
-      </nav>
+      <style jsx>{`
+        .ti-wrapper { position:relative; z-index:10; min-height:100vh; padding:0 20px 60px; }
+        .ti-container { max-width:720px; margin:0 auto; }
 
-      {loading ? (
-        <SkeletonTeamInfo />
-      ) : !team ? (
-        <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4">
-          <h1 className="text-2xl font-bold">Team not found</h1>
-          <Link href="/" className="text-emerald-400">Go back home</Link>
-        </div>
-      ) : (
-        <main className="relative z-10 max-w-3xl mx-auto px-8 py-8 page-transition">
-          {/* Welcome */}
-          <div className="p-6 rounded-2xl glass glow-pulse mb-8 fade-in">
-            <div className="flex items-center gap-3 mb-2">
-              <span className="text-2xl">👋</span>
-              <h1 className="text-2xl font-bold">
-                Welcome{currentMember ? ", " + currentMember.member_name : ""}!
-              </h1>
+        .ti-header { display:flex; align-items:center; justify-content:space-between; padding:20px 0; margin-bottom:8px; opacity:0; animation:psFadeIn 0.6s ease forwards; }
+        .ti-logo { display:flex; align-items:center; gap:10px; cursor:pointer; }
+        .ti-logo-icon { width:38px;height:38px; border-radius:10px; background:linear-gradient(135deg,#ff3020,#ff6040); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-weight:900; font-size:15px; color:#fff; }
+        .ti-logo-text { font-family:var(--font-display); font-size:18px; font-weight:700; color:#fff; letter-spacing:2px; text-transform:uppercase; }
+        .ti-header-right { display:flex; align-items:center; gap:10px; }
+        .ti-roll-badge { font-family:var(--font-display); font-size:11px; color:rgba(255,255,255,0.35); letter-spacing:1.5px; text-transform:uppercase; }
+        .ti-icon-btn { width:36px; height:36px; border-radius:50%; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.03); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.3s ease; text-decoration:none; position:relative; }
+        .ti-icon-btn:hover { border-color:rgba(255,60,30,0.4); background:rgba(255,60,30,0.06); }
+        .ti-icon-btn svg { width:18px; height:18px; stroke:rgba(255,255,255,0.4); fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+        .ti-icon-btn:hover svg { stroke:var(--accent-orange); }
+        .ti-logout { padding:6px 14px; border-radius:50px; border:1px solid rgba(255,255,255,0.1); background:none; color:rgba(255,255,255,0.4); font-family:var(--font-display); font-size:11px; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; transition:all 0.3s ease; }
+        .ti-logout:hover { border-color:rgba(255,60,30,0.4); color:var(--accent-orange); }
+
+        .ti-welcome { padding:24px 28px; border-radius:18px; border:1px solid rgba(255,60,30,0.15); background:linear-gradient(165deg,rgba(35,12,8,0.7),rgba(18,6,4,0.85)); backdrop-filter:blur(15px); margin-bottom:20px; opacity:0; animation:psFadeIn 0.7s ease 0.15s forwards; position:relative; overflow:hidden; }
+        .ti-welcome::before { content:''; position:absolute; top:0;left:0;right:0; height:2px; background:linear-gradient(90deg,#ff4020,#ff8040,#ffaa40); }
+        .ti-welcome-row { display:flex; align-items:center; gap:12px; }
+        .ti-welcome-name { font-family:var(--font-display); font-size:24px; font-weight:800; color:#fff; letter-spacing:1px; text-transform:uppercase; }
+        .ti-welcome-role { font-size:13px; color:rgba(255,255,255,0.35); margin-top:4px; }
+
+        .ti-card { padding:28px; border-radius:18px; border:1px solid rgba(255,60,30,0.1); background:linear-gradient(165deg,rgba(35,12,8,0.65),rgba(18,6,4,0.8)); backdrop-filter:blur(15px); margin-bottom:16px; position:relative; overflow:hidden; opacity:0; animation:psFadeIn 0.7s ease forwards; transition:all 0.3s ease; }
+        .ti-card:hover { border-color:rgba(255,60,30,0.25); }
+        .ti-card::after { content:''; position:absolute; top:-50%;left:-50%; width:200%;height:200%; background:radial-gradient(circle at 50% 0%,rgba(255,60,30,0.04),transparent 50%); pointer-events:none; }
+        .ti-card-d1 { animation-delay:0.3s; }
+        .ti-card-d2 { animation-delay:0.45s; }
+        .ti-card-d3 { animation-delay:0.6s; }
+        .ti-card-d4 { animation-delay:0.75s; }
+
+        .ti-card-title { font-family:var(--font-display); font-size:14px; font-weight:700; color:var(--accent-light); letter-spacing:2px; text-transform:uppercase; margin-bottom:18px; position:relative; z-index:1; }
+
+        .ti-team-num { font-family:var(--font-display); font-size:48px; font-weight:900; letter-spacing:5px; text-align:center; background:linear-gradient(135deg,#ff6040,#ffaa40); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin:8px 0 16px; }
+        .ti-team-label { font-family:var(--font-display); font-size:11px; color:rgba(255,255,255,0.3); letter-spacing:3px; text-transform:uppercase; text-align:center; }
+        .ti-registered { font-size:11px; color:rgba(255,255,255,0.2); text-align:center; margin-top:12px; font-family:var(--font-display); letter-spacing:1px; }
+
+        .ti-actions { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-top:16px; position:relative; z-index:1; }
+        .ti-action-btn { padding:8px 16px; border-radius:50px; font-family:var(--font-display); font-size:11px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; transition:all 0.3s ease; display:flex; align-items:center; gap:5px; }
+        .ti-action-copy { border:1px solid rgba(255,60,30,0.2); background:rgba(255,60,30,0.06); color:var(--accent-light); }
+        .ti-action-copy:hover { background:rgba(255,60,30,0.12); }
+        .ti-action-copy.copied { background:rgba(255,60,30,0.15); border-color:var(--accent-orange); color:#fff; }
+        .ti-action-wa { border:1px solid rgba(37,211,102,0.25); background:rgba(37,211,102,0.06); color:#25d366; }
+        .ti-action-wa:hover { background:rgba(37,211,102,0.12); }
+        .ti-action-dl { border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.03); color:rgba(255,255,255,0.4); }
+        .ti-action-dl:hover { border-color:rgba(255,60,30,0.3); color:rgba(255,255,255,0.7); }
+
+        .ti-detail { position:relative; z-index:1; }
+        .ti-detail-row { margin-bottom:14px; }
+        .ti-detail-label { font-size:11px; color:rgba(255,255,255,0.3); font-family:var(--font-display); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:3px; }
+        .ti-detail-value { font-size:15px; color:rgba(255,255,255,0.8); font-weight:500; }
+        .ti-tech-chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:4px; }
+        .ti-tech-chip { padding:4px 12px; border-radius:50px; font-family:var(--font-display); font-size:11px; letter-spacing:1px; text-transform:uppercase; background:rgba(255,60,30,0.1); border:1px solid rgba(255,60,30,0.2); color:var(--accent-light); }
+
+        .ti-member { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; border-radius:12px; background:rgba(255,255,255,0.015); border:1px solid rgba(255,255,255,0.04); margin-bottom:8px; transition:all 0.3s ease; position:relative; z-index:1; }
+        .ti-member:hover { border-color:rgba(255,60,30,0.15); background:rgba(255,60,30,0.02); }
+        .ti-member.you { border-color:rgba(255,60,30,0.25); background:rgba(255,60,30,0.04); }
+        .ti-member-left { display:flex; align-items:center; gap:10px; }
+        .ti-member-avatar { width:36px;height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; font-family:var(--font-display); }
+        .ti-member-avatar.leader { background:rgba(255,60,30,0.15); color:var(--accent-orange); }
+        .ti-member-avatar.normal { background:rgba(255,255,255,0.05); color:rgba(255,255,255,0.35); }
+        .ti-member-name { font-size:14px; font-weight:500; color:#fff; }
+        .ti-member-you-tag { display:inline-block; padding:2px 8px; border-radius:50px; font-family:var(--font-display); font-size:10px; letter-spacing:1px; text-transform:uppercase; background:rgba(255,60,30,0.15); color:var(--accent-orange); margin-left:6px; }
+        .ti-member-sub { font-size:11px; color:rgba(255,255,255,0.3); }
+        .ti-member-right { text-align:right; }
+
+        .ti-event-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; position:relative; z-index:1; }
+        .ti-event-item { padding:14px 16px; border-radius:12px; border:1px solid rgba(255,60,30,0.08); background:rgba(255,255,255,0.015); }
+        .ti-event-label { font-size:10px; color:rgba(255,255,255,0.25); font-family:var(--font-display); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:4px; }
+        .ti-event-value { font-size:14px; color:rgba(255,255,255,0.7); font-weight:500; }
+
+        /* CTA Buttons */
+        .ti-cta { opacity:0; animation:psFadeIn 0.6s ease 0.9s forwards; display:flex; flex-direction:column; gap:12px; }
+        .ti-cta-btn { display:flex; align-items:center; justify-content:center; gap:10px; width:100%; padding:16px 24px; border-radius:14px; font-family:var(--font-display); font-size:15px; font-weight:700; letter-spacing:2px; text-transform:uppercase; text-align:center; text-decoration:none; transition:all 0.4s ease; border:none; cursor:pointer; }
+        .ti-cta-primary { background:linear-gradient(135deg,#ff3020,#ff6040); color:#fff; box-shadow:0 0 30px rgba(255,50,30,0.3); }
+        .ti-cta-primary:hover { box-shadow:0 0 50px rgba(255,50,30,0.5),0 8px 35px rgba(255,50,30,0.3); transform:translateY(-2px); }
+        .ti-cta-cart { background:linear-gradient(135deg,#ff8020,#ffaa40); color:#fff; box-shadow:0 0 25px rgba(255,130,30,0.2); }
+        .ti-cta-cart:hover { box-shadow:0 0 40px rgba(255,130,30,0.4); transform:translateY(-2px); }
+
+        .ti-footer { text-align:center; padding:20px 0; font-size:12px; color:rgba(255,255,255,0.2); font-family:var(--font-display); letter-spacing:1px; }
+        .ti-footer strong { color:var(--accent-orange); }
+
+        @media (max-width:640px) {
+          .ti-team-num { font-size:36px; }
+          .ti-welcome-name { font-size:20px; }
+          .ti-card { padding:20px 18px; }
+          .ti-member { flex-direction:column; align-items:flex-start; gap:6px; }
+          .ti-member-right { text-align:left; }
+          .ti-event-grid { grid-template-columns:1fr; }
+          .ti-header { flex-direction:column; gap:10px; align-items:flex-start; }
+          .ti-cta-btn { font-size:13px; padding:14px 20px; }
+        }
+      `}</style>
+
+      <div className="ti-wrapper">
+        <div className="ti-container">
+
+          {/* Header with bell icon + logout */}
+          <div className="ti-header">
+            <div className="ti-logo" onClick={function () { router.push("/") }}>
+              <div className="ti-logo-icon">PS</div>
+              <div className="ti-logo-text">{EVENT_CONFIG.eventName}</div>
             </div>
-            <p className="text-gray-400 text-sm">
-              {isLeader ? "You are the Team Leader of this team." : "You are a member of this team."}
-            </p>
+            <div className="ti-header-right">
+              <span className="ti-roll-badge">{loggedInRoll}</span>
+              <Link href="/announcements" className="ti-icon-btn" title="Announcements">
+                <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 0 1-3.46 0" /></svg>
+              </Link>
+              <button className="ti-logout" onClick={handleLogout}>Logout</button>
+            </div>
           </div>
 
-          {/* Team Number */}
-          <ScrollAnimate>
-            <div className="p-8 rounded-2xl glass mb-6 text-center card-hover">
-              <p className="text-sm text-gray-400 mb-2">Your Team Number</p>
-              <p className="text-5xl font-bold gradient-text-animate mb-4">
-                {team.team_number}
-              </p>
-
-              <div className="flex flex-wrap justify-center gap-3">
-                <button onClick={copyTeamNumber}
-                  className={copied
-                    ? "px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 btn-press"
-                    : "px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 glass text-gray-300 hover:bg-white/10 btn-press"
-                  }>
-                  {copied ? "Copied!" : "Copy Number"}
-                </button>
-                <button onClick={shareWhatsApp}
-                  className="px-4 py-2 bg-green-500/20 border border-green-500/30 rounded-xl text-sm font-medium text-green-400 hover:bg-green-500/30 flex items-center gap-2 btn-press">
-                  Share WhatsApp
-                </button>
-                <button onClick={downloadTeamCard}
-                  className="px-4 py-2 glass rounded-xl text-sm font-medium text-gray-300 hover:bg-white/10 flex items-center gap-2 btn-press">
-                  Download Card
-                </button>
+          {/* Welcome */}
+          <div className="ti-welcome">
+            <div className="ti-welcome-row">
+              <span style={{ fontSize: 28 }}>👋</span>
+              <div>
+                <div className="ti-welcome-name">
+                  Welcome{currentMember ? ", " + currentMember.member_name : ""}!
+                </div>
+                <div className="ti-welcome-role">
+                  {isLeader ? "You are the Team Leader of this team." : "You are a member of this team."}
+                </div>
               </div>
-
-              <p className="text-xs text-gray-500 mt-4">
-                Registered on {new Date(team.registered_at).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}
-              </p>
             </div>
-          </ScrollAnimate>
+          </div>
+
+          {/* Team Number Card */}
+          <div className="ti-card ti-card-d1" style={{ textAlign: "center" }}>
+            <div className="ti-team-label">Your Team Number</div>
+            <div className="ti-team-num">{team.team_number}</div>
+
+            <div className="ti-actions">
+              <button onClick={copyTeamNumber} className={"ti-action-btn ti-action-copy " + (copied ? "copied" : "")}>
+                {copied ? "✓ Copied" : "📋 Copy"}
+              </button>
+              <button onClick={shareWhatsApp} className="ti-action-btn ti-action-wa">
+                💬 WhatsApp
+              </button>
+              <button onClick={downloadTeamCard} className="ti-action-btn ti-action-dl">
+                ⬇ Card
+              </button>
+            </div>
+
+            <div className="ti-registered">
+              Registered {team.registered_at ? new Date(team.registered_at).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" }) : ""}
+            </div>
+          </div>
 
           {/* Project Details */}
-          <ScrollAnimate>
-            <div className="p-6 rounded-2xl glass mb-6 card-hover">
-              <h2 className="text-lg font-semibold mb-4">Project Details</h2>
-              <div className="space-y-4">
-                <div>
-                  <p className="text-sm text-gray-400">Project Title</p>
-                  <p className="font-semibold text-lg">{team.project_title}</p>
+          <div className="ti-card ti-card-d2">
+            <div className="ti-card-title">💡 Project Details</div>
+            <div className="ti-detail">
+              <div className="ti-detail-row">
+                <div className="ti-detail-label">Project Title</div>
+                <div className="ti-detail-value">{team.project_title}</div>
+              </div>
+              {team.project_description && (
+                <div className="ti-detail-row">
+                  <div className="ti-detail-label">Description</div>
+                  <div className="ti-detail-value" style={{ fontSize: 13, color: "rgba(255,255,255,0.5)" }}>{team.project_description}</div>
                 </div>
-                {team.project_description && (
-                  <div>
-                    <p className="text-sm text-gray-400">Description</p>
-                    <p className="text-gray-300">{team.project_description}</p>
-                  </div>
-                )}
-                <div>
-                  <p className="text-sm text-gray-400 mb-2">Technologies</p>
-                  <div className="flex flex-wrap gap-2">
-                    {(team.technologies || []).map(function (tech) {
-                      return <span key={tech} className="px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-sm text-emerald-400">{tech}</span>
-                    })}
-                  </div>
+              )}
+              <div className="ti-detail-row">
+                <div className="ti-detail-label">Technologies</div>
+                <div className="ti-tech-chips">
+                  {(team.technologies || []).map(function (tech) {
+                    return <span key={tech} className="ti-tech-chip">{tech}</span>
+                  })}
                 </div>
               </div>
             </div>
-          </ScrollAnimate>
+          </div>
 
           {/* Team Members */}
-          <ScrollAnimate>
-            <div className="p-6 rounded-2xl glass mb-6 card-hover">
-              <h2 className="text-lg font-semibold mb-4">Team Members ({members.length})</h2>
-              <div className="space-y-3">
-                {members.map(function (m, i) {
-                  return (
-                    <div key={i}
-                      className={m.member_roll_number === loggedInRoll
-                        ? "flex items-center justify-between p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/5 card-hover"
-                        : "flex items-center justify-between p-4 rounded-xl glass card-hover"
-                      }>
-                      <div className="flex items-center gap-3">
-                        <div className={m.is_leader
-                          ? "w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold bg-yellow-500/20 text-yellow-400"
-                          : "w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold bg-white/10 text-gray-300"
-                        }>
-                          {m.is_leader ? "👑" : i + 1}
-                        </div>
-                        <div>
-                          <p className="font-medium">
-                            {m.member_name}
-                            {m.member_roll_number === loggedInRoll && (
-                              <span className="ml-2 px-2 py-0.5 bg-emerald-500/20 text-emerald-400 rounded-full text-xs">You</span>
-                            )}
-                          </p>
-                          <p className="text-xs text-gray-500">{m.member_roll_number} | {m.member_branch}</p>
-                        </div>
+          <div className="ti-card ti-card-d3">
+            <div className="ti-card-title">👥 Team Members ({members.length})</div>
+            <div style={{ position: "relative", zIndex: 1 }}>
+              {members.map(function (m, i) {
+                return (
+                  <div key={i} className={"ti-member " + (m.member_roll_number === loggedInRoll ? "you" : "")}>
+                    <div className="ti-member-left">
+                      <div className={"ti-member-avatar " + (m.is_leader ? "leader" : "normal")}>
+                        {m.is_leader ? "👑" : i + 1}
                       </div>
-                      <div className="text-right hidden sm:block">
-                        <p className="text-xs text-gray-400">{m.member_college}</p>
-                        <p className="text-xs text-gray-500">{m.member_year}</p>
+                      <div>
+                        <div className="ti-member-name">
+                          {m.member_name}
+                          {m.member_roll_number === loggedInRoll && (
+                            <span className="ti-member-you-tag">You</span>
+                          )}
+                        </div>
+                        <div className="ti-member-sub">{m.member_roll_number} | {m.member_branch}</div>
                       </div>
                     </div>
-                  )
-                })}
-              </div>
+                    <div className="ti-member-right">
+                      <div style={{ fontSize: 12, color: "rgba(255,255,255,0.3)" }}>{m.member_college}</div>
+                    </div>
+                  </div>
+                )
+              })}
             </div>
-          </ScrollAnimate>
+          </div>
 
           {/* Event Details */}
-          <ScrollAnimate>
-            <div className="p-6 rounded-2xl glass mb-6 card-hover">
-              <h2 className="text-lg font-semibold mb-4">Event Details</h2>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 rounded-xl glass">
-                  <p className="text-xs text-gray-500">Date</p>
-                  <p className="font-medium">May 6 - 12, 2026</p>
-                </div>
-                <div className="p-4 rounded-xl glass">
-                  <p className="text-xs text-gray-500">Time</p>
-                  <p className="font-medium">{EVENT_CONFIG.eventTime}</p>
-                </div>
-                <div className="p-4 rounded-xl glass">
-                  <p className="text-xs text-gray-500">Venue</p>
-                  <p className="font-medium">{EVENT_CONFIG.eventVenue}</p>
-                </div>
-                <div className="p-4 rounded-xl glass">
-                  <p className="text-xs text-gray-500">Your Role</p>
-                  <p className="font-medium">{isLeader ? "Team Leader" : "Team Member"}</p>
-                </div>
+          <div className="ti-card ti-card-d4">
+            <div className="ti-card-title">📅 Event Details</div>
+            <div className="ti-event-grid">
+              <div className="ti-event-item">
+                <div className="ti-event-label">Date</div>
+                <div className="ti-event-value">May 6 - 12, 2026</div>
+              </div>
+              <div className="ti-event-item">
+                <div className="ti-event-label">Time</div>
+                <div className="ti-event-value">{EVENT_CONFIG.eventTime}</div>
+              </div>
+              <div className="ti-event-item">
+                <div className="ti-event-label">Venue</div>
+                <div className="ti-event-value">{EVENT_CONFIG.eventVenue}</div>
+              </div>
+              <div className="ti-event-item">
+                <div className="ti-event-label">Your Role</div>
+                <div className="ti-event-value">{isLeader ? "Team Leader" : "Team Member"}</div>
               </div>
             </div>
-          </ScrollAnimate>
-
-          {/* Action Buttons */}
-          <ScrollAnimate>
-            <div className="space-y-3">
-              <Link href={"/food-selection/" + team.team_number}>
-                <div className="w-full py-4 bg-gradient-to-r from-emerald-500 to-cyan-500 text-black font-bold rounded-xl text-lg text-center btn-press hover:shadow-[0_0_40px_rgba(16,185,129,0.3)] transition-all">
-                  Select Snacks and Beverages
-                </div>
-              </Link>
-              <Link href={"/mentor-request/" + team.team_number}>
-                <div className="w-full py-3 bg-purple-500/20 border border-purple-500/30 rounded-xl text-sm font-medium text-purple-400 hover:bg-purple-500/30 text-center mt-3 btn-press">
-                  🧑‍🏫 Request a Mentor
-                </div>
-              </Link>
-              <Link href="/announcements">
-                <div className="w-full py-3 glass rounded-xl text-sm font-medium hover:bg-white/10 text-center mt-3 btn-press">
-                  View Announcements
-                </div>
-              </Link>
-            </div>
-          </ScrollAnimate>
-
-          <div className="text-center py-6">
-            <p className="text-sm text-gray-500">Show team number <span className="text-emerald-400 font-bold">{team.team_number}</span> at the venue</p>
           </div>
-        </main>
-      )}
+
+          {/* CTA Buttons */}
+          <div className="ti-cta">
+            {hasCart ? (
+              <Link href={"/snack-cards/" + team.team_number} className="ti-cta-btn ti-cta-cart">
+                🛒 View My Snack Cards
+              </Link>
+            ) : (
+              <Link href={"/food-selection/" + team.team_number} className="ti-cta-btn ti-cta-primary">
+                🍔 Select Snacks & Beverages
+              </Link>
+            )}
+          </div>
+
+          <div className="ti-footer">
+            Show team number <strong>{team.team_number}</strong> at the venue
+          </div>
+
+        </div>
+      </div>
     </div>
   )
 }

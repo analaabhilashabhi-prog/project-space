@@ -1,111 +1,129 @@
 import { supabase } from "@/lib/supabase"
-import { EVENT_CONFIG } from "@/config/formFields"
 
 export async function POST(request) {
   try {
-    const { projectTitle, projectDescription, technologies, members } = await request.json()
-
-    // Check if registrations are open
-    const { data: settings } = await supabase
-      .from("settings")
-      .select("value")
-      .eq("id", "registration_open")
-      .single()
-
-    if (settings?.value !== "true") {
-      return Response.json({ error: "Registrations are currently closed." }, { status: 400 })
-    }
+    const body = await request.json()
+    const { projectTitle, projectDescription, technologies, members } = body
 
     // Validate
-    if (!projectTitle || !technologies?.length || !members?.length) {
-      return Response.json({ error: "Missing required fields" }, { status: 400 })
+    if (!projectTitle || !members || members.length < 3) {
+      return Response.json({ error: "Project title and at least 3 team members are required" }, { status: 400 })
     }
 
-    if (members.length !== EVENT_CONFIG.teamSize) {
-      return Response.json({ error: `Team must have exactly ${EVENT_CONFIG.teamSize} members` }, { status: 400 })
+    if (members.length > 6) {
+      return Response.json({ error: "Maximum 6 team members allowed" }, { status: 400 })
     }
 
-    // Get all roll numbers
-    const rollNumbers = members.map((m) => m.member_roll_number)
-
-    // Check for duplicate roll numbers within the team
-    const uniqueRolls = new Set(rollNumbers)
-    if (uniqueRolls.size !== rollNumbers.length) {
-      return Response.json({ error: "Duplicate roll numbers found in your team. Each member must have a unique roll number." }, { status: 400 })
+    const leader = members.find(function (m) { return m.is_leader })
+    if (!leader) {
+      return Response.json({ error: "Team must have a leader" }, { status: 400 })
     }
 
-    // Only check NON-LEADER members against existing teams
-    // The leader is registering for the first time, so skip them
-    const nonLeaderRolls = members.filter((m) => !m.is_leader).map((m) => m.member_roll_number)
+    // Check for duplicates within submission
+    const rollNumbers = members.map(function (m) { return m.member_roll_number.toUpperCase().trim() })
+    if (new Set(rollNumbers).size !== rollNumbers.length) {
+      return Response.json({ error: "Duplicate roll numbers found in your team" }, { status: 400 })
+    }
 
-    if (nonLeaderRolls.length > 0) {
-      const { data: existingMembers } = await supabase
+    // Check each roll number against existing teams
+    for (var i = 0; i < rollNumbers.length; i++) {
+      const { data: existingMember } = await supabase
         .from("team_members")
-        .select("member_roll_number, teams(team_number)")
-        .in("member_roll_number", nonLeaderRolls)
+        .select("team_id, teams(team_number)")
+        .eq("member_roll_number", rollNumbers[i])
+        .single()
 
-      if (existingMembers && existingMembers.length > 0) {
-        const details = existingMembers.map((m) => `${m.member_roll_number} (Team ${m.teams?.team_number || "Unknown"})`).join(", ")
-        return Response.json({ error: `These roll numbers are already registered: ${details}` }, { status: 400 })
+      if (existingMember) {
+        return Response.json({
+          error: rollNumbers[i] + " is already registered in Team " + (existingMember.teams?.team_number || "Unknown"),
+        }, { status: 400 })
       }
     }
 
-    // Get next team number
+    // Get next team number from counters (current_value is integer)
+    var nextTeamNum = "PS-001"
+
     const { data: counterData, error: counterError } = await supabase
       .from("counters")
       .select("current_value")
       .eq("id", "team_number")
       .single()
 
-    if (counterError) throw counterError
+    if (counterError || !counterData) {
+      // Fallback: count existing teams
+      const { count } = await supabase
+        .from("teams")
+        .select("*", { count: "exact", head: true })
 
-    const nextNumber = counterData.current_value + 1
-    const teamNumber = `${EVENT_CONFIG.teamNumberPrefix}-${String(nextNumber).padStart(3, "0")}`
+      var nextNum = (count || 0) + 1
+      nextTeamNum = "PS-" + String(nextNum).padStart(3, "0")
 
-    // Update counter
-    await supabase
-      .from("counters")
-      .update({ current_value: nextNumber })
-      .eq("id", "team_number")
+      // Try to create the counter row
+      await supabase.from("counters").upsert({ id: "team_number", current_value: nextNum })
+    } else {
+      var nextNum = (counterData.current_value || 0) + 1
+      nextTeamNum = "PS-" + String(nextNum).padStart(3, "0")
 
-    // Insert team
+      // Update counter
+      await supabase
+        .from("counters")
+        .update({ current_value: nextNum })
+        .eq("id", "team_number")
+    }
+
+    // Create team
     const { data: teamData, error: teamError } = await supabase
       .from("teams")
       .insert({
-        team_number: teamNumber,
+        team_number: nextTeamNum,
         project_title: projectTitle,
         project_description: projectDescription || "",
-        technologies: technologies,
+        technologies: technologies || [],
+        leader_roll_number: leader.member_roll_number.toUpperCase().trim(),
+        member_count: members.length,
       })
-      .select()
+      .select("id, team_number")
       .single()
 
-    if (teamError) throw teamError
+    if (teamError) {
+      console.error("Team insert error:", JSON.stringify(teamError))
+      return Response.json({ error: "Failed to create team: " + teamError.message }, { status: 500 })
+    }
 
-    // Insert members
-    const memberInserts = members.map((m) => ({
-      team_id: teamData.id,
-      member_name: m.member_name,
-      member_roll_number: m.member_roll_number,
-      member_email: m.member_email,
-      member_phone: m.member_phone,
-      member_branch: m.member_branch,
-      member_year: m.member_year,
-      member_college: m.member_college,
-      is_leader: m.is_leader || false,
-    }))
+    // Insert all team members
+    const memberInserts = members.map(function (m) {
+      return {
+        team_id: teamData.id,
+        member_name: m.member_name,
+        member_roll_number: m.member_roll_number.toUpperCase().trim(),
+        member_email: m.member_email || (m.member_roll_number.toLowerCase().trim() + "@outlook.com"),
+        member_phone: m.member_phone || "",
+        member_branch: m.member_branch || "",
+        member_year: m.member_year || "",
+        member_college: m.member_college || "",
+        is_leader: m.is_leader || false,
+      }
+    })
 
-    const { error: membersError } = await supabase.from("team_members").insert(memberInserts)
+    const { error: membersError } = await supabase
+      .from("team_members")
+      .insert(memberInserts)
 
-    if (membersError) throw membersError
+    if (membersError) {
+      console.error("Members insert error:", JSON.stringify(membersError))
+      // Rollback team
+      await supabase.from("teams").delete().eq("id", teamData.id)
+      return Response.json({ error: "Failed to add team members: " + membersError.message }, { status: 500 })
+    }
 
     return Response.json({
       success: true,
-      teamNumber,
+      teamNumber: teamData.team_number,
       teamId: teamData.id,
+      message: "Team registered successfully!",
     })
   } catch (error) {
     console.error("Register Error:", error)
-    return Response.json({ error: error.message || "Registration failed" }, { status: 500 })
+    return Response.json({ error: "Internal server error: " + error.message }, { status: 500 })
   }
 }

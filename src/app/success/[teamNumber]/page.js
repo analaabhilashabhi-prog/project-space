@@ -1,49 +1,24 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import Link from "next/link"
 import QRCode from "qrcode"
-import confetti from "canvas-confetti"
 import { supabase } from "@/lib/supabase"
 import { EVENT_CONFIG, WHATSAPP_MESSAGE } from "@/config/formFields"
-import CountdownTimer from "@/components/CountdownTimer"
+import AnimatedBackground from "@/components/AnimatedBackground"
 
 export default function SuccessPage() {
-  var params = useParams()
-  var teamNumber = params.teamNumber
-  var [team, setTeam] = useState(null)
-  var [members, setMembers] = useState([])
-  var [qrImage, setQrImage] = useState("")
-  var [loading, setLoading] = useState(true)
-  var [copied, setCopied] = useState(false)
+  const params = useParams()
+  const router = useRouter()
+  const teamNumber = params.teamNumber
+  const [team, setTeam] = useState(null)
+  const [members, setMembers] = useState([])
+  const [qrImage, setQrImage] = useState("")
+  const [loading, setLoading] = useState(true)
+  const [copied, setCopied] = useState(false)
 
   useEffect(function () {
-    // Fire confetti
-    setTimeout(function () {
-      confetti({
-        particleCount: 150,
-        spread: 80,
-        origin: { y: 0.6 },
-        colors: ["#10b981", "#06b6d4", "#8b5cf6", "#f59e0b"],
-      })
-    }, 500)
-
-    setTimeout(function () {
-      confetti({
-        particleCount: 80,
-        spread: 100,
-        origin: { x: 0.2, y: 0.5 },
-        colors: ["#10b981", "#06b6d4"],
-      })
-      confetti({
-        particleCount: 80,
-        spread: 100,
-        origin: { x: 0.8, y: 0.5 },
-        colors: ["#8b5cf6", "#f59e0b"],
-      })
-    }, 1200)
-
     async function fetchTeam() {
       var teamRes = await supabase
         .from("teams")
@@ -90,130 +65,188 @@ export default function SuccessPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] text-white flex items-center justify-center">
-        <div className="animate-spin h-8 w-8 border-2 border-emerald-500 border-t-transparent rounded-full"></div>
+      <div className="ps-page">
+        <AnimatedBackground />
+        <div style={{ position: "relative", zIndex: 10, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <span className="ps-spinner" style={{ width: 32, height: 32 }} />
+        </div>
       </div>
     )
   }
 
   if (!team) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] text-white flex flex-col items-center justify-center gap-4">
-        <h1 className="text-2xl font-bold">Team not found</h1>
-        <Link href="/">Go back home</Link>
+      <div className="ps-page">
+        <AnimatedBackground />
+        <div style={{ position: "relative", zIndex: 10, minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 16 }}>
+          <div className="ps-page-title" style={{ fontSize: 28 }}>Team Not Found</div>
+          <button className="ps-btn ps-btn-secondary" onClick={() => router.push("/")}>← Back to Home</button>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
-      <CountdownTimer />
-      <div className="absolute top-[-200px] left-[-200px] w-[600px] h-[600px] rounded-full bg-emerald-500/10 blur-[120px]"></div>
-      <div className="absolute bottom-[-200px] right-[-200px] w-[600px] h-[600px] rounded-full bg-cyan-500/10 blur-[120px]"></div>
+    <div className="ps-page">
+      <AnimatedBackground />
 
-      <main className="relative z-10 max-w-2xl mx-auto px-8 py-16 text-center page-transition">
-        {/* Success icon */}
-        <div className="w-20 h-20 rounded-full bg-emerald-500/20 flex items-center justify-center mx-auto mb-6 scale-in glow-pulse">
-          <svg className="w-10 h-10 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7"></path>
-          </svg>
-        </div>
+      <style jsx>{`
+        .success-wrapper { position:relative; z-index:10; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:50px 20px 60px; }
+        .success-container { max-width:580px; width:100%; }
 
-        <h1 className="text-4xl font-bold mb-3 fade-in gradient-text-animate">Registration Successful!</h1>
-        <p className="text-gray-400 mb-10 fade-in fade-in-delay-1">Your team has been registered for {EVENT_CONFIG.eventName}.</p>
+        /* Check icon */
+        .success-check { width:72px;height:72px; border-radius:50%; background:rgba(255,60,30,0.12); border:2px solid rgba(255,60,30,0.25); display:flex; align-items:center; justify-content:center; margin:0 auto 24px; opacity:0; animation:psFadeIn 0.8s ease forwards; }
+        .success-check svg { width:36px;height:36px; color:var(--accent-orange); }
 
-        {/* Team Number Card */}
-        <div className="p-8 rounded-2xl glass glow-pulse mb-6 fade-in fade-in-delay-2">
-          <p className="text-sm text-gray-400 mb-2">Your Team Number</p>
-          <p className="text-5xl font-bold gradient-text-animate mb-6">
-            {team.team_number}
-          </p>
+        .success-title { font-family:var(--font-display); font-weight:900; font-size:36px; text-transform:uppercase; letter-spacing:3px; text-align:center; background:linear-gradient(180deg,#ffffff 0%,#ffd6bc 40%,#ff8850 70%,#ff3020 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:8px; opacity:0; animation:psTitleIn 0.8s ease 0.2s forwards; }
+        .success-subtitle { font-family:var(--font-display); font-size:14px; font-weight:500; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.35); text-align:center; margin-bottom:32px; opacity:0; animation:psSubIn 0.6s ease 0.4s forwards; }
 
-          {qrImage !== "" && (
-            <div className="flex justify-center mb-6">
-              <div className="p-4 bg-white rounded-2xl card-hover">
-                <img src={qrImage} alt="QR Code" width={192} height={192} />
-              </div>
-            </div>
-          )}
+        /* Main card */
+        .success-card { padding:36px 32px; border-radius:20px; border:1px solid rgba(255,60,30,0.12); background:linear-gradient(165deg,rgba(35,12,8,0.75),rgba(18,6,4,0.9)); backdrop-filter:blur(20px); position:relative; overflow:hidden; margin-bottom:20px; opacity:0; animation:psFadeIn 0.8s ease 0.5s forwards; }
+        .success-card::before { content:''; position:absolute; top:0;left:0;right:0; height:2px; background:linear-gradient(90deg,#ff4020,#ff8040,#ffaa40); }
+        .success-card::after { content:''; position:absolute; top:-50%;left:-50%; width:200%;height:200%; background:radial-gradient(circle at 50% 0%,rgba(255,60,30,0.08),transparent 50%); pointer-events:none; }
 
-          <p className="text-xs text-gray-500 mb-6">Scan this QR code at the venue entrance</p>
+        .success-card-inner { position:relative; z-index:1; }
 
-          {/* Team Details */}
-          <div className="text-left space-y-3 border-t border-white/10 pt-6">
-            <div className="flex justify-between">
-              <span className="text-gray-400 text-sm">Project</span>
-              <span className="font-medium text-right max-w-[60%]">{team.project_title}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-400 text-sm">Technologies</span>
-              <span className="font-medium text-right max-w-[60%]">{(team.technologies || []).join(", ")}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-400 text-sm">Team Size</span>
-              <span className="font-medium">{members.length} members</span>
-            </div>
+        .success-team-label { font-family:var(--font-display); font-size:11px; font-weight:600; color:rgba(255,255,255,0.3); letter-spacing:3px; text-transform:uppercase; text-align:center; margin-bottom:6px; }
+        .success-team-number { font-family:var(--font-display); font-size:52px; font-weight:900; text-align:center; letter-spacing:6px; background:linear-gradient(135deg,#ff6040,#ffaa40); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:24px; }
+
+        /* QR Code */
+        .success-qr-wrap { display:flex; justify-content:center; margin-bottom:20px; }
+        .success-qr { padding:14px; background:#fff; border-radius:16px; display:inline-block; }
+        .success-qr img { display:block; width:180px; height:180px; }
+        .success-qr-hint { font-family:var(--font-display); font-size:11px; color:rgba(255,255,255,0.25); letter-spacing:2px; text-transform:uppercase; text-align:center; margin-bottom:24px; }
+
+        /* Details */
+        .success-divider { width:100%; height:1px; background:linear-gradient(90deg,transparent,rgba(255,60,30,0.2),transparent); margin:20px 0; }
+        .success-detail-row { display:flex; justify-content:space-between; align-items:flex-start; padding:8px 0; }
+        .success-detail-label { font-size:13px; color:rgba(255,255,255,0.35); font-family:var(--font-display); letter-spacing:1px; text-transform:uppercase; }
+        .success-detail-value { font-size:14px; color:rgba(255,255,255,0.8); font-weight:500; text-align:right; max-width:60%; }
+
+        /* Members */
+        .success-members-label { font-family:var(--font-display); font-size:12px; font-weight:600; color:rgba(255,255,255,0.3); letter-spacing:2px; text-transform:uppercase; margin-bottom:10px; }
+        .success-member { display:flex; justify-content:space-between; align-items:center; padding:8px 12px; border-radius:10px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.04); margin-bottom:6px; }
+        .success-member-name { font-size:13px; color:rgba(255,255,255,0.7); }
+        .success-member-roll { font-family:var(--font-display); font-size:11px; color:rgba(255,255,255,0.3); letter-spacing:1px; }
+
+        /* Action buttons */
+        .success-actions { opacity:0; animation:psFadeIn 0.6s ease 0.7s forwards; }
+        .success-btn-row { display:flex; gap:10px; margin-bottom:10px; }
+        .success-copy-btn { flex:1; padding:12px; border-radius:14px; font-family:var(--font-display); font-size:13px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; transition:all 0.3s ease; display:flex; align-items:center; justify-content:center; gap:6px; border:1px solid rgba(255,60,30,0.2); background:rgba(255,60,30,0.06); color:var(--accent-light); }
+        .success-copy-btn:hover { background:rgba(255,60,30,0.12); border-color:rgba(255,60,30,0.35); }
+        .success-copy-btn.copied { background:rgba(255,60,30,0.15); border-color:var(--accent-orange); color:#fff; }
+
+        .success-wa-btn { flex:1; padding:12px; border-radius:14px; font-family:var(--font-display); font-size:13px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; transition:all 0.3s ease; display:flex; align-items:center; justify-content:center; gap:6px; border:1px solid rgba(37,211,102,0.25); background:rgba(37,211,102,0.08); color:#25d366; }
+        .success-wa-btn:hover { background:rgba(37,211,102,0.15); border-color:rgba(37,211,102,0.4); }
+
+        .success-dl-btn { display:block; width:100%; padding:12px; border-radius:14px; font-family:var(--font-display); font-size:13px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; text-align:center; text-decoration:none; cursor:pointer; transition:all 0.3s ease; border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.03); color:rgba(255,255,255,0.5); margin-bottom:10px; }
+        .success-dl-btn:hover { border-color:rgba(255,60,30,0.3); color:rgba(255,255,255,0.8); }
+
+        .success-food-btn { display:block; width:100%; padding:16px; border-radius:14px; font-family:var(--font-display); font-size:16px; font-weight:700; letter-spacing:2px; text-transform:uppercase; text-align:center; text-decoration:none; cursor:pointer; background:linear-gradient(135deg,#ff3020,#ff6040); color:#fff; box-shadow:0 0 30px rgba(255,50,30,0.3); transition:all 0.4s ease; border:none; margin-bottom:10px; }
+        .success-food-btn:hover { box-shadow:0 0 50px rgba(255,50,30,0.5),0 8px 35px rgba(255,50,30,0.3); transform:translateY(-2px); }
+
+        .success-dash-btn { display:block; width:100%; padding:12px; border-radius:14px; font-family:var(--font-display); font-size:13px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; text-align:center; text-decoration:none; cursor:pointer; transition:all 0.3s ease; border:1px solid rgba(255,255,255,0.1); background:transparent; color:rgba(255,255,255,0.4); }
+        .success-dash-btn:hover { border-color:rgba(255,60,30,0.4); color:var(--accent-orange); }
+
+        @media (max-width:600px) {
+          .success-title { font-size:26px; letter-spacing:2px; }
+          .success-team-number { font-size:38px; letter-spacing:4px; }
+          .success-card { padding:24px 20px; }
+          .success-qr img { width:150px; height:150px; }
+          .success-btn-row { flex-direction:column; }
+        }
+      `}</style>
+
+      <div className="success-wrapper">
+        <div className="success-container">
+
+          {/* Check Icon */}
+          <div className="success-check">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+            </svg>
           </div>
 
-          {/* Members */}
-          <div className="mt-6 border-t border-white/10 pt-6">
-            <p className="text-sm text-gray-400 mb-3 text-left">Team Members</p>
-            <div className="space-y-2">
+          <div className="success-title">Registration Successful!</div>
+          <div className="success-subtitle">Your team has been registered for {EVENT_CONFIG.eventName}</div>
+
+          {/* Main Card */}
+          <div className="success-card">
+            <div className="success-card-inner">
+              <div className="success-team-label">Your Team Number</div>
+              <div className="success-team-number">{team.team_number}</div>
+
+              {/* QR Code */}
+              {qrImage !== "" && (
+                <>
+                  <div className="success-qr-wrap">
+                    <div className="success-qr">
+                      <img src={qrImage} alt="QR Code" />
+                    </div>
+                  </div>
+                  <div className="success-qr-hint">Scan this QR code at the venue entrance</div>
+                </>
+              )}
+
+              <div className="success-divider" />
+
+              {/* Details */}
+              <div className="success-detail-row">
+                <span className="success-detail-label">Project</span>
+                <span className="success-detail-value">{team.project_title}</span>
+              </div>
+              <div className="success-detail-row">
+                <span className="success-detail-label">Technologies</span>
+                <span className="success-detail-value">{(team.technologies || []).join(", ")}</span>
+              </div>
+              <div className="success-detail-row">
+                <span className="success-detail-label">Team Size</span>
+                <span className="success-detail-value">{members.length} members</span>
+              </div>
+
+              <div className="success-divider" />
+
+              {/* Members */}
+              <div className="success-members-label">Team Members</div>
               {members.map(function (m, i) {
                 return (
-                  <div key={i} className="flex justify-between items-center text-sm py-2 px-3 rounded-lg glass card-hover">
-                    <span className="text-gray-300">{m.is_leader ? "👑 " : ""}{m.member_name}</span>
-                    <span className="text-gray-500 text-xs">{m.member_roll_number}</span>
+                  <div key={i} className="success-member">
+                    <span className="success-member-name">{m.is_leader ? "👑 " : ""}{m.member_name}</span>
+                    <span className="success-member-roll">{m.member_roll_number}</span>
                   </div>
                 )
               })}
             </div>
           </div>
-        </div>
 
-        {/* Action Buttons */}
-        <div className="space-y-3 fade-in fade-in-delay-3">
-          <div className="flex gap-3">
-            <button
-              onClick={copyTeamNumber}
-              className={copied
-                ? "flex-1 py-3 rounded-xl text-sm font-medium flex items-center justify-center gap-2 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 btn-press"
-                : "flex-1 py-3 rounded-xl text-sm font-medium flex items-center justify-center gap-2 glass text-gray-300 hover:bg-white/10 btn-press"
-              }
-            >
-              {copied ? "Copied!" : "Copy Number"}
-            </button>
-            <button
-              onClick={shareWhatsApp}
-              className="flex-1 py-3 bg-green-500/20 border border-green-500/30 rounded-xl text-sm font-medium text-green-400 hover:bg-green-500/30 flex items-center justify-center gap-2 btn-press"
-            >
-              Share WhatsApp
-            </button>
+          {/* Action Buttons */}
+          <div className="success-actions">
+            <div className="success-btn-row">
+              <button onClick={copyTeamNumber} className={`success-copy-btn ${copied ? "copied" : ""}`}>
+                {copied ? "✓ Copied!" : "📋 Copy Number"}
+              </button>
+              <button onClick={shareWhatsApp} className="success-wa-btn">
+                💬 Share WhatsApp
+              </button>
+            </div>
+
+            {qrImage !== "" && (
+              <a href={qrImage} download="team-qr-code.png" className="success-dl-btn">
+                ⬇ Download QR Code
+              </a>
+            )}
+
+            <Link href={"/food-selection/" + team.team_number} className="success-food-btn">
+              🍔 Select Snacks & Beverages
+            </Link>
+
+            <Link href={"/team-info/" + team.team_number} className="success-dash-btn">
+              View Team Dashboard →
+            </Link>
           </div>
 
-          {qrImage !== "" && (
-            <div>
-              <a href={qrImage} download="team-qr-code.png">
-                <div className="w-full py-3 glass rounded-xl text-sm font-medium hover:bg-white/10 text-center btn-press">
-                  Download QR Code
-                </div>
-              </a>
-            </div>
-          )}
-
-          <Link href={"/food-selection/" + team.team_number}>
-            <div className="w-full py-4 bg-gradient-to-r from-emerald-500 to-cyan-500 text-black font-bold rounded-xl text-lg text-center mt-3 btn-press hover:shadow-[0_0_40px_rgba(16,185,129,0.3)] transition-all">
-              Select Snacks and Beverages
-            </div>
-          </Link>
-
-          <Link href={"/team-info/" + team.team_number}>
-            <div className="w-full py-3 glass rounded-xl text-sm font-medium hover:bg-white/10 text-center mt-3 btn-press">
-              View Team Dashboard
-            </div>
-          </Link>
         </div>
-      </main>
+      </div>
     </div>
   )
 }

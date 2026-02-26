@@ -9,8 +9,24 @@ export const EVENT_CONFIG = {
   eventEndDate: "2026-05-12",
   eventTime: "9:00 AM - 12:00 AM",
   eventVenue: "Technical Hub Campus",
-  teamSize: 6,
+  minTeamSize: 3,
+  maxTeamSize: 6,
   teamNumberPrefix: "PS",
+  adminPassword: "projectspace2026",
+}
+
+export const BRAND = {
+  primary: "#f34900",
+  secondary: "#5f6163",
+  tertiary: "#303030",
+  primaryLight: "#ff6b2b",
+  primaryDark: "#d13e00",
+  bg: "#0a0a0a",
+  surface: "#141414",
+  surfaceLight: "#1a1a1a",
+  border: "#2a2a2a",
+  text: "#ffffff",
+  textMuted: "#9ca3af",
 }
 
 export const EVENT_DAYS = [
@@ -24,6 +40,12 @@ export const EVENT_DAYS = [
 ]
 
 export const TECHNOLOGIES = [
+  "AWS Development with DevOps",
+  "Data Specialist",
+  "FSD With Flutter",
+  "FSD With React Native",
+  "SERVICE NOW",
+  "VLSI",
   "React.js", "Next.js", "Angular", "Vue.js", "Node.js", "Express.js",
   "Python", "Django", "Flask", "FastAPI", "Java", "Spring Boot",
   "C#", ".NET", "PHP", "Laravel", "Ruby on Rails", "Go", "Rust",
@@ -37,15 +59,18 @@ export const TECHNOLOGIES = [
   "Figma", "Tailwind CSS", "Bootstrap",
 ]
 
+export const COLLEGES = ["ACET", "ACOE", "AEC"]
+
 export const BRANCHES = [
-  "Computer Science & Engineering (CSE)",
-  "Information Technology (IT)",
-  "Electronics & Communication (ECE)",
-  "Electrical & Electronics (EEE)",
+  "CSE",
+  "IT",
+  "AIML",
+  "DS",
+  "ECE",
+  "IoT",
+  "EEE",
   "Mechanical Engineering",
   "Civil Engineering",
-  "Artificial Intelligence & ML",
-  "Data Science",
   "Cyber Security",
   "Other",
 ]
@@ -80,7 +105,35 @@ export const SNACKS = {
   },
   night: {
     label: "Night",
-    options: ["Gobi", "Sweet Corn Samosa", "Chips", "Ice Cream", "Ice Cream with Fruits"],
+    options: ["Gobi", "Sweet Corn", "Samosa", "Chips", "Ice Cream", "Ice Cream with Fruits"],
+  },
+}
+
+export const GALLERY_IMAGES = [
+  { src: "/images/gallery1.jpg", alt: "Project Space Aerial View" },
+  { src: "/images/gallery2.jpg", alt: "Students at Project Space" },
+  { src: "/images/gallery3.jpg", alt: "Project Space Event" },
+  { src: "/images/gallery4.jpg", alt: "Team Activities" },
+  { src: "/images/gallery5.jpg", alt: "Project Presentations" },
+  { src: "/images/gallery6.jpg", alt: "Hackathon Session" },
+  { src: "/images/gallery7.jpg", alt: "Collaboration Time" },
+  { src: "/images/gallery8.jpg", alt: "Campus Life" },
+]
+
+export const PASSWORD_RULES = {
+  minLength: 8,
+  requireUppercase: true,
+  requireLowercase: true,
+  requireNumber: true,
+  requireSpecial: true,
+  validate: (password) => {
+    const errors = []
+    if (password.length < 8) errors.push("At least 8 characters")
+    if (!/[A-Z]/.test(password)) errors.push("One uppercase letter")
+    if (!/[a-z]/.test(password)) errors.push("One lowercase letter")
+    if (!/[0-9]/.test(password)) errors.push("One number")
+    if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password)) errors.push("One special character")
+    return { valid: errors.length === 0, errors }
   },
 }
 
