@@ -23,7 +23,6 @@ export async function POST(request) {
     // ========== ACTION: CHECK ROLL & SEND OTP ==========
     if (action === "check_roll") {
 
-      // Check if registered in a team
       var { data: memberData, error: memberError } = await supabase
         .from("team_members")
         .select("member_name, member_email, member_roll_number, team_id, teams(team_number)")
@@ -37,7 +36,6 @@ export async function POST(request) {
         }, { status: 400 })
       }
 
-      // Check if password already exists
       var { data: existingUser } = await supabase
         .from("user_passwords")
         .select("id")
@@ -51,7 +49,6 @@ export async function POST(request) {
         }, { status: 400 })
       }
 
-      // Generate 6-digit OTP
       var otpCode = String(Math.floor(100000 + Math.random() * 900000))
       var email = memberData.member_email
 
@@ -59,7 +56,6 @@ export async function POST(request) {
         return Response.json({ error: "No email found for your account. Contact your team leader." }, { status: 400 })
       }
 
-      // Store OTP in otp_codes table
       var expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString()
 
       await supabase.from("otp_codes").delete().eq("roll_number", roll).eq("used", false)
@@ -77,7 +73,6 @@ export async function POST(request) {
         return Response.json({ error: "Failed to generate OTP. Try again." }, { status: 500 })
       }
 
-      // Send OTP via email
       try {
         var maskedEmail = email.replace(/(.{2})(.*)(@.*)/, function (_, a, b, c) {
           return a + b.replace(/./g, "*") + c
@@ -130,12 +125,10 @@ export async function POST(request) {
         return Response.json({ error: "Invalid OTP. Please try again." }, { status: 400 })
       }
 
-      // Check expiry
       if (new Date(otpData.expires_at) < new Date()) {
         return Response.json({ error: "OTP has expired. Please request a new one." }, { status: 400 })
       }
 
-      // Mark OTP as used
       await supabase.from("otp_codes").update({ used: true }).eq("id", otpData.id)
 
       return Response.json({
@@ -154,7 +147,6 @@ export async function POST(request) {
         return Response.json({ error: "Password must be at least 4 characters" }, { status: 400 })
       }
 
-      // Verify the member exists
       var { data: memberCheck } = await supabase
         .from("team_members")
         .select("member_name, teams(team_number)")
@@ -165,7 +157,6 @@ export async function POST(request) {
         return Response.json({ error: "Roll number not found" }, { status: 400 })
       }
 
-      // Check if password already exists
       var { data: existingPw } = await supabase
         .from("user_passwords")
         .select("id")
@@ -179,7 +170,6 @@ export async function POST(request) {
         }, { status: 400 })
       }
 
-      // Verify that OTP was verified (check for a used OTP in last 15 min)
       var fifteenMinAgo = new Date(Date.now() - 15 * 60 * 1000).toISOString()
       var { data: verifiedOtp } = await supabase
         .from("otp_codes")
@@ -194,7 +184,6 @@ export async function POST(request) {
         return Response.json({ error: "Please verify your OTP first." }, { status: 400 })
       }
 
-      // Hash and save password
       var passwordHash = await bcrypt.hash(password, 10)
 
       var { error: insertError } = await supabase
