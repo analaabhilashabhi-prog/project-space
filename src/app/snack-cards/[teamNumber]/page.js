@@ -1,319 +1,323 @@
 "use client"
-
 import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
-import Link from "next/link"
 import { supabase } from "@/lib/supabase"
-import { EVENT_CONFIG } from "@/config/formFields"
-import AnimatedBackground from "@/components/AnimatedBackground"
+import SubtleBackground from "@/components/SubtleBackground"
+import DashboardSidebar from "@/components/DashboardSidebar"
 
 export default function SnackCardsPage() {
   var params = useParams()
   var router = useRouter()
   var teamNumber = params.teamNumber
+
   var [team, setTeam] = useState(null)
-  var [cards, setCards] = useState([])
-  var [cartSummary, setCartSummary] = useState([])
-  var [loading, setLoading] = useState(true)
-  var [selectedDay, setSelectedDay] = useState(1)
-  var [viewMode, setViewMode] = useState("cards")
-  var [filterType, setFilterType] = useState("all")
+  var [currentMember, setCurrentMember] = useState(null)
+  var [isLeader, setIsLeader] = useState(false)
   var [loggedInRoll, setLoggedInRoll] = useState("")
+  var [loading, setLoading] = useState(true)
+  var [allCards, setAllCards] = useState([])
+
+  // Filters
+  var [typeFilter, setTypeFilter] = useState("all") // "all" | "snack" | "beverage"
+  var [selectedDay, setSelectedDay] = useState(null) // null = all days, or 1-7
 
   useEffect(function () {
     var roll = sessionStorage.getItem("ps_roll") || localStorage.getItem("ps_roll")
-    if (!roll) { router.push("/login"); return }
+    if (!roll) {
+      router.push("/login")
+      return
+    }
     setLoggedInRoll(roll)
 
     async function fetchData() {
-      var teamRes = await supabase.from("teams").select("*").eq("team_number", teamNumber).single()
-      if (!teamRes.data) { setLoading(false); return }
-      setTeam(teamRes.data)
+      var teamRes = await supabase
+        .from("teams")
+        .select("*")
+        .eq("team_number", teamNumber)
+        .single()
 
+      if (teamRes.data) {
+        setTeam(teamRes.data)
+
+        var memberRes = await supabase
+          .from("team_members")
+          .select("*")
+          .eq("team_id", teamRes.data.id)
+          .eq("member_roll_number", roll)
+          .single()
+
+        if (memberRes.data) {
+          setCurrentMember(memberRes.data)
+          setIsLeader(memberRes.data.is_leader || false)
+        }
+      }
+
+      // Get THIS person's snack cards
       var cardsRes = await supabase
         .from("snack_cards")
         .select("*")
-        .eq("team_id", teamRes.data.id)
         .eq("member_roll_number", roll)
-        .order("day_number")
-        .order("session_type")
+        .order("day_number", { ascending: true })
 
-      setCards(cardsRes.data || [])
+      if (cardsRes.data) {
+        setAllCards(cardsRes.data)
+      }
 
-      var summRes = await supabase
-        .from("cart_summary")
-        .select("*")
-        .eq("team_id", teamRes.data.id)
-        .eq("member_roll_number", roll)
-
-      setCartSummary(summRes.data || [])
       setLoading(false)
     }
 
     if (teamNumber) fetchData()
   }, [teamNumber, router])
 
-  var sessionOrder = { morning: 1, afternoon: 2, evening: 3, night: 4 }
-  var sessionLabels = { morning: "🌅 Morning", afternoon: "☀️ Afternoon", evening: "🌇 Evening", night: "🌙 Night" }
-  var sessionTimes = { morning: "7–11 AM", afternoon: "11 AM–3 PM", evening: "3–7 PM", night: "7–10 PM" }
+  function getQrUrl(token) {
+    return "https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=" + encodeURIComponent(token) + "&color=ffffff&bgcolor=0a0a0a"
+  }
 
-  var dayCards = cards
-    .filter(function (c) { return c.day_number === selectedDay })
-    .filter(function (c) {
-      if (filterType === "all") return true
-      return (c.card_type || "snack") === filterType
-    })
-    .sort(function (a, b) { return (sessionOrder[a.session_type] || 0) - (sessionOrder[b.session_type] || 0) })
+  // Get filtered cards based on current view mode
+  function getFilteredCards() {
+    var cards = allCards
 
-  function getQRUrl(token) {
-    return "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + encodeURIComponent(token) + "&bgcolor=0a0a0a&color=ff6040"
+    // If day is selected, filter by day (day filter view)
+    if (selectedDay !== null) {
+      return cards.filter(function (c) { return c.day_number === selectedDay })
+    }
+
+    // If type filter active (type filter view)
+    if (typeFilter === "snack") {
+      return cards.filter(function (c) { return c.card_type === "snack" || c.session_type === "snack" })
+    }
+    if (typeFilter === "beverage") {
+      return cards.filter(function (c) { return c.card_type === "beverage" || c.session_type === "beverage" })
+    }
+
+    return cards
+  }
+
+  // When selecting a day, reset type filter; when selecting type, reset day
+  function selectType(type) {
+    setTypeFilter(type)
+    setSelectedDay(null)
+  }
+
+  function selectDay(day) {
+    if (selectedDay === day) {
+      setSelectedDay(null) // deselect
+    } else {
+      setSelectedDay(day)
+      setTypeFilter("all") // reset type filter when day is selected
+    }
+  }
+
+  function renderCard(card) {
+    var isUsed = card.is_used || card.status === "used" || false
+    var isSnack = card.card_type === "snack" || card.session_type === "snack"
+    var itemName = card.item_name || card.snack_name || "Item"
+    return (
+      <div key={card.id} style={{
+        padding: "24px 22px", borderRadius: 18,
+        border: isUsed ? "1px solid rgba(255,255,255,0.04)" : "1px solid rgba(255,60,30,0.15)",
+        background: isUsed ? "rgba(255,255,255,0.01)" : "linear-gradient(165deg,rgba(30,12,8,0.6),rgba(15,6,4,0.8))",
+        opacity: isUsed ? 0.5 : 1,
+        position: "relative", overflow: "hidden",
+        transition: "all 0.3s ease",
+      }}>
+        {isUsed && (
+          <div style={{
+            position: "absolute", top: 12, right: 12,
+            padding: "4px 10px", borderRadius: 8,
+            background: "rgba(255,50,30,0.15)", color: "#ff6040",
+            fontSize: 11, fontWeight: 700,
+          }}>USED</div>
+        )}
+
+        {/* Type badge */}
+        <div style={{
+          position: "absolute", top: 12, left: 12,
+          padding: "3px 10px", borderRadius: 8,
+          background: isSnack ? "rgba(255,150,50,0.12)" : "rgba(100,180,255,0.12)",
+          color: isSnack ? "#ffaa40" : "#64b5f6",
+          fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1,
+        }}>
+          {card.card_type}
+        </div>
+
+        <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 14, marginTop: 20 }}>
+          <div style={{ fontSize: 28 }}>{isSnack ? "\ud83c\udf54" : "\u2615"}</div>
+          <div>
+            <div style={{ fontSize: 11, color: "#666", textTransform: "uppercase", letterSpacing: 1 }}>
+              Day {card.day_number}
+            </div>
+            <div style={{ fontSize: 16, fontWeight: 700, color: "#fff" }}>
+              {itemName}
+            </div>
+          </div>
+        </div>
+
+        {/* QR Code - WHITE */}
+        <div style={{
+          display: "flex", justifyContent: "center", padding: 12,
+          background: "rgba(0,0,0,0.3)", borderRadius: 12, marginBottom: 10,
+        }}>
+          <img
+            src={getQrUrl(card.qr_token || card.id)}
+            alt="QR Code"
+            style={{ width: 120, height: 120, borderRadius: 8 }}
+          />
+        </div>
+
+        <div style={{ textAlign: "center", fontSize: 11, color: "#555" }}>
+          {card.member_name || loggedInRoll}
+        </div>
+
+        {card.slot_number && (
+          <div style={{ textAlign: "center", marginTop: 6, fontSize: 10, color: "#444", fontWeight: 600 }}>
+            Slot #{card.slot_number}
+          </div>
+        )}
+      </div>
+    )
   }
 
   if (loading) {
     return (
-      <div className="ps-page"><AnimatedBackground />
-        <div style={{ position: "relative", zIndex: 10, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <span className="ps-spinner" style={{ width: 32, height: 32 }} />
+      <div style={{ minHeight: "100vh", background: "#0a0a0a", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <SubtleBackground />
+        <div style={{ position: "relative", zIndex: 10 }}>
+          <div className="ps-spinner" style={{ width: 32, height: 32 }} />
         </div>
       </div>
     )
   }
 
-  if (!team) {
-    return (
-      <div className="ps-page"><AnimatedBackground />
-        <div style={{ position: "relative", zIndex: 10, minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 16 }}>
-          <div style={{ fontSize: 28, fontFamily: "var(--font-display)", color: "#fff" }}>Team Not Found</div>
-          <button className="ps-btn ps-btn-secondary" onClick={function () { router.push("/") }}>← Home</button>
-        </div>
-      </div>
-    )
-  }
-
-  var snackCount = cards.filter(function (c) { return (c.card_type || "snack") === "snack" }).length
-  var bevCount = cards.filter(function (c) { return c.card_type === "beverage" }).length
+  var filteredCards = getFilteredCards()
+  var noCards = allCards.length === 0
+  var availableDays = []
+  var daySet = {}
+  allCards.forEach(function (c) { daySet[c.day_number] = true })
+  for (var d = 1; d <= 7; d++) { if (daySet[d]) availableDays.push(d) }
 
   return (
-    <div className="ps-page">
-      <AnimatedBackground />
+    <div style={{ display: "flex", minHeight: "100vh", background: "#0a0a0a", color: "#fff", fontFamily: "'DM Sans', sans-serif", overflow: "hidden" }}>
+      <SubtleBackground />
 
       <style jsx>{`
-        .sc-wrap { position:relative; z-index:10; min-height:100vh; padding:0 16px 60px; }
-        .sc-cont { max-width:1100px; margin:0 auto; }
-
-        .sc-head { display:flex; align-items:center; justify-content:space-between; padding:18px 0; margin-bottom:6px; opacity:0; animation:psFadeIn 0.6s ease forwards; }
-        .sc-logo { display:flex; align-items:center; gap:8px; }
-        .sc-logo-box { width:34px;height:34px; border-radius:9px; background:linear-gradient(135deg,#ff3020,#ff6040); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-weight:900; font-size:13px; color:#fff; }
-        .sc-back { font-family:var(--font-display); font-size:11px; color:rgba(255,255,255,0.3); letter-spacing:1.5px; text-transform:uppercase; text-decoration:none; }
-        .sc-back:hover { color:var(--accent-orange); }
-
-        .sc-title { font-family:var(--font-display); font-size:26px; font-weight:900; color:#fff; text-transform:uppercase; letter-spacing:2px; margin-bottom:3px; opacity:0; animation:psFadeIn 0.5s ease 0.1s forwards; }
-        .sc-sub { font-size:12px; color:rgba(255,255,255,0.25); margin-bottom:14px; opacity:0; animation:psFadeIn 0.5s ease 0.15s forwards; }
-
-        .sc-stats { display:flex; gap:8px; margin-bottom:14px; opacity:0; animation:psFadeIn 0.5s ease 0.2s forwards; }
-        .sc-pill { padding:5px 12px; border-radius:50px; font-family:var(--font-display); font-size:10px; font-weight:600; letter-spacing:1px; }
-        .sc-pill-s { background:rgba(255,60,30,0.08); border:1px solid rgba(255,60,30,0.18); color:var(--accent-light); }
-        .sc-pill-b { background:rgba(60,130,255,0.08); border:1px solid rgba(60,130,255,0.18); color:#6bb3ff; }
-
-        .sc-toggle { display:flex; gap:3px; padding:3px; border-radius:10px; background:rgba(255,255,255,0.025); border:1px solid rgba(255,255,255,0.05); margin-bottom:12px; opacity:0; animation:psFadeIn 0.5s ease 0.25s forwards; }
-        .sc-tog { flex:1; padding:9px; border-radius:8px; border:none; font-family:var(--font-display); font-size:11px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; transition:all 0.3s; background:transparent; color:rgba(255,255,255,0.3); }
-        .sc-tog.on { background:linear-gradient(135deg,#ff3020,#ff6040); color:#fff; }
-
-        .sc-days { display:flex; gap:5px; margin-bottom:10px; overflow-x:auto; padding-bottom:3px; opacity:0; animation:psFadeIn 0.5s ease 0.3s forwards; }
-        .sc-day { padding:8px 16px; border-radius:9px; border:none; font-family:var(--font-display); font-size:11px; font-weight:600; letter-spacing:1px; cursor:pointer; transition:all 0.3s; white-space:nowrap; }
-        .sc-day.on { background:linear-gradient(135deg,#ff3020,#ff6040); color:#fff; }
-        .sc-day.off { background:rgba(255,255,255,0.025); border:1px solid rgba(255,255,255,0.06); color:rgba(255,255,255,0.3); }
-        .sc-day.off:hover { border-color:rgba(255,60,30,0.25); color:rgba(255,255,255,0.5); }
-
-        .sc-filter { display:flex; gap:4px; margin-bottom:16px; opacity:0; animation:psFadeIn 0.5s ease 0.35s forwards; }
-        .sc-fbtn { padding:5px 12px; border-radius:7px; border:none; font-family:var(--font-display); font-size:10px; font-weight:600; letter-spacing:1px; cursor:pointer; transition:all 0.3s; }
-        .sc-fbtn.on { background:rgba(255,60,30,0.12); border:1px solid rgba(255,60,30,0.28); color:var(--accent-light); }
-        .sc-fbtn.off { background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); color:rgba(255,255,255,0.25); }
-
-        /* ===== 4-COLUMN GRID ===== */
-        .sc-grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:12px; opacity:0; animation:psFadeIn 0.5s ease 0.4s forwards; }
-
-        .sc-card { padding:14px; border-radius:13px; border:1px solid rgba(255,60,30,0.08); background:linear-gradient(165deg,rgba(30,10,6,0.8),rgba(14,5,3,0.9)); position:relative; overflow:hidden; transition:all 0.3s; }
-        .sc-card:hover { border-color:rgba(255,60,30,0.22); transform:translateY(-2px); }
-        .sc-card::before { content:''; position:absolute; top:0;left:0;right:0; height:2px; }
-        .sc-card.active::before { background:linear-gradient(90deg,#44ff66,#22cc44); }
-        .sc-card.used::before { background:linear-gradient(90deg,#ff4444,#cc2222); }
-        .sc-card.expired::before { background:#555; }
-
-        .sc-card-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px; }
-        .sc-badge { padding:2px 7px; border-radius:5px; font-family:var(--font-display); font-size:8px; font-weight:700; letter-spacing:1px; text-transform:uppercase; }
-        .sc-b-snack { background:rgba(255,60,30,0.1); border:1px solid rgba(255,60,30,0.18); color:var(--accent-light); }
-        .sc-b-bev { background:rgba(60,130,255,0.1); border:1px solid rgba(60,130,255,0.18); color:#6bb3ff; }
-        .sc-sts { padding:2px 7px; border-radius:5px; font-family:var(--font-display); font-size:8px; font-weight:700; letter-spacing:1px; text-transform:uppercase; }
-        .sc-sts-active { background:rgba(68,255,102,0.06); border:1px solid rgba(68,255,102,0.18); color:#44ff66; }
-        .sc-sts-used { background:rgba(255,85,85,0.06); border:1px solid rgba(255,85,85,0.18); color:#ff5555; }
-        .sc-sts-expired { background:rgba(136,136,136,0.06); border:1px solid rgba(136,136,136,0.18); color:#888; }
-
-        .sc-sess { font-family:var(--font-display); font-size:10px; font-weight:600; color:rgba(255,255,255,0.4); letter-spacing:1px; text-transform:uppercase; margin-bottom:1px; }
-        .sc-name { font-family:var(--font-display); font-size:14px; font-weight:800; color:#fff; letter-spacing:0.5px; margin-bottom:1px; line-height:1.2; }
-        .sc-time { font-size:9px; color:rgba(255,255,255,0.18); font-family:var(--font-display); letter-spacing:1px; margin-bottom:8px; }
-
-        .sc-qr { display:flex; justify-content:center; padding:8px; border-radius:8px; background:rgba(255,255,255,0.012); border:1px solid rgba(255,255,255,0.025); }
-        .sc-qr img { width:100%; max-width:130px; height:auto; aspect-ratio:1; border-radius:4px; }
-        .sc-qr.off { opacity:0.1; filter:grayscale(1); }
-
-        .sc-tok { text-align:center; font-family:monospace; font-size:6px; color:rgba(255,255,255,0.06); letter-spacing:0.5px; margin-top:3px; word-break:break-all; }
-
-        /* Summary */
-        .sc-summ { opacity:0; animation:psFadeIn 0.5s ease 0.4s forwards; }
-        .sc-sum-sec { margin-bottom:14px; }
-        .sc-sum-h { font-family:var(--font-display); font-size:12px; font-weight:700; letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; padding:7px 12px; border-radius:9px; }
-        .sc-sum-hs { color:var(--accent-light); background:rgba(255,60,30,0.05); border:1px solid rgba(255,60,30,0.1); }
-        .sc-sum-hb { color:#6bb3ff; background:rgba(60,130,255,0.05); border:1px solid rgba(60,130,255,0.1); }
-        .sc-sum-box { padding:14px; border-radius:12px; border:1px solid rgba(255,60,30,0.06); background:rgba(255,255,255,0.012); }
-        .sc-sum-r { display:flex; align-items:center; justify-content:space-between; padding:7px 0; border-bottom:1px solid rgba(255,255,255,0.025); }
-        .sc-sum-r:last-child { border-bottom:none; }
-        .sc-sum-n { font-family:var(--font-display); font-size:12px; font-weight:600; color:#fff; }
-        .sc-sum-c { display:flex; gap:10px; font-family:var(--font-display); font-size:10px; letter-spacing:0.5px; }
-
-        .sc-empty { text-align:center; padding:35px; color:rgba(255,255,255,0.2); font-size:12px; grid-column:1/-1; }
-
-        @media (max-width:900px) { .sc-grid { grid-template-columns:repeat(3, 1fr); } }
-        @media (max-width:650px) { .sc-grid { grid-template-columns:repeat(2, 1fr); } .sc-head { flex-direction:column; gap:8px; align-items:flex-start; } }
-        @media (max-width:400px) { .sc-grid { grid-template-columns:1fr; } .sc-title { font-size:20px; } }
+        .filter-btn { padding:12px 24px; border-radius:14px; border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.03); color:#888; font-size:15px; font-weight:500; cursor:pointer; transition:all 0.25s ease; font-family:'DM Sans',sans-serif; }
+        .filter-btn:hover { background:rgba(255,255,255,0.06); color:#ccc; border-color:rgba(255,255,255,0.12); }
+        .filter-btn.active { background:linear-gradient(135deg,rgba(255,50,30,0.15),rgba(255,80,40,0.08)); border-color:rgba(255,60,30,0.35); color:#ff6040; font-weight:700; }
+        .day-btn { width:50px; height:50px; border-radius:14px; border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.03); color:#888; font-size:16px; font-weight:600; cursor:pointer; transition:all 0.25s ease; display:flex; align-items:center; justify-content:center; font-family:'Genos',sans-serif; }
+        .day-btn:hover { background:rgba(255,255,255,0.06); color:#ccc; }
+        .day-btn.active { background:linear-gradient(135deg,#ff3020,#ff6040); border-color:transparent; color:#fff; font-weight:800; box-shadow:0 0 20px rgba(255,50,30,0.2); }
       `}</style>
 
-      <div className="sc-wrap">
-        <div className="sc-cont">
+      <DashboardSidebar
+        teamNumber={teamNumber}
+        currentMember={currentMember}
+        loggedInRoll={loggedInRoll}
+        isLeader={isLeader}
+      />
 
-          <div className="sc-head">
-            <div className="sc-logo">
-              <div className="sc-logo-box">PS</div>
-              <div>
-                <div style={{ fontFamily: "var(--font-display)", fontSize: 14, fontWeight: 600, color: "#fff", letterSpacing: 1 }}>{EVENT_CONFIG.eventName}</div>
-                <div style={{ fontFamily: "var(--font-display)", fontSize: 10, color: "rgba(255,255,255,0.25)", letterSpacing: 1 }}>{team.team_number}</div>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", height: "100vh", overflowY: "auto", position: "relative", zIndex: 1 }}>
+        {/* Top Bar */}
+        <div style={{
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          padding: "18px 32px", borderBottom: "1px solid rgba(255,255,255,0.05)",
+          background: "rgba(10,10,10,0.8)", backdropFilter: "blur(15px)", position: "sticky", top: 0, zIndex: 40,
+        }}>
+          <div style={{ fontFamily: "'Genos', sans-serif", fontSize: 28, fontWeight: 800, color: "#fff", letterSpacing: 1, textTransform: "uppercase" }}>
+            My Snack Cards
+          </div>
+          <div style={{ fontSize: 13, color: "#666" }}>
+            {allCards.length} card{allCards.length !== 1 ? "s" : ""} total
+          </div>
+        </div>
+
+        {/* Content */}
+        <div style={{ padding: "24px 32px", flex: 1 }}>
+          {noCards ? (
+            <div style={{ textAlign: "center", padding: "60px 20px" }}>
+              <div style={{ fontSize: 48, marginBottom: 16 }}>{"\ud83c\udf7d\ufe0f"}</div>
+              <div style={{ fontSize: 20, fontWeight: 700, color: "#fff", marginBottom: 8 }}>No Cards Yet</div>
+              <div style={{ fontSize: 14, color: "#666", marginBottom: 24 }}>
+                Complete food selection for all 7 days and submit to generate your cards.
               </div>
+              <button onClick={function () { router.push("/food-selection/" + teamNumber) }} style={{
+                padding: "12px 28px", borderRadius: 12, border: "none",
+                background: "linear-gradient(135deg,#ff3020,#ff6040)", color: "#fff",
+                fontSize: 14, fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
+              }}>
+                Go to Food Selection
+              </button>
             </div>
-            <Link href={"/team-info/" + team.team_number} className="sc-back">← Back to Team</Link>
-          </div>
-
-          <div className="sc-title">🛒 My Cards</div>
-          <div className="sc-sub">Show QR at counter to collect your snack or beverage</div>
-
-          <div className="sc-stats">
-            <span className="sc-pill sc-pill-s">🍔 Snacks: {snackCount}</span>
-            <span className="sc-pill sc-pill-b">🥤 Beverages: {bevCount}</span>
-            <span className="sc-pill" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.3)" }}>Total: {cards.length}</span>
-          </div>
-
-          <div className="sc-toggle">
-            <button className={"sc-tog " + (viewMode === "cards" ? "on" : "")} onClick={function () { setViewMode("cards") }}>📱 QR Cards</button>
-            <button className={"sc-tog " + (viewMode === "summary" ? "on" : "")} onClick={function () { setViewMode("summary") }}>📊 Cart Summary</button>
-          </div>
-
-          {viewMode === "cards" && (
+          ) : (
             <>
-              <div className="sc-days">
-                {[1, 2, 3, 4, 5, 6, 7].map(function (d) {
-                  return (
-                    <button key={d} onClick={function () { setSelectedDay(d) }} className={"sc-day " + (selectedDay === d ? "on" : "off")}>
-                      Day-{d}
-                    </button>
-                  )
-                })}
-              </div>
-
-              <div className="sc-filter">
+              {/* Type Filter Buttons */}
+              <div style={{ display: "flex", gap: 10, marginBottom: 20, flexWrap: "wrap" }}>
                 {[
-                  { key: "all", label: "All" },
-                  { key: "snack", label: "🍔 Snacks" },
-                  { key: "beverage", label: "🥤 Beverages" },
+                  { id: "all", label: "\ud83c\udfb4 All Cards" },
+                  { id: "snack", label: "\ud83c\udf54 Snacks" },
+                  { id: "beverage", label: "\u2615 Beverages" },
                 ].map(function (f) {
                   return (
-                    <button key={f.key} onClick={function () { setFilterType(f.key) }} className={"sc-fbtn " + (filterType === f.key ? "on" : "off")}>
+                    <button
+                      key={f.id}
+                      className={"filter-btn" + (typeFilter === f.id && selectedDay === null ? " active" : "")}
+                      onClick={function () { selectType(f.id) }}
+                    >
                       {f.label}
                     </button>
                   )
                 })}
               </div>
 
-              <div className="sc-grid">
-                {dayCards.length === 0 ? (
-                  <div className="sc-empty">No cards for Day-{selectedDay}{filterType !== "all" ? " (" + filterType + "s)" : ""}</div>
-                ) : (
-                  dayCards.map(function (card) {
-                    var isActive = card.status === "active"
-                    var ct = card.card_type || "snack"
+              {/* Day Selector */}
+              <div style={{ marginBottom: 24 }}>
+                <div style={{ fontSize: 12, color: "#555", marginBottom: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: 1 }}>
+                  Filter by Day
+                </div>
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                  {availableDays.map(function (day) {
                     return (
-                      <div key={card.id} className={"sc-card " + card.status}>
-                        <div className="sc-card-top">
-                          <span className={"sc-badge " + (ct === "beverage" ? "sc-b-bev" : "sc-b-snack")}>
-                            {ct === "beverage" ? "🥤 Bev" : "🍔 Snack"}
-                          </span>
-                          <span className={"sc-sts sc-sts-" + card.status}>
-                            {card.status === "active" ? "✓ Active" : card.status === "used" ? "✗ Used" : "Expired"}
-                          </span>
-                        </div>
-                        <div className="sc-sess">{sessionLabels[card.session_type] || card.session_type}</div>
-                        <div className="sc-name">{card.snack_name}</div>
-                        <div className="sc-time">Day-{card.day_number} • {sessionTimes[card.session_type] || ""}</div>
-                        <div className={"sc-qr " + (!isActive ? "off" : "")}>
-                          <img src={getQRUrl(card.qr_token)} alt="QR" loading="lazy" />
-                        </div>
-                        <div className="sc-tok">{card.qr_token}</div>
-                      </div>
+                      <button
+                        key={day}
+                        className={"day-btn" + (selectedDay === day ? " active" : "")}
+                        onClick={function () { selectDay(day) }}
+                      >
+                        {day}
+                      </button>
                     )
-                  })
-                )}
+                  })}
+                  {selectedDay !== null && (
+                    <button
+                      className="filter-btn"
+                      onClick={function () { setSelectedDay(null) }}
+                      style={{ fontSize: 12, padding: "8px 14px" }}
+                    >
+                      {"\u2715"} Clear
+                    </button>
+                  )}
+                </div>
               </div>
+
+              {/* Active filter info */}
+              {(selectedDay !== null || typeFilter !== "all") && (
+                <div style={{ fontSize: 13, color: "#666", marginBottom: 16 }}>
+                  Showing: {selectedDay !== null ? "Day " + selectedDay + " cards" : typeFilter === "snack" ? "Snack cards only" : typeFilter === "beverage" ? "Beverage cards only" : "All cards"}
+                  {" "}({filteredCards.length} card{filteredCards.length !== 1 ? "s" : ""})
+                </div>
+              )}
+
+              {/* Cards Grid */}
+              {filteredCards.length === 0 ? (
+                <div style={{ textAlign: "center", padding: "40px 20px", color: "#555" }}>
+                  No cards match this filter.
+                </div>
+              ) : (
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 18 }}>
+                  {filteredCards.map(function (card) { return renderCard(card) })}
+                </div>
+              )}
             </>
           )}
-
-          {viewMode === "summary" && (
-            <div className="sc-summ">
-              {cartSummary.length === 0 ? (
-                <div className="sc-empty">No cart summary available</div>
-              ) : (
-                <>
-                  {cartSummary.filter(function (s) { return (s.item_type || "snack") === "snack" }).length > 0 && (
-                    <div className="sc-sum-sec">
-                      <div className="sc-sum-h sc-sum-hs">🍔 Snacks</div>
-                      <div className="sc-sum-box">
-                        {cartSummary.filter(function (s) { return (s.item_type || "snack") === "snack" }).map(function (item) {
-                          return (
-                            <div key={item.id} className="sc-sum-r">
-                              <div className="sc-sum-n">{item.snack_name}</div>
-                              <div className="sc-sum-c">
-                                <span style={{ color: "var(--accent-orange)" }}>Total: {item.total_count}</span>
-                                <span style={{ color: "#ff5555" }}>Used: {item.used_count}</span>
-                                <span style={{ color: "#44ff66" }}>Left: {item.total_count - item.used_count}</span>
-                              </div>
-                            </div>
-                          )
-                        })}
-                      </div>
-                    </div>
-                  )}
-
-                  {cartSummary.filter(function (s) { return s.item_type === "beverage" }).length > 0 && (
-                    <div className="sc-sum-sec">
-                      <div className="sc-sum-h sc-sum-hb">🥤 Beverages</div>
-                      <div className="sc-sum-box">
-                        {cartSummary.filter(function (s) { return s.item_type === "beverage" }).map(function (item) {
-                          return (
-                            <div key={item.id} className="sc-sum-r">
-                              <div className="sc-sum-n">{item.snack_name}</div>
-                              <div className="sc-sum-c">
-                                <span style={{ color: "#6bb3ff" }}>Total: {item.total_count}</span>
-                                <span style={{ color: "#ff5555" }}>Used: {item.used_count}</span>
-                                <span style={{ color: "#44ff66" }}>Left: {item.total_count - item.used_count}</span>
-                              </div>
-                            </div>
-                          )
-                        })}
-                      </div>
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
-          )}
-
         </div>
       </div>
     </div>
