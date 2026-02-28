@@ -1,18 +1,20 @@
-import { supabase } from "@/lib/supabase"
+import { createClient } from "@supabase/supabase-js"
 import bcrypt from "bcryptjs"
 
 export async function POST(request) {
   try {
-    const { rollNumber, password } = await request.json()
+    var supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    )
 
+    var { rollNumber, password } = await request.json()
     if (!rollNumber || !password) {
       return Response.json({ error: "Roll number and password are required" }, { status: 400 })
     }
+    var roll = rollNumber.toUpperCase()
 
-    const roll = rollNumber.toUpperCase()
-
-    // Check if account exists
-    const { data: userData, error: userError } = await supabase
+    var { data: userData, error: userError } = await supabase
       .from("user_passwords")
       .select("*")
       .eq("roll_number", roll)
@@ -25,14 +27,12 @@ export async function POST(request) {
       }, { status: 400 })
     }
 
-    // Verify password
-    const isMatch = await bcrypt.compare(password, userData.password_hash)
+    var isMatch = await bcrypt.compare(password, userData.password_hash)
     if (!isMatch) {
       return Response.json({ error: "Incorrect password. Please try again." }, { status: 400 })
     }
 
-    // Password correct! Now check team status
-    const { data: memberData } = await supabase
+    var { data: memberData } = await supabase
       .from("team_members")
       .select("team_id, is_leader, member_name, teams(team_number, project_title)")
       .eq("member_roll_number", roll)
@@ -40,7 +40,6 @@ export async function POST(request) {
 
     if (memberData && memberData.teams) {
       if (memberData.is_leader) {
-        // Team Lead
         return Response.json({
           success: true,
           status: "team_lead",
@@ -48,40 +47,29 @@ export async function POST(request) {
           message: "Welcome back, Team Lead!",
         })
       } else {
-        // Team Member - BLOCKED
-        const { data: leaderData } = await supabase
-          .from("team_members")
-          .select("member_name, member_roll_number")
-          .eq("team_id", memberData.team_id)
-          .eq("is_leader", true)
-          .single()
-
         return Response.json({
-          success: false,
+          success: true,
           status: "team_member",
           teamNumber: memberData.teams.team_number,
-          projectTitle: memberData.teams.project_title,
           memberName: memberData.member_name,
-          leaderName: leaderData?.member_name || "Unknown",
-          leaderRoll: leaderData?.member_roll_number || "Unknown",
-          message: "You are a team member. Only team leads can login.",
+          projectTitle: memberData.teams.project_title,
+          message: "Welcome back, " + memberData.member_name + "!",
         })
       }
     }
 
-    // No team yet - check if registrations are open
-    const { data: settings } = await supabase
+    var { data: settings } = await supabase
       .from("settings")
       .select("value")
       .eq("id", "registration_open")
       .single()
 
-    const registrationOpen = settings?.value === "true"
+    var registrationOpen = settings ? settings.value === "true" : false
 
     return Response.json({
       success: true,
       status: "new_user",
-      registrationOpen,
+      registrationOpen: registrationOpen,
       message: "Login successful!",
     })
   } catch (error) {

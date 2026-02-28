@@ -8,12 +8,15 @@ import { EVENT_CONFIG } from "@/config/formFields"
 import AnimatedBackground from "@/components/AnimatedBackground"
 
 export default function LoginPage() {
-  const router = useRouter()
-  const [rollNumber, setRollNumber] = useState("")
-  const [password, setPassword] = useState("")
-  const [loading, setLoading] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
-  const [blockedInfo, setBlockedInfo] = useState(null)
+  var router = useRouter()
+  var [rollNumber, setRollNumber] = useState("")
+  var [password, setPassword] = useState("")
+  var [confirmPassword, setConfirmPassword] = useState("")
+  var [loading, setLoading] = useState(false)
+  var [showPassword, setShowPassword] = useState(false)
+  var [blockedInfo, setBlockedInfo] = useState(null)
+  var [mode, setMode] = useState("login")
+  var [setupSuccess, setSetupSuccess] = useState(null)
 
   function handleLogin(e) {
     e.preventDefault()
@@ -30,19 +33,23 @@ export default function LoginPage() {
       .then(function (res) { return res.json() })
       .then(function (data) {
         if (data.status === "no_account") {
-          toast.error("No account found. Please create one first.")
-          setLoading(false)
-          return
-        }
-
-        if (data.status === "team_member") {
-          setBlockedInfo(data)
+          toast.error("No account found. Set your password first!")
+          setMode("set-password")
+          setPassword("")
           setLoading(false)
           return
         }
 
         if (data.success && data.status === "team_lead") {
           toast.success("Welcome back, Team Lead!")
+          localStorage.setItem("ps_roll", rollNumber.trim().toUpperCase())
+          sessionStorage.setItem("ps_roll", rollNumber.trim().toUpperCase())
+          setTimeout(function () { router.push("/team-info/" + data.teamNumber) }, 800)
+          return
+        }
+
+        if (data.success && data.status === "team_member") {
+          toast.success(data.message || "Welcome back!")
           localStorage.setItem("ps_roll", rollNumber.trim().toUpperCase())
           sessionStorage.setItem("ps_roll", rollNumber.trim().toUpperCase())
           setTimeout(function () { router.push("/team-info/" + data.teamNumber) }, 800)
@@ -68,6 +75,57 @@ export default function LoginPage() {
       .catch(function () { toast.error("Something went wrong"); setLoading(false) })
   }
 
+  function handleSetPassword(e) {
+    e.preventDefault()
+    if (!rollNumber.trim()) { toast.error("Please enter your roll number"); return }
+    if (!password) { toast.error("Please enter a password"); return }
+    if (password.length < 4) { toast.error("Password must be at least 4 characters"); return }
+    if (password !== confirmPassword) { toast.error("Passwords do not match"); return }
+    setLoading(true)
+
+    fetch("/api/set-password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ rollNumber: rollNumber.trim().toUpperCase(), password: password }),
+    })
+      .then(function (res) { return res.json() })
+      .then(function (data) {
+        if (data.success) {
+          toast.success("Password set successfully!")
+          setSetupSuccess(data)
+          setPassword("")
+          setConfirmPassword("")
+        } else {
+          if (data.status === "already_exists") {
+            toast.error("You already have a password. Please login.")
+            setMode("login")
+            setPassword("")
+            setConfirmPassword("")
+          } else if (data.status === "not_registered") {
+            toast.error("Roll number not found in any team.")
+          } else {
+            toast.error(data.error || "Failed to set password")
+          }
+        }
+        setLoading(false)
+      })
+      .catch(function () { toast.error("Something went wrong"); setLoading(false) })
+  }
+
+  function switchToLogin() {
+    setMode("login")
+    setPassword("")
+    setConfirmPassword("")
+    setSetupSuccess(null)
+  }
+
+  function switchToSetPassword() {
+    setMode("set-password")
+    setPassword("")
+    setConfirmPassword("")
+    setSetupSuccess(null)
+  }
+
   return (
     <div className="ps-page">
       <AnimatedBackground />
@@ -88,18 +146,20 @@ export default function LoginPage() {
         .lg-pw-toggle:hover { color:var(--accent-orange); }
 
         .lg-link { text-align:center; font-size:12px; color:rgba(255,255,255,0.3); margin-top:16px; }
-        .lg-link a { color:var(--accent-orange); text-decoration:none; font-family:var(--font-display); letter-spacing:1px; }
-        .lg-link a:hover { text-decoration:underline; }
+        .lg-link a, .lg-link span.lg-link-btn { color:var(--accent-orange); text-decoration:none; font-family:var(--font-display); letter-spacing:1px; cursor:pointer; }
+        .lg-link a:hover, .lg-link span.lg-link-btn:hover { text-decoration:underline; }
 
-        /* Blocked card */
-        .lg-blocked { padding:24px; border-radius:16px; border:1px solid rgba(255,50,50,0.2); background:rgba(255,50,50,0.04); text-align:center; }
-        .lg-blocked-icon { font-size:40px; margin-bottom:12px; display:block; }
-        .lg-blocked-title { font-family:var(--font-display); font-size:18px; font-weight:700; color:#ff5555; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:8px; }
-        .lg-blocked-msg { font-size:13px; color:rgba(255,255,255,0.4); margin-bottom:16px; line-height:1.6; }
-        .lg-blocked-info { padding:12px; border-radius:10px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); text-align:left; }
-        .lg-blocked-row { display:flex; justify-content:space-between; padding:4px 0; font-size:12px; }
-        .lg-blocked-label { color:rgba(255,255,255,0.3); }
-        .lg-blocked-value { color:#fff; font-family:var(--font-display); letter-spacing:1px; }
+        .lg-success { padding:24px; border-radius:16px; border:1px solid rgba(68,255,102,0.2); background:rgba(68,255,102,0.04); text-align:center; animation:psFadeIn 0.5s ease forwards; }
+        .lg-success-icon { font-size:40px; margin-bottom:12px; display:block; }
+        .lg-success-title { font-family:var(--font-display); font-size:18px; font-weight:700; color:#44ff66; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:8px; }
+        .lg-success-msg { font-size:13px; color:rgba(255,255,255,0.4); margin-bottom:16px; line-height:1.6; }
+
+        .lg-tab-row { display:flex; gap:4px; margin-bottom:20px; padding:4px; border-radius:12px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); }
+        .lg-tab { flex:1; padding:10px 0; text-align:center; border-radius:9px; font-family:var(--font-display); font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; transition:all 0.3s ease; color:rgba(255,255,255,0.3); border:none; background:transparent; }
+        .lg-tab.active { background:linear-gradient(135deg,rgba(255,50,30,0.15),rgba(255,80,40,0.1)); color:#ff6040; border:1px solid rgba(255,60,30,0.2); }
+        .lg-tab:hover:not(.active) { color:rgba(255,255,255,0.5); }
+
+        .lg-hint { font-size:11px; color:rgba(255,255,255,0.2); text-align:center; margin-top:4px; }
 
         @media (max-width:500px) {
           .lg-card { padding:28px 20px; }
@@ -113,43 +173,36 @@ export default function LoginPage() {
             <div className="lg-logo-icon">PS</div>
             <div className="lg-logo-text">{EVENT_CONFIG.eventName}</div>
           </div>
-          <div className="lg-subtitle">Login to your account</div>
+          <div className="lg-subtitle">{mode === "login" ? "Login to your account" : "Set up your password"}</div>
 
-          {/* Blocked Screen */}
-          {blockedInfo ? (
-            <div className="lg-blocked">
-              <span className="lg-blocked-icon">🚫</span>
-              <div className="lg-blocked-title">Access Restricted</div>
-              <div className="lg-blocked-msg">
-                You&apos;re registered as a team member in <strong style={{ color: "#fff" }}>{blockedInfo.teamNumber}</strong>. Only team leads can access the dashboard.
+          <div className="lg-tab-row">
+            <button className={"lg-tab" + (mode === "login" ? " active" : "")} onClick={switchToLogin}>
+              Login
+            </button>
+            <button className={"lg-tab" + (mode === "set-password" ? " active" : "")} onClick={switchToSetPassword}>
+              First Time? Set Password
+            </button>
+          </div>
+
+          {setupSuccess ? (
+            <div className="lg-success">
+              <span className="lg-success-icon">{"\u2705"}</span>
+              <div className="lg-success-title">Password Created!</div>
+              <div className="lg-success-msg">
+                Welcome, <strong style={{ color: "#fff" }}>{setupSuccess.memberName}</strong>!
+                {setupSuccess.teamNumber && <> Your team is <strong style={{ color: "#fff" }}>{setupSuccess.teamNumber}</strong>.</>}
+                {" "}You can now login with your roll number and password.
               </div>
-              <div className="lg-blocked-info">
-                <div className="lg-blocked-row">
-                  <span className="lg-blocked-label">Your Name</span>
-                  <span className="lg-blocked-value">{blockedInfo.memberName}</span>
-                </div>
-                <div className="lg-blocked-row">
-                  <span className="lg-blocked-label">Team</span>
-                  <span className="lg-blocked-value">{blockedInfo.teamNumber}</span>
-                </div>
-                <div className="lg-blocked-row">
-                  <span className="lg-blocked-label">Project</span>
-                  <span className="lg-blocked-value">{blockedInfo.projectTitle}</span>
-                </div>
-                <div className="lg-blocked-row">
-                  <span className="lg-blocked-label">Team Lead</span>
-                  <span className="lg-blocked-value">{blockedInfo.leaderName}</span>
-                </div>
-                <div className="lg-blocked-row">
-                  <span className="lg-blocked-label">Lead Roll</span>
-                  <span className="lg-blocked-value">{blockedInfo.leaderRoll}</span>
-                </div>
-              </div>
-              <button className="ps-btn ps-btn-secondary" style={{ width: "100%", marginTop: 16 }} onClick={function () { setBlockedInfo(null) }}>
-                ← Try Different Account
+              <button className="ps-btn ps-btn-primary" style={{ width: "100%" }} onClick={function () {
+                setSetupSuccess(null)
+                setMode("login")
+                setPassword("")
+                setConfirmPassword("")
+              }}>
+                {"\u2192"} Go to Login
               </button>
             </div>
-          ) : (
+          ) : mode === "login" ? (
             <form className="lg-form" onSubmit={handleLogin}>
               <input
                 type="text"
@@ -174,7 +227,44 @@ export default function LoginPage() {
                 </button>
               </div>
               <button type="submit" className="ps-btn ps-btn-primary" style={{ width: "100%" }} disabled={loading}>
-                {loading ? "Logging in..." : "Login →"}
+                {loading ? "Logging in..." : "Login \u2192"}
+              </button>
+            </form>
+          ) : (
+            <form className="lg-form" onSubmit={handleSetPassword}>
+              <input
+                type="text"
+                value={rollNumber}
+                onChange={function (e) { setRollNumber(e.target.value.toUpperCase()) }}
+                placeholder="Roll Number (e.g. 22A31A0501)"
+                className="ps-input"
+                style={{ width: "100%", textAlign: "center", fontSize: 15, letterSpacing: 2, fontFamily: "var(--font-display)" }}
+                autoFocus
+              />
+              <div className="lg-hint">Enter your registered roll number</div>
+              <div className="lg-pw-wrap">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={function (e) { setPassword(e.target.value) }}
+                  placeholder="Create Password"
+                  className="ps-input"
+                  style={{ width: "100%", paddingRight: 60 }}
+                />
+                <button type="button" className="lg-pw-toggle" onClick={function () { setShowPassword(!showPassword) }}>
+                  {showPassword ? "HIDE" : "SHOW"}
+                </button>
+              </div>
+              <input
+                type={showPassword ? "text" : "password"}
+                value={confirmPassword}
+                onChange={function (e) { setConfirmPassword(e.target.value) }}
+                placeholder="Confirm Password"
+                className="ps-input"
+                style={{ width: "100%" }}
+              />
+              <button type="submit" className="ps-btn ps-btn-primary" style={{ width: "100%" }} disabled={loading}>
+                {loading ? "Setting up..." : "Set Password \u2192"}
               </button>
             </form>
           )}
