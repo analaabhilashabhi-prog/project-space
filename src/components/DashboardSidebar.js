@@ -29,11 +29,11 @@ export default function DashboardSidebar({ teamNumber, currentMember, loggedInRo
           setFoodDone(days.size >= 7)
         }
 
-        // Check individual snack cards
+        // Check if food codes generated
         var cartRes = await supabase
-          .from("snack_cards")
+          .from("food_codes")
           .select("id")
-          .eq("member_roll_number", loggedInRoll)
+          .eq("roll_number", loggedInRoll)
           .limit(1)
 
         if (cartRes.data && cartRes.data.length > 0) {
@@ -84,7 +84,7 @@ export default function DashboardSidebar({ teamNumber, currentMember, loggedInRo
     { id: "dashboard", label: "Team Profile", icon: "https://cdn-icons-png.flaticon.com/128/9338/9338878.png", path: "/team-info/" + teamNumber },
     { id: "announcements", label: "Announcements", icon: "https://cdn-icons-png.flaticon.com/128/7729/7729329.png", path: "/announcements", badge: unreadCount },
     { id: "food", label: "Food Selection", icon: "https://cdn-icons-png.flaticon.com/128/8633/8633559.png", path: "/food-selection/" + teamNumber },
-    { id: "snacks", label: "Snack Coupons", icon: "https://cdn-icons-png.flaticon.com/128/10064/10064817.png", path: hasCart ? "/snack-cards/" + teamNumber : "/food-selection/" + teamNumber },
+    { id: "snacks", label: "Food Cards", icon: "https://cdn-icons-png.flaticon.com/128/10064/10064817.png", path: hasCart ? "/food-cards/" + teamNumber : "/food-selection/" + teamNumber },
   ]
 
   // Only leaders see Mentor Request

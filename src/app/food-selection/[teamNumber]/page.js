@@ -20,32 +20,25 @@ export default function FoodSelectionPage() {
   var [selections, setSelections] = useState({})
   var [expandedDay, setExpandedDay] = useState(null)
 
+  // PIN popup state
+  var [showPinPopup, setShowPinPopup] = useState(false)
+  var [pin, setPin] = useState("")
+  var [confirmPin, setConfirmPin] = useState("")
+  var [pinStep, setPinStep] = useState("create") // "create" | "confirm" | "generating" | "success"
+  var [generatedPin, setGeneratedPin] = useState("")
+
   var snackOptions = ["Samosa", "Sandwich", "Puff", "Cake", "Biscuits", "Chips", "Vada Pav", "Bread Pakora"]
   var beverageOptions = ["Tea", "Coffee", "Juice", "Milk", "Buttermilk", "Water", "Lemonade", "Cold Coffee"]
 
   var snackIcons = {
-    "Samosa": "\ud83e\udd5f",
-    "Sandwich": "\ud83e\udd6a",
-    "Puff": "\ud83e\udd50",
-    "Cake": "\ud83c\udf70",
-    "Biscuits": "\ud83c\udf6a",
-    "Chips": "\ud83c\udf5f",
-    "Vada Pav": "\ud83c\udf54",
-    "Bread Pakora": "\ud83e\uddc7",
+    "Samosa": "\ud83e\udd5f", "Sandwich": "\ud83e\udd6a", "Puff": "\ud83e\udd50", "Cake": "\ud83c\udf70",
+    "Biscuits": "\ud83c\udf6a", "Chips": "\ud83c\udf5f", "Vada Pav": "\ud83c\udf54", "Bread Pakora": "\ud83e\uddc7",
   }
-
   var beverageIcons = {
-    "Tea": "\ud83c\udf75",
-    "Coffee": "\u2615",
-    "Juice": "\ud83e\uddc3",
-    "Milk": "\ud83e\udd5b",
-    "Buttermilk": "\ud83e\udd5b",
-    "Water": "\ud83d\udca7",
-    "Lemonade": "\ud83c\udf4b",
-    "Cold Coffee": "\ud83e\uddca",
+    "Tea": "\ud83c\udf75", "Coffee": "\u2615", "Juice": "\ud83e\uddc3", "Milk": "\ud83e\udd5b",
+    "Buttermilk": "\ud83e\udd5b", "Water": "\ud83d\udca7", "Lemonade": "\ud83c\udf4b", "Cold Coffee": "\ud83e\uddca",
   }
 
-  // Event dates: May 6-12, 2026
   var eventDates = [
     "2026-05-06", "2026-05-07", "2026-05-08", "2026-05-09",
     "2026-05-10", "2026-05-11", "2026-05-12"
@@ -53,62 +46,34 @@ export default function FoodSelectionPage() {
 
   useEffect(function () {
     var roll = sessionStorage.getItem("ps_roll") || localStorage.getItem("ps_roll")
-    if (!roll) {
-      router.push("/login")
-      return
-    }
+    if (!roll) { router.push("/login"); return }
     setLoggedInRoll(roll)
 
     async function fetchData() {
-      var teamRes = await supabase
-        .from("teams")
-        .select("*")
-        .eq("team_number", teamNumber)
-        .single()
-
+      var teamRes = await supabase.from("teams").select("*").eq("team_number", teamNumber).single()
       if (!teamRes.data) { setLoading(false); return }
       setTeam(teamRes.data)
 
-      var memberRes = await supabase
-        .from("team_members")
-        .select("*")
-        .eq("team_id", teamRes.data.id)
-        .eq("member_roll_number", roll)
-        .single()
-
+      var memberRes = await supabase.from("team_members").select("*").eq("team_id", teamRes.data.id).eq("member_roll_number", roll).single()
       if (memberRes.data) {
         setCurrentMember(memberRes.data)
         setIsLeader(memberRes.data.is_leader || false)
       }
 
-      // Load saved food selections
-      var foodRes = await supabase
-        .from("food_selections")
-        .select("*")
-        .eq("member_roll_number", roll)
-        .order("day_number", { ascending: true })
-
+      var foodRes = await supabase.from("food_selections").select("*").eq("member_roll_number", roll).order("day_number", { ascending: true })
       if (foodRes.data && foodRes.data.length > 0) {
         var sels = {}
         foodRes.data.forEach(function (f) {
-          // Read from new columns first, fallback to old morning columns
           var snackVal = f.snack || f.snack_morning || ""
           var bevVal = f.beverage || f.beverage_morning || ""
-          if (snackVal || bevVal) {
-            sels[f.day_number] = { snack: snackVal, beverage: bevVal }
-          }
+          if (snackVal || bevVal) { sels[f.day_number] = { snack: snackVal, beverage: bevVal } }
         })
         setSelections(sels)
       }
 
-      // Check if cards already generated = locked
-      var cardRes = await supabase
-        .from("snack_cards")
-        .select("id")
-        .eq("member_roll_number", roll)
-        .limit(1)
-
-      if (cardRes.data && cardRes.data.length > 0) {
+      // Check if food codes already generated = locked
+      var codeRes = await supabase.from("food_codes").select("id").eq("roll_number", roll).limit(1)
+      if (codeRes.data && codeRes.data.length > 0) {
         setIsLocked(true)
         setExpandedDay(null)
       }
@@ -127,9 +92,7 @@ export default function FoodSelectionPage() {
     setSelections(newSels)
   }
 
-  function toggleDay(day) {
-    setExpandedDay(expandedDay === day ? null : day)
-  }
+  function toggleDay(day) { setExpandedDay(expandedDay === day ? null : day) }
 
   function isAllComplete() {
     for (var d = 1; d <= 7; d++) {
@@ -145,88 +108,117 @@ export default function FoodSelectionPage() {
     return "partial"
   }
 
+  // Step 1: Save food selections to DB
+  async function saveFoodSelections() {
+    for (var d = 1; d <= 7; d++) {
+      var { data: existing } = await supabase.from("food_selections").select("id").eq("member_roll_number", loggedInRoll).eq("day_number", d).maybeSingle()
+
+      var rowData = {
+        snack: selections[d].snack,
+        beverage: selections[d].beverage,
+        snack_morning: selections[d].snack,
+        beverage_morning: selections[d].beverage,
+        submitted_at: new Date().toISOString(),
+      }
+
+      if (existing) {
+        var { error: updateErr } = await supabase.from("food_selections").update(rowData).eq("id", existing.id)
+        if (updateErr) { throw new Error("Failed to update day " + d + ": " + updateErr.message) }
+      } else {
+        rowData.team_id = team.id
+        rowData.team_number = teamNumber
+        rowData.member_roll_number = loggedInRoll
+        rowData.member_name = currentMember ? currentMember.member_name : ""
+        rowData.day_number = d
+        rowData.day_date = eventDates[d - 1]
+
+        var { error: insertErr } = await supabase.from("food_selections").insert(rowData)
+        if (insertErr) { throw new Error("Failed to save day " + d + ": " + insertErr.message) }
+      }
+    }
+  }
+
+  // Step 2: When user clicks submit, save food then show PIN popup
   async function handleFinalSubmit() {
     if (!isAllComplete() || isLocked) return
     setSubmitting(true)
 
     try {
-      for (var d = 1; d <= 7; d++) {
-        // Check if row exists for this member + day
-        var { data: existing } = await supabase
-          .from("food_selections")
-          .select("id")
-          .eq("member_roll_number", loggedInRoll)
-          .eq("day_number", d)
-          .maybeSingle()
-
-        var rowData = {
-          snack: selections[d].snack,
-          beverage: selections[d].beverage,
-          snack_morning: selections[d].snack,
-          beverage_morning: selections[d].beverage,
-          submitted_at: new Date().toISOString(),
-        }
-
-        if (existing) {
-          // Update existing row
-          var { error: updateErr } = await supabase
-            .from("food_selections")
-            .update(rowData)
-            .eq("id", existing.id)
-
-          if (updateErr) {
-            console.error("Update failed day " + d + ":", updateErr)
-            alert("Failed to update day " + d + ": " + updateErr.message)
-            setSubmitting(false)
-            return
-          }
-        } else {
-          // Insert new row
-          rowData.team_id = team.id
-          rowData.team_number = teamNumber
-          rowData.member_roll_number = loggedInRoll
-          rowData.member_name = currentMember ? currentMember.member_name : ""
-          rowData.day_number = d
-          rowData.day_date = eventDates[d - 1]
-
-          var { error: insertErr } = await supabase
-            .from("food_selections")
-            .insert(rowData)
-
-          if (insertErr) {
-            console.error("Insert failed day " + d + ":", insertErr)
-            alert("Failed to save day " + d + ": " + insertErr.message)
-            setSubmitting(false)
-            return
-          }
-        }
-      }
-
-      // Generate snack cards
-      var res = await fetch("/api/generate-snack-cards", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          team_id: team.id,
-          team_number: teamNumber,
-          member_roll_number: loggedInRoll,
-          member_name: currentMember ? currentMember.member_name : "",
-        })
-      })
-
-      var resData = await res.json()
-      if (res.ok) {
-        setIsLocked(true)
-        router.push("/snack-cards/" + teamNumber)
-      } else {
-        console.error("Card generation failed:", resData)
-        alert("Card generation failed: " + (resData.error || "Unknown error"))
-      }
+      await saveFoodSelections()
+      // Food saved! Now show PIN popup
+      setShowPinPopup(true)
+      setPinStep("create")
+      setPin("")
+      setConfirmPin("")
     } catch (err) {
-      console.error("Submit failed:", err)
       alert("Submit failed: " + err.message)
     }
     setSubmitting(false)
+  }
+
+  // Step 3: User enters PIN → confirm → generate codes
+  function handlePinCreate() {
+    if (pin.length !== 4) { alert("PIN must be exactly 4 digits"); return }
+    setPinStep("confirm")
+  }
+
+  function handlePinConfirm() {
+    if (confirmPin !== pin) {
+      alert("PINs don't match! Try again.")
+      setConfirmPin("")
+      return
+    }
+    // PINs match → generate food codes
+    generateFoodCodes(pin)
+  }
+
+  async function generateFoodCodes(secretPin) {
+    setPinStep("generating")
+
+    try {
+      // Build food items for each day
+      var foodItems = []
+      for (var d = 1; d <= 7; d++) {
+        foodItems.push({
+          day_number: d,
+          snack_item: selections[d].snack,
+          beverage_item: selections[d].beverage,
+        })
+      }
+
+      var res = await fetch("/api/generate-food-codes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          roll_number: loggedInRoll,
+          student_name: currentMember ? currentMember.member_name : "",
+          team_number: teamNumber,
+          secret_pin: secretPin,
+          food_items: foodItems,
+        })
+      })
+
+      var data = await res.json()
+      if (res.ok && data.success) {
+        setGeneratedPin(secretPin)
+        setPinStep("success")
+        setIsLocked(true)
+      } else {
+        alert("Failed to generate codes: " + (data.error || "Unknown error"))
+        setPinStep("create")
+        setPin("")
+        setConfirmPin("")
+      }
+    } catch (err) {
+      alert("Error: " + err.message)
+      setPinStep("create")
+      setPin("")
+      setConfirmPin("")
+    }
+  }
+
+  function handlePinKeyDown(e, nextAction) {
+    if (e.key === "Enter") nextAction()
   }
 
   if (loading) {
@@ -274,7 +266,134 @@ export default function FoodSelectionPage() {
         .sd.complete { background:#4ade80; }
         .chev { font-size:18px; color:#555; transition:transform 0.3s ease; display:inline-block; }
         .day-acc.exp .chev { transform:rotate(180deg); }
+
+        /* PIN Popup Overlay */
+        .pin-overlay { position:fixed; top:0;left:0;right:0;bottom:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); display:flex; align-items:center; justify-content:center; z-index:9999; animation:pinFadeIn 0.3s ease; }
+        .pin-card { width:100%; max-width:400px; padding:40px 32px; border-radius:22px; border:1px solid rgba(255,60,30,0.2); background:linear-gradient(165deg,rgba(35,12,8,0.9),rgba(18,6,4,0.95)); animation:pinSlideUp 0.4s ease; }
+        .pin-title { font-family:'Genos',sans-serif; font-size:22px; font-weight:800; color:#fff; letter-spacing:2px; text-transform:uppercase; text-align:center; margin-bottom:6px; }
+        .pin-desc { font-size:13px; color:rgba(255,255,255,0.35); text-align:center; margin-bottom:28px; line-height:1.6; }
+        .pin-input { width:100%; padding:18px; border-radius:14px; border:1px solid rgba(255,60,30,0.2); background:rgba(255,255,255,0.04); color:#fff; font-size:32px; font-weight:700; text-align:center; letter-spacing:16px; font-family:'Genos',sans-serif; outline:none; transition:all 0.3s ease; }
+        .pin-input:focus { border-color:rgba(255,60,30,0.5); background:rgba(255,255,255,0.06); }
+        .pin-input::placeholder { color:rgba(255,255,255,0.15); letter-spacing:8px; font-size:24px; }
+        .pin-btn { width:100%; padding:16px; border-radius:14px; border:none; background:linear-gradient(135deg,#ff3020,#ff6040); color:#fff; font-size:16px; font-weight:700; font-family:'Genos',sans-serif; letter-spacing:2px; text-transform:uppercase; cursor:pointer; transition:all 0.3s ease; margin-top:16px; }
+        .pin-btn:hover { box-shadow:0 0 40px rgba(255,50,30,0.35); transform:translateY(-1px); }
+        .pin-btn:disabled { opacity:0.5; cursor:not-allowed; transform:none; box-shadow:none; }
+        .pin-hint { font-size:11px; color:rgba(255,255,255,0.2); text-align:center; margin-top:12px; }
+        .pin-icon { font-size:48px; text-align:center; display:block; margin-bottom:16px; }
+        .pin-dots { display:flex; justify-content:center; gap:12px; margin-bottom:20px; }
+        .pin-dot { width:14px; height:14px; border-radius:50%; border:2px solid rgba(255,60,30,0.3); transition:all 0.2s ease; }
+        .pin-dot.filled { background:#ff6040; border-color:#ff6040; box-shadow:0 0 10px rgba(255,96,64,0.4); }
+
+        .pin-success { text-align:center; }
+        .pin-success-icon { font-size:56px; display:block; margin-bottom:16px; }
+        .pin-success-title { font-family:'Genos',sans-serif; font-size:24px; font-weight:800; color:#4ade80; letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; }
+        .pin-success-pin { font-size:40px; font-weight:900; letter-spacing:12px; color:#fff; font-family:'Genos',sans-serif; padding:16px; border-radius:14px; background:rgba(255,60,30,0.08); border:1px solid rgba(255,60,30,0.2); display:inline-block; margin:16px 0; }
+        .pin-success-warn { font-size:13px; color:#f59e0b; margin:12px 0; font-weight:600; }
+        .pin-success-msg { font-size:12px; color:rgba(255,255,255,0.3); margin-bottom:20px; }
+
+        .pin-generating { text-align:center; }
+        .pin-gen-icon { font-size:48px; display:block; margin-bottom:16px; animation:pinPulse 1.5s ease infinite; }
+        .pin-gen-text { font-family:'Genos',sans-serif; font-size:18px; color:rgba(255,255,255,0.5); letter-spacing:2px; }
+
+        @keyframes pinFadeIn { from { opacity:0; } to { opacity:1; } }
+        @keyframes pinSlideUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes pinPulse { 0%,100% { transform:scale(1); opacity:1; } 50% { transform:scale(1.1); opacity:0.7; } }
       `}</style>
+
+      {/* ===== PIN POPUP ===== */}
+      {showPinPopup && (
+        <div className="pin-overlay">
+          <div className="pin-card">
+
+            {/* CREATE PIN */}
+            {pinStep === "create" && (
+              <>
+                <span className="pin-icon">{"\uD83D\uDD10"}</span>
+                <div className="pin-title">Create Your Secret PIN</div>
+                <div className="pin-desc">
+                  This 4-digit PIN is like your ATM pin. You'll need it at the food counter to collect your meals. <strong style={{ color: "#ff6040" }}>Only you should know it!</strong>
+                </div>
+                <div className="pin-dots">
+                  {[0, 1, 2, 3].map(function (i) {
+                    return <div key={i} className={"pin-dot" + (pin.length > i ? " filled" : "")} />
+                  })}
+                </div>
+                <input
+                  type="password"
+                  inputMode="numeric"
+                  maxLength={4}
+                  value={pin}
+                  onChange={function (e) { setPin(e.target.value.replace(/[^0-9]/g, "").slice(0, 4)) }}
+                  onKeyDown={function (e) { handlePinKeyDown(e, handlePinCreate) }}
+                  placeholder="----"
+                  className="pin-input"
+                  autoFocus
+                />
+                <button className="pin-btn" disabled={pin.length !== 4} onClick={handlePinCreate}>
+                  Next {"\u2192"}
+                </button>
+                <div className="pin-hint">Choose a 4-digit number you can remember</div>
+              </>
+            )}
+
+            {/* CONFIRM PIN */}
+            {pinStep === "confirm" && (
+              <>
+                <span className="pin-icon">{"\uD83D\uDD12"}</span>
+                <div className="pin-title">Confirm Your PIN</div>
+                <div className="pin-desc">Enter your 4-digit PIN again to confirm.</div>
+                <div className="pin-dots">
+                  {[0, 1, 2, 3].map(function (i) {
+                    return <div key={i} className={"pin-dot" + (confirmPin.length > i ? " filled" : "")} />
+                  })}
+                </div>
+                <input
+                  type="password"
+                  inputMode="numeric"
+                  maxLength={4}
+                  value={confirmPin}
+                  onChange={function (e) { setConfirmPin(e.target.value.replace(/[^0-9]/g, "").slice(0, 4)) }}
+                  onKeyDown={function (e) { handlePinKeyDown(e, handlePinConfirm) }}
+                  placeholder="----"
+                  className="pin-input"
+                  autoFocus
+                />
+                <button className="pin-btn" disabled={confirmPin.length !== 4} onClick={handlePinConfirm}>
+                  Confirm & Generate Codes {"\uD83C\uDFAB"}
+                </button>
+                <div className="pin-hint" style={{ cursor: "pointer", color: "rgba(255,96,64,0.5)" }} onClick={function () { setPinStep("create"); setPin(""); setConfirmPin("") }}>
+                  {"\u2190"} Change PIN
+                </div>
+              </>
+            )}
+
+            {/* GENERATING */}
+            {pinStep === "generating" && (
+              <div className="pin-generating">
+                <span className="pin-gen-icon">{"\u2699\uFE0F"}</span>
+                <div className="pin-title">Generating Your Food Codes</div>
+                <div className="pin-gen-text">Creating 14 unique codes for 7 days...</div>
+              </div>
+            )}
+
+            {/* SUCCESS */}
+            {pinStep === "success" && (
+              <div className="pin-success">
+                <span className="pin-success-icon">{"\uD83C\uDF89"}</span>
+                <div className="pin-success-title">Food Codes Generated!</div>
+                <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginBottom: 12 }}>Your secret PIN is:</div>
+                <div className="pin-success-pin">{generatedPin}</div>
+                <div className="pin-success-warn">{"\u26A0\uFE0F"} Remember this PIN! You'll need it at every meal counter.</div>
+                <div className="pin-success-msg">14 unique meal codes have been generated for all 7 days. Show your meal code + PIN at the food counter.</div>
+                <button className="pin-btn" onClick={function () { router.push("/food-cards/" + teamNumber) }}>
+                  View My Food Codes {"\u2192"}
+                </button>
+              </div>
+            )}
+
+          </div>
+        </div>
+      )}
 
       <DashboardSidebar
         teamNumber={teamNumber}
@@ -310,16 +429,16 @@ export default function FoodSelectionPage() {
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 <span style={{ fontSize: 20 }}>{"\u2705"}</span>
                 <div>
-                  <div style={{ fontSize: 14, fontWeight: 600, color: "#4ade80" }}>Selections submitted & cards generated!</div>
-                  <div style={{ fontSize: 12, color: "#666" }}>Your selections are locked and cannot be changed.</div>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: "#4ade80" }}>Selections submitted & codes generated!</div>
+                  <div style={{ fontSize: 12, color: "#666" }}>Your selections are locked. Use your PIN + meal code at the food counter.</div>
                 </div>
               </div>
-              <button onClick={function () { router.push("/snack-cards/" + teamNumber) }} style={{
+              <button onClick={function () { router.push("/food-cards/" + teamNumber) }} style={{
                 padding: "10px 20px", borderRadius: 10, border: "1px solid rgba(50,200,80,0.3)",
                 background: "rgba(50,200,80,0.1)", color: "#4ade80", fontSize: 13, fontWeight: 600,
                 cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
               }}>
-                View My Cards {"\u2192"}
+                View My Food Codes {"\u2192"}
               </button>
             </div>
           )}
@@ -360,17 +479,12 @@ export default function FoodSelectionPage() {
                       </div>
                     )}
                   </div>
-                  {isExp && (
-                    <span className="chev">{"\u25b2"}</span>
-                  )}
-                  {!isExp && status === "complete" && (
-                    <span style={{ fontSize: 12, color: "#4ade80", marginLeft: 6 }}>{"\u2713"}</span>
-                  )}
+                  {isExp && <span className="chev">{"\u25b2"}</span>}
+                  {!isExp && status === "complete" && <span style={{ fontSize: 12, color: "#4ade80", marginLeft: 6 }}>{"\u2713"}</span>}
                 </div>
 
                 <div className="day-bd">
                   <div className="fg">
-                    {/* Snacks - title + items inline */}
                     <div className="fo-section">
                       <div className="fo-row">
                         <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", display: "flex", alignItems: "center", gap: 5, whiteSpace: "nowrap", flexShrink: 0 }}>
@@ -379,11 +493,7 @@ export default function FoodSelectionPage() {
                         {snackOptions.map(function (opt) {
                           var isSel = daySel.snack === opt
                           return (
-                            <div
-                              key={opt}
-                              className={"fo" + (isSel ? " sel" : "") + (isLocked ? " lk" : "")}
-                              onClick={function () { if (!isLocked) updateSelection(day, "snack", opt) }}
-                            >
+                            <div key={opt} className={"fo" + (isSel ? " sel" : "") + (isLocked ? " lk" : "")} onClick={function () { if (!isLocked) updateSelection(day, "snack", opt) }}>
                               <span style={{ fontSize: 15, opacity: isSel ? 1 : 0.35 }}>{snackIcons[opt] || "\ud83c\udf7d\ufe0f"}</span>
                               {opt}
                             </div>
@@ -391,8 +501,6 @@ export default function FoodSelectionPage() {
                         })}
                       </div>
                     </div>
-
-                    {/* Beverages - title + items inline */}
                     <div className="fo-section">
                       <div className="fo-row">
                         <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", display: "flex", alignItems: "center", gap: 5, whiteSpace: "nowrap", flexShrink: 0 }}>
@@ -401,11 +509,7 @@ export default function FoodSelectionPage() {
                         {beverageOptions.map(function (opt) {
                           var isSel = daySel.beverage === opt
                           return (
-                            <div
-                              key={opt}
-                              className={"fo" + (isSel ? " sel" : "") + (isLocked ? " lk" : "")}
-                              onClick={function () { if (!isLocked) updateSelection(day, "beverage", opt) }}
-                            >
+                            <div key={opt} className={"fo" + (isSel ? " sel" : "") + (isLocked ? " lk" : "")} onClick={function () { if (!isLocked) updateSelection(day, "beverage", opt) }}>
                               <span style={{ fontSize: 15, opacity: isSel ? 1 : 0.35 }}>{beverageIcons[opt] || "\ud83c\udf7d\ufe0f"}</span>
                               {opt}
                             </div>
@@ -437,7 +541,7 @@ export default function FoodSelectionPage() {
                   boxShadow: allComplete && !submitting ? "0 0 40px rgba(255,50,30,0.25)" : "none",
                 }}
               >
-                {submitting ? "Submitting & Generating..." : allComplete ? "\ud83c\udfab Submit & Generate Snack Cards" : "Complete all 7 days to submit"}
+                {submitting ? "Saving selections..." : allComplete ? "\uD83C\uDFAB Submit & Set PIN" : "Complete all 7 days to submit"}
               </button>
               {!allComplete && (
                 <div style={{ fontSize: 12, color: "#555", marginTop: 10 }}>

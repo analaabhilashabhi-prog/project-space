@@ -149,7 +149,7 @@ export async function POST(request) {
 
       var { data: memberCheck } = await supabase
         .from("team_members")
-        .select("member_name, teams(team_number)")
+        .select("member_name, member_email, teams(team_number)")
         .eq("member_roll_number", roll)
         .single()
 
@@ -191,7 +191,7 @@ export async function POST(request) {
         .insert({
           roll_number: roll,
           password_hash: passwordHash,
-          name: memberCheck.member_name
+          email: memberCheck.member_email || ""
         })
 
       if (insertError) {

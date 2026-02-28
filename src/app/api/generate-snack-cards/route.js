@@ -1,169 +1,130 @@
-import { supabase } from "@/lib/supabase"
+import { createClient } from "@supabase/supabase-js"
+import { v4 as uuidv4 } from "uuid"
+import crypto from "crypto"
 
-function generateQRToken() {
-  var chars = "abcdef0123456789"
-  var token = ""
-  for (var i = 0; i < 32; i++) {
-    token += chars.charAt(Math.floor(Math.random() * chars.length))
-  }
-  return token + "-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6)
-}
+var supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+)
 
 export async function POST(request) {
   try {
-    const { teamId, teamNumber } = await request.json()
+    var body = await request.json()
+    var { team_id, team_number, member_roll_number, member_name } = body
 
-    if (!teamId) {
+    if (!member_roll_number) {
+      return Response.json({ error: "Member roll number is required" }, { status: 400 })
+    }
+
+    // If team_id not provided, look it up from team_number
+    if (!team_id && team_number) {
+      var teamLookup = await supabase
+        .from("teams")
+        .select("id")
+        .eq("team_number", team_number)
+        .single()
+      if (teamLookup.data) {
+        team_id = teamLookup.data.id
+      }
+    }
+
+    if (!team_id) {
       return Response.json({ error: "Team ID is required" }, { status: 400 })
     }
 
-    // Check if cards already generated
-    const { data: existingCards } = await supabase
+    // Check if cards already exist for this member
+    var existingRes = await supabase
       .from("snack_cards")
       .select("id")
-      .eq("team_id", teamId)
+      .eq("member_roll_number", member_roll_number)
       .limit(1)
 
-    if (existingCards && existingCards.length > 0) {
-      return Response.json({ error: "Cards already generated for this team. Redirecting..." }, { status: 400 })
+    if (existingRes.data && existingRes.data.length > 0) {
+      return Response.json({ message: "Cards already generated" }, { status: 200 })
     }
 
-    // Get all food selections
-    const { data: selections, error: selError } = await supabase
+    // Get this member's food selections
+    var foodRes = await supabase
       .from("food_selections")
       .select("*")
-      .eq("team_id", teamId)
+      .eq("member_roll_number", member_roll_number)
+      .order("day_number", { ascending: true })
 
-    if (selError || !selections || selections.length === 0) {
-      return Response.json({ error: "No food selections found. Complete all 7 days first." }, { status: 400 })
+    if (!foodRes.data || foodRes.data.length < 7) {
+      return Response.json({ error: "Must complete all 7 days first. Found: " + (foodRes.data ? foodRes.data.length : 0) }, { status: 400 })
     }
 
-    // Get team members
-    const { data: members } = await supabase
-      .from("team_members")
-      .select("member_roll_number, member_name")
-      .eq("team_id", teamId)
+    // Generate 14 cards (7 snack + 7 beverage)
+    var cards = []
+    var slotCounter = 1
 
-    var memberMap = {}
-    if (members) {
-      members.forEach(function (m) {
-        memberMap[m.member_roll_number] = m.member_name
+    foodRes.data.forEach(function (sel) {
+      // Read snack from new or old columns
+      var snackVal = sel.snack || sel.snack_morning || ""
+      var bevVal = sel.beverage || sel.beverage_morning || ""
+
+      // Snack card
+      var snackUuid = uuidv4()
+      var snackToken = crypto.createHash("sha256").update(snackUuid + "-snack-" + member_roll_number).digest("hex").substring(0, 32)
+      var snackSig = crypto.createHash("sha256").update(snackToken + "-sig").digest("hex").substring(0, 16)
+
+      cards.push({
+        team_id: team_id,
+        team_number: team_number || "",
+        member_roll_number: member_roll_number,
+        member_name: member_name || "",
+        day_number: sel.day_number,
+        card_type: "snack",
+        session_type: "snack",
+        item_name: snackVal,
+        snack_name: snackVal,
+        qr_token: snackToken,
+        qr_signature: snackSig,
+        is_used: false,
+        status: "active",
+        slot_number: slotCounter,
+        slot_order: slotCounter,
+        created_at: new Date().toISOString(),
       })
-    }
+      slotCounter++
 
-    var allCards = []
-    var cartSummaryMap = {}
+      // Beverage card
+      var bevUuid = uuidv4()
+      var bevToken = crypto.createHash("sha256").update(bevUuid + "-beverage-" + member_roll_number).digest("hex").substring(0, 32)
+      var bevSig = crypto.createHash("sha256").update(bevToken + "-sig").digest("hex").substring(0, 16)
 
-    // SNACK session fields
-    var snackFields = [
-      { field: "snack_morning", session: "morning", type: "snack" },
-      { field: "snack_evening", session: "evening", type: "snack" },
-      { field: "snack_night", session: "night", type: "snack" },
-    ]
-
-    // BEVERAGE session fields
-    var beverageFields = [
-      { field: "beverage_morning", session: "morning", type: "beverage" },
-      { field: "beverage_afternoon", session: "afternoon", type: "beverage" },
-      { field: "beverage_evening", session: "evening", type: "beverage" },
-      { field: "beverage_night", session: "night", type: "beverage" },
-    ]
-
-    var allFields = snackFields.concat(beverageFields)
-
-    selections.forEach(function (sel) {
-      var memberName = memberMap[sel.member_roll_number] || sel.member_roll_number
-
-      allFields.forEach(function (sf) {
-        var itemName = sel[sf.field]
-        if (!itemName) return
-
-        allCards.push({
-          team_id: teamId,
-          member_roll_number: sel.member_roll_number,
-          member_name: memberName,
-          day_number: sel.day_number,
-          session_type: sf.session,
-          snack_name: itemName,
-          card_type: sf.type,
-          qr_token: generateQRToken(),
-          status: "active",
-        })
-
-        var key = sel.member_roll_number + "___" + itemName + "___" + sf.type
-        if (!cartSummaryMap[key]) {
-          cartSummaryMap[key] = {
-            team_id: teamId,
-            member_roll_number: sel.member_roll_number,
-            member_name: memberName,
-            snack_name: itemName,
-            item_type: sf.type,
-            total_count: 0,
-            used_count: 0,
-          }
-        }
-        cartSummaryMap[key].total_count += 1
+      cards.push({
+        team_id: team_id,
+        team_number: team_number || "",
+        member_roll_number: member_roll_number,
+        member_name: member_name || "",
+        day_number: sel.day_number,
+        card_type: "beverage",
+        session_type: "beverage",
+        item_name: bevVal,
+        snack_name: bevVal,
+        qr_token: bevToken,
+        qr_signature: bevSig,
+        is_used: false,
+        status: "active",
+        slot_number: slotCounter,
+        slot_order: slotCounter,
+        created_at: new Date().toISOString(),
       })
+      slotCounter++
     })
 
-    if (allCards.length === 0) {
-      return Response.json({ error: "No selections found." }, { status: 400 })
+    // Insert all cards
+    var insertRes = await supabase
+      .from("snack_cards")
+      .insert(cards)
+
+    if (insertRes.error) {
+      return Response.json({ error: insertRes.error.message }, { status: 500 })
     }
 
-    // Insert cards in batches
-    var batchSize = 50
-    for (var i = 0; i < allCards.length; i += batchSize) {
-      var batch = allCards.slice(i, i + batchSize)
-      var { error: cardError } = await supabase.from("snack_cards").insert(batch)
-      if (cardError) {
-        console.error("Card insert error:", JSON.stringify(cardError))
-        return Response.json({ error: "Failed to generate cards: " + cardError.message }, { status: 500 })
-      }
-    }
-
-    // Insert cart summary
-    var summaryRows = Object.values(cartSummaryMap)
-    if (summaryRows.length > 0) {
-      var { error: summaryError } = await supabase.from("cart_summary").insert(summaryRows)
-      if (summaryError) {
-        console.error("Cart summary error:", JSON.stringify(summaryError))
-      }
-    }
-
-    // Update inventory
-    var inventoryMap = {}
-    allCards.forEach(function (card) {
-      var key = card.snack_name
-      if (!inventoryMap[key]) inventoryMap[key] = 0
-      inventoryMap[key] += 1
-    })
-
-    for (var itemName in inventoryMap) {
-      var { data: inv } = await supabase
-        .from("snack_inventory")
-        .select("*")
-        .eq("snack_name", itemName)
-        .single()
-
-      if (inv) {
-        await supabase
-          .from("snack_inventory")
-          .update({ total_stock: inv.total_stock + inventoryMap[itemName] })
-          .eq("id", inv.id)
-      } else {
-        await supabase
-          .from("snack_inventory")
-          .insert({ snack_name: itemName, total_stock: inventoryMap[itemName], used_today: 0 })
-      }
-    }
-
-    return Response.json({
-      success: true,
-      cardsGenerated: allCards.length,
-      message: "Cards generated successfully!",
-    })
-  } catch (error) {
-    console.error("Generate cards error:", error)
-    return Response.json({ error: "Internal server error: " + error.message }, { status: 500 })
+    return Response.json({ message: "Cards generated successfully", count: cards.length }, { status: 200 })
+  } catch (err) {
+    return Response.json({ error: "Server error: " + err.message }, { status: 500 })
   }
 }
