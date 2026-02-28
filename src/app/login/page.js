@@ -263,40 +263,14 @@ export default function LoginPage() {
 
           {/* ===== TEAM LEADER FLOW ===== */}
           {role === "leader" && (
-            <>
-              <div className="lg-tab-row">
-                <button className={"lg-tab" + (mode === "login" ? " active" : "")} onClick={function () { setMode("login"); setPassword(""); setConfirmPassword("") }}>
-                  Login
-                </button>
-                <button className={"lg-tab" + (mode === "set-password" ? " active" : "")} onClick={function () { setMode("set-password"); setSetupStep("roll"); setPassword(""); setConfirmPassword(""); setOtp(""); setSetupSuccess(null) }}>
-                  First Time?
-                </button>
+            <form className="lg-form" onSubmit={handleLogin}>
+              <input type="text" value={rollNumber} onChange={function (e) { setRollNumber(e.target.value.toUpperCase()) }} placeholder="Roll Number (e.g. 22A31A0501)" className="ps-input" style={{ width: "100%", textAlign: "center", fontSize: 15, letterSpacing: 2, fontFamily: "var(--font-display)" }} autoFocus />
+              <div className="lg-pw-wrap">
+                <input type={showPassword ? "text" : "password"} value={password} onChange={function (e) { setPassword(e.target.value) }} placeholder="Password" className="ps-input" style={{ width: "100%", paddingRight: 60 }} />
+                <button type="button" className="lg-pw-toggle" onClick={function () { setShowPassword(!showPassword) }}>{showPassword ? "HIDE" : "SHOW"}</button>
               </div>
-
-              {setupSuccess ? (
-                <div className="lg-success">
-                  <span className="lg-success-icon">{"\u2705"}</span>
-                  <div className="lg-success-title">Password Created!</div>
-                  <div className="lg-success-msg">
-                    You can now login with your roll number and password.
-                  </div>
-                  <button className="ps-btn ps-btn-primary" style={{ width: "100%" }} onClick={function () { resetSetup(); setRole("leader") }}>
-                    {"\u2192"} Go to Login
-                  </button>
-                </div>
-              ) : mode === "login" ? (
-                <form className="lg-form" onSubmit={handleLogin}>
-                  <input type="text" value={rollNumber} onChange={function (e) { setRollNumber(e.target.value.toUpperCase()) }} placeholder="Roll Number (e.g. 22A31A0501)" className="ps-input" style={{ width: "100%", textAlign: "center", fontSize: 15, letterSpacing: 2, fontFamily: "var(--font-display)" }} autoFocus />
-                  <div className="lg-pw-wrap">
-                    <input type={showPassword ? "text" : "password"} value={password} onChange={function (e) { setPassword(e.target.value) }} placeholder="Password" className="ps-input" style={{ width: "100%", paddingRight: 60 }} />
-                    <button type="button" className="lg-pw-toggle" onClick={function () { setShowPassword(!showPassword) }}>{showPassword ? "HIDE" : "SHOW"}</button>
-                  </div>
-                  <button type="submit" className="ps-btn ps-btn-primary" style={{ width: "100%" }} disabled={loading}>{loading ? "Logging in..." : "Login \u2192"}</button>
-                </form>
-              ) : (
-                <div className="lg-hint" style={{ marginBottom: 12, marginTop: -8 }}>Create your account via the Register Team page</div>
-              )}
-            </>
+              <button type="submit" className="ps-btn ps-btn-primary" style={{ width: "100%" }} disabled={loading}>{loading ? "Logging in..." : "Login \u2192"}</button>
+            </form>
           )}
 
           {/* ===== TEAM MEMBER FLOW ===== */}
