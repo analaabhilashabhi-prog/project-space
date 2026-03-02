@@ -84,6 +84,7 @@ export default function DashboardSidebar({ teamNumber, currentMember, loggedInRo
     { id: "dashboard", label: "Team Profile", icon: "https://cdn-icons-png.flaticon.com/128/9338/9338878.png", path: "/team-info/" + teamNumber },
     { id: "announcements", label: "Announcements", icon: "https://cdn-icons-png.flaticon.com/128/7729/7729329.png", path: "/announcements", badge: unreadCount },
     { id: "food", label: "Food Selection", icon: "https://cdn-icons-png.flaticon.com/128/8633/8633559.png", path: "/food-selection/" + teamNumber },
+    { id: "explore", label: "Explore Teams", icon: "https://cdn-icons-png.flaticon.com/128/565/565504.png", path: "/explore" },
     { id: "snacks", label: "Food Cards", icon: "https://cdn-icons-png.flaticon.com/128/10064/10064817.png", path: hasCart ? "/food-cards/" + teamNumber : "/food-selection/" + teamNumber },
   ]
 

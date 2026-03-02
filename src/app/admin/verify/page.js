@@ -140,29 +140,56 @@ export default function AdminVerifyPage() {
   // Admin login screen
   if (!authenticated) {
     return (
-      <div style={{ minHeight: "100vh", background: "#0a0a0a", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'DM Sans', sans-serif" }}>
+      <div style={{ minHeight:"100vh", background:"#000", position:"relative", overflow:"hidden", display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"'DM Sans',sans-serif" }}>
         <style jsx>{`
-          .al-card { width:100%; max-width:380px; padding:40px 32px; border-radius:22px; border:1px solid rgba(255,60,30,0.12); background:linear-gradient(165deg,rgba(35,12,8,0.7),rgba(18,6,4,0.85)); text-align:center; }
-          .al-title { font-family:'Genos',sans-serif; font-size:24px; font-weight:800; color:#fff; letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; }
-          .al-sub { font-size:13px; color:rgba(255,255,255,0.3); margin-bottom:28px; }
-          .al-input { width:100%; padding:16px; border-radius:12px; border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.04); color:#fff; font-size:16px; text-align:center; outline:none; font-family:'DM Sans',sans-serif; }
-          .al-input:focus { border-color:rgba(255,60,30,0.4); }
-          .al-btn { width:100%; padding:16px; border-radius:12px; border:none; background:linear-gradient(135deg,#ff3020,#ff6040); color:#fff; font-size:16px; font-weight:700; cursor:pointer; margin-top:16px; font-family:'Genos',sans-serif; letter-spacing:2px; text-transform:uppercase; }
+          .nx-stars { position:absolute; inset:0; z-index:0; }
+          .nx-s { position:absolute; border-radius:50%; background:rgba(255,200,180,0.6); }
+          .nx-s::after { content:""; position:absolute; inset:-2px; border-radius:50%; background:rgba(255,140,100,0.15); filter:blur(2px); }
+          .nx-s.dim { background:rgba(255,180,160,0.25); }
+          .nx-s.dim::after { background:rgba(255,140,100,0.06); }
+          .nx-s.twinkle { animation:nxTw 3s ease-in-out infinite; }
+          @keyframes nxTw { 0%,100%{opacity:0.3} 50%{opacity:1} }
+          .nx-bg { position:absolute; left:0; right:0; bottom:0; height:100%; background:url('/space-bg.png') center bottom/cover no-repeat; z-index:1; transform:translateY(40%); opacity:0; animation:nxRise 3.5s cubic-bezier(0.22,1,0.36,1) 0.5s forwards; }
+          .nx-bg::after { content:""; position:absolute; inset:0; background:rgba(0,0,0,0.3); }
+          .nx-bg::before { content:""; position:absolute; top:0; left:0; right:0; height:40%; background:linear-gradient(to bottom, #000 0%, transparent 100%); z-index:1; }
+          @keyframes nxRise { 0%{transform:translateY(40%);opacity:0} 15%{opacity:0.4} 40%{opacity:0.8} 100%{transform:translateY(0%);opacity:1} }
+          .nx-shoot { position:absolute; z-index:0; width:80px; height:1px; background:linear-gradient(90deg, rgba(255,160,120,0.7), transparent); border-radius:1px; opacity:0; transform:rotate(-35deg); }
+          .nx-shoot::before { content:""; position:absolute; left:0; top:-1px; width:4px; height:3px; border-radius:50%; background:rgba(255,200,170,0.9); box-shadow:0 0 6px rgba(255,150,100,0.6); }
+          .nx-shoot.s1 { animation:nxSh1 8s linear 2s infinite; }
+          .nx-shoot.s2 { animation:nxSh2 11s linear 5s infinite; }
+          @keyframes nxSh1 { 0%{top:8%;left:-5%;opacity:0} 2%{opacity:1} 8%{top:28%;left:35%;opacity:0} 100%{opacity:0} }
+          @keyframes nxSh2 { 0%{top:5%;left:40%;opacity:0} 1.5%{opacity:0.8} 6%{top:22%;left:72%;opacity:0} 100%{opacity:0} }
+          .nx-card { position:relative; z-index:10; width:100%; max-width:440px; padding:56px 40px 44px; border-radius:20px; background:rgba(10,5,3,0.92); backdrop-filter:blur(40px); -webkit-backdrop-filter:blur(40px); border:1px solid rgba(255,96,64,0.1); box-shadow:0 8px 60px rgba(0,0,0,0.7),0 0 80px rgba(255,50,30,0.05),inset 0 1px 0 rgba(255,255,255,0.03); opacity:0; animation:nxIn 1.2s ease 0.5s forwards; }
+          .nx-logo-float { position:absolute; top:-36px; left:50%; transform:translateX(-50%); z-index:11; }
+          .nx-logo-icon { width:72px; height:72px; border-radius:20px; background:linear-gradient(145deg,#ff4020,#ff6040); display:flex; align-items:center; justify-content:center; font-family:'Genos',sans-serif; font-weight:900; font-size:26px; color:#fff; box-shadow:0 8px 30px rgba(255,50,30,0.4),0 0 60px rgba(255,50,30,0.15); border:2px solid rgba(255,255,255,0.1); }
+          .nx-input { width:100%; padding:15px 18px; border-radius:10px; border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.04); color:#fff; font-size:14px; font-family:'DM Sans',sans-serif; outline:none; transition:all 0.3s; box-sizing:border-box; }
+          .nx-input:focus { border-color:rgba(255,96,64,0.4); background:rgba(255,255,255,0.06); box-shadow:0 0 0 3px rgba(255,96,64,0.08); }
+          .nx-input::placeholder { color:rgba(255,255,255,0.2); }
+          .nx-btn { width:100%; padding:15px; border:none; border-radius:12px; background:linear-gradient(135deg,#ff3020 0%,#ff6040 50%,rgba(255,140,100,0.8) 100%); color:#fff; font-size:14px; font-weight:700; font-family:'Genos',sans-serif; letter-spacing:2px; text-transform:uppercase; cursor:pointer; transition:all 0.3s; margin-top:16px; box-shadow:0 4px 20px rgba(255,50,30,0.3),inset 0 1px 0 rgba(255,255,255,0.15); }
+          .nx-btn:hover { box-shadow:0 6px 30px rgba(255,50,30,0.45); transform:translateY(-2px); }
+          @keyframes nxIn { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
         `}</style>
-        <div className="al-card">
-          <div style={{ fontSize: 48, marginBottom: 16 }}>{"\uD83D\uDD10"}</div>
-          <div className="al-title">Admin Access</div>
-          <div className="al-sub">Enter admin password to continue</div>
-          <input
-            type="password"
-            value={adminPass}
-            onChange={function (e) { setAdminPass(e.target.value) }}
-            onKeyDown={function (e) { if (e.key === "Enter") handleAdminLogin() }}
-            placeholder="Admin Password"
-            className="al-input"
-            autoFocus
-          />
-          <button className="al-btn" onClick={handleAdminLogin}>Enter {"\u2192"}</button>
+
+        <a href="/admin" style={{ position:"fixed", top:24, left:24, zIndex:9999, background:"rgba(255,255,255,0.05)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:10, padding:"10px 16px", display:"flex", alignItems:"center", gap:6, textDecoration:"none", color:"rgba(255,255,255,0.4)", fontFamily:"'Genos',sans-serif", fontSize:12, fontWeight:600, letterSpacing:1, textTransform:"uppercase", backdropFilter:"blur(10px)", WebkitBackdropFilter:"blur(10px)" }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M19 12H5M5 12L11 6M5 12L11 18"/></svg>Back
+        </a>
+
+        <div className="nx-stars">
+          <div className="nx-s twinkle" style={{width:2,height:2,top:"8%",left:"6%"}} /><div className="nx-s" style={{width:1.5,height:1.5,top:"5%",left:"22%"}} />
+          <div className="nx-s twinkle" style={{width:2.5,height:2.5,top:"12%",left:"42%",animationDelay:"1s"}} /><div className="nx-s" style={{width:1,height:1,top:"3%",left:"58%"}} />
+          <div className="nx-s twinkle" style={{width:2,height:2,top:"15%",left:"75%",animationDelay:"2s"}} /><div className="nx-s" style={{width:1.5,height:1.5,top:"7%",left:"88%"}} />
+          <div className="nx-s dim" style={{width:1,height:1,top:"20%",left:"32%"}} /><div className="nx-s dim" style={{width:1,height:1,top:"30%",left:"55%"}} />
+          <div className="nx-s dim" style={{width:1,height:1,top:"45%",left:"15%"}} /><div className="nx-s dim" style={{width:1,height:1,top:"50%",left:"70%"}} />
+        </div>
+        <div className="nx-bg" />
+        <div className="nx-shoot s1" /><div className="nx-shoot s2" />
+
+        <div className="nx-card">
+          <div className="nx-logo-float"><div className="nx-logo-icon">PS</div></div>
+          <div style={{ textAlign:"center", fontFamily:"'Genos',sans-serif", fontSize:24, fontWeight:800, color:"#fff", letterSpacing:2, marginTop:16 }}>Food Verification</div>
+          <div style={{ textAlign:"center", fontSize:12, color:"rgba(255,255,255,0.3)", marginTop:4, marginBottom:28 }}>Enter admin password to continue</div>
+          <input type="password" className="nx-input" placeholder="Enter admin password" value={adminPass} onChange={function(e){setAdminPass(e.target.value)}} onKeyDown={function(e){if(e.key==="Enter")handleAdminLogin()}} autoFocus />
+          <button className="nx-btn" onClick={handleAdminLogin}>Enter {"\u2192"}</button>
         </div>
       </div>
     )
@@ -186,8 +213,8 @@ export default function AdminVerifyPage() {
         .av-main { max-width:600px; margin:0 auto; padding:32px; }
 
         .av-input-row { display:flex; gap:12px; margin-bottom:20px; }
-        .av-input { flex:1; padding:20px; border-radius:14px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.04); color:#fff; font-size:28px; font-weight:700; text-align:center; letter-spacing:8px; font-family:'Genos',sans-serif; outline:none; transition:all 0.3s ease; }
-        .av-input:focus { border-color:rgba(255,60,30,0.5); background:rgba(255,255,255,0.06); box-shadow:0 0 20px rgba(255,60,30,0.1); }
+        .av-input { flex:1; padding:20px 14px; border-radius:0; border:none; border-left:2px solid rgba(255,96,64,0.5); border-bottom:2px solid rgba(255,96,64,0.5); background:transparent; color:#fff; font-size:28px; font-weight:700; text-align:center; letter-spacing:8px; font-family:'Genos',sans-serif; outline:none; transition:all 0.3s ease; border-bottom-left-radius:8px; }
+        .av-input:focus { border:2px solid rgba(255,96,64,0.7); border-radius:8px; box-shadow:0 0 20px rgba(255,60,30,0.1); }
         .av-input::placeholder { color:rgba(255,255,255,0.15); letter-spacing:4px; font-size:20px; }
         .av-input-label { font-size:11px; color:#666; font-family:'Genos',sans-serif; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:8px; text-align:center; }
 
