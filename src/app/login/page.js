@@ -20,7 +20,7 @@ export default function LoginPage() {
   var [memberEmail, setMemberEmail] = useState("")
   var [setupSuccess, setSetupSuccess] = useState(null)
 
-  /* ===== ALL HANDLERS (unchanged) ===== */
+  /* ===== ALL HANDLERS ===== */
   function handleLogin(e) {
     e.preventDefault()
     if (!rollNumber.trim()) { toast.error("Please enter your roll number"); return }
@@ -30,8 +30,24 @@ export default function LoginPage() {
       .then(function (res) { return res.json() })
       .then(function (data) {
         if (data.status === "no_account") { toast.error("No account found. Set your password first!"); setMode("set-password"); setSetupStep("roll"); setPassword(""); setLoading(false); return }
-        if (data.success && data.status === "team_lead") { toast.success("Welcome back, Team Lead!"); localStorage.setItem("ps_roll", rollNumber.trim().toUpperCase()); sessionStorage.setItem("ps_roll", rollNumber.trim().toUpperCase()); setTimeout(function () { router.push("/team-info/" + data.teamNumber) }, 800); return }
-        if (data.success && data.status === "team_member") { toast.success(data.message || "Welcome back!"); localStorage.setItem("ps_roll", rollNumber.trim().toUpperCase()); sessionStorage.setItem("ps_roll", rollNumber.trim().toUpperCase()); setTimeout(function () { router.push("/team-info/" + data.teamNumber) }, 800); return }
+        if (data.success && data.status === "team_lead") {
+          toast.success("Welcome back, Team Lead!")
+          localStorage.setItem("ps_roll", rollNumber.trim().toUpperCase())
+          sessionStorage.setItem("ps_roll", rollNumber.trim().toUpperCase())
+          sessionStorage.setItem("ps_team_number", data.teamNumber)
+          localStorage.setItem("ps_team_number", data.teamNumber)
+          setTimeout(function () { router.push("/team-info/" + data.teamNumber) }, 800)
+          return
+        }
+        if (data.success && data.status === "team_member") {
+          toast.success(data.message || "Welcome back!")
+          localStorage.setItem("ps_roll", rollNumber.trim().toUpperCase())
+          sessionStorage.setItem("ps_roll", rollNumber.trim().toUpperCase())
+          sessionStorage.setItem("ps_team_number", data.teamNumber)
+          localStorage.setItem("ps_team_number", data.teamNumber)
+          setTimeout(function () { router.push("/team-info/" + data.teamNumber) }, 800)
+          return
+        }
         if (data.success && data.status === "new_user") { if (data.registrationOpen) { toast.success("Login successful! Register your team."); localStorage.setItem("ps_roll", rollNumber.trim().toUpperCase()); sessionStorage.setItem("ps_roll", rollNumber.trim().toUpperCase()); setTimeout(function () { router.push("/register") }, 800) } else { toast.error("Registrations are currently closed."); setLoading(false) } return }
         toast.error(data.error || "Login failed"); setLoading(false)
       })

@@ -2,16 +2,48 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import { supabase } from "@/lib/supabase"
 import { EVENT_CONFIG } from "@/config/formFields"
-import AnimatedBackground from "@/components/AnimatedBackground"
+import SubtleBackground from "@/components/SubtleBackground"
+import DashboardSidebar from "@/components/DashboardSidebar"
 
 export default function AnnouncementsPage() {
   var [announcements, setAnnouncements] = useState([])
   var [loading, setLoading] = useState(true)
+  var [teamNumber, setTeamNumber] = useState("")
+  var [currentMember, setCurrentMember] = useState(null)
+  var [loggedInRoll, setLoggedInRoll] = useState("")
+  var [isLeader, setIsLeader] = useState(false)
   var router = useRouter()
 
   useEffect(function () {
     localStorage.setItem("ps_last_seen_announcement", new Date().toISOString())
+
+    // Get auth info for sidebar
+    var roll = sessionStorage.getItem("ps_roll") || localStorage.getItem("ps_roll")
+    var memberRoll = localStorage.getItem("ps_member_roll")
+    var activeRoll = roll || memberRoll || ""
+    setLoggedInRoll(activeRoll)
+
+    // Try to get teamNumber from storage
+    var storedTeam = sessionStorage.getItem("ps_team_number") || localStorage.getItem("ps_team_number") || ""
+    setTeamNumber(storedTeam)
+
+    // Fetch member info for sidebar if we have roll + team
+    async function fetchMember() {
+      if (!activeRoll || !storedTeam) return
+      try {
+        var teamRes = await supabase.from("teams").select("id").eq("team_number", storedTeam).single()
+        if (teamRes.data) {
+          var memberRes = await supabase.from("team_members").select("*").eq("team_id", teamRes.data.id).eq("member_roll_number", activeRoll).single()
+          if (memberRes.data) {
+            setCurrentMember(memberRes.data)
+            setIsLeader(memberRes.data.is_leader || false)
+          }
+        }
+      } catch (e) {}
+    }
+    fetchMember()
 
     fetch("/api/announcements")
       .then(function (res) { return res.json() })
@@ -34,10 +66,10 @@ export default function AnnouncementsPage() {
   }
 
   function getTypeIcon(type) {
-    if (type === "alert") return "🚨"
-    if (type === "timing") return "⏰"
-    if (type === "update") return "📢"
-    return "ℹ️"
+    if (type === "alert") return "\ud83d\udea8"
+    if (type === "timing") return "\u23f0"
+    if (type === "update") return "\ud83d\udce2"
+    return "\u2139\ufe0f"
   }
 
   function formatDate(dateStr) {
@@ -54,21 +86,17 @@ export default function AnnouncementsPage() {
   }
 
   return (
-    <div className="ps-page">
-      <AnimatedBackground />
+    <div style={{ display: "flex", minHeight: "100vh", background: "#0a0a0a", color: "#fff", fontFamily: "'DM Sans', sans-serif", overflow: "hidden" }}>
+      <SubtleBackground />
 
       <style jsx>{`
-        .ann-wrapper { position:relative; z-index:10; min-height:100vh; padding:0 20px 60px; }
-        .ann-container { max-width:780px; margin:0 auto; }
+        .ann-main { flex:1; display:flex; flex-direction:column; height:100vh; overflow-y:auto; position:relative; z-index:1; }
+        .ann-topbar { display:flex; align-items:center; justify-content:space-between; padding:18px 32px; border-bottom:1px solid rgba(255,255,255,0.05); background:rgba(10,10,10,0.8); backdrop-filter:blur(15px); position:sticky; top:0; z-index:40; }
+        .ann-topbar-title { font-family:'Genos',sans-serif; font-size:28px; font-weight:800; color:#fff; letter-spacing:1px; text-transform:uppercase; }
 
-        .ann-header { display:flex; align-items:center; justify-content:space-between; padding:20px 0; margin-bottom:8px; opacity:0; animation:psFadeIn 0.6s ease forwards; }
-        .ann-logo { display:flex; align-items:center; gap:10px; }
-        .ann-logo-icon { width:36px;height:36px; border-radius:10px; background:linear-gradient(135deg,#ff3020,#ff6040); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-weight:900; font-size:14px; color:#fff; }
-        .ann-logo-text { font-family:var(--font-display); font-size:16px; font-weight:600; color:#fff; letter-spacing:1px; }
-        .ann-back { font-family:var(--font-display); font-size:11px; color:rgba(255,255,255,0.35); letter-spacing:1.5px; text-transform:uppercase; padding:6px 14px; border:1px solid rgba(255,60,30,0.15); border-radius:10px; background:transparent; cursor:pointer; transition:all 0.3s ease; }
-        .ann-back:hover { border-color:rgba(255,60,30,0.4); color:var(--accent-orange); }
+        .ann-container { max-width:780px; padding:28px 32px; }
 
-        .ann-title { font-family:var(--font-display); font-size:32px; font-weight:900; color:#fff; text-transform:uppercase; letter-spacing:2px; margin-bottom:6px; opacity:0; animation:psFadeIn 0.6s ease 0.15s forwards; }
+        .ann-title { font-family:'Genos',sans-serif; font-size:32px; font-weight:900; color:#fff; text-transform:uppercase; letter-spacing:2px; margin-bottom:6px; opacity:0; animation:psFadeIn 0.6s ease 0.15s forwards; }
         .ann-subtitle { font-size:13px; color:rgba(255,255,255,0.3); margin-bottom:28px; opacity:0; animation:psFadeIn 0.5s ease 0.25s forwards; }
 
         .ann-list { display:flex; flex-direction:column; gap:16px; }
@@ -77,10 +105,10 @@ export default function AnnouncementsPage() {
         .ann-card:hover { border-color:rgba(255,60,30,0.25); }
 
         .ann-card-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
-        .ann-badge { padding:4px 12px; border-radius:20px; font-family:var(--font-display); font-size:11px; font-weight:600; letter-spacing:1px; text-transform:uppercase; display:inline-flex; align-items:center; gap:5px; }
-        .ann-date { font-size:11px; color:rgba(255,255,255,0.25); font-family:var(--font-display); letter-spacing:1px; }
+        .ann-badge { padding:4px 12px; border-radius:20px; font-family:'Genos',sans-serif; font-size:11px; font-weight:600; letter-spacing:1px; text-transform:uppercase; display:inline-flex; align-items:center; gap:5px; }
+        .ann-date { font-size:11px; color:rgba(255,255,255,0.25); font-family:'Genos',sans-serif; letter-spacing:1px; }
 
-        .ann-card-title { font-family:var(--font-display); font-size:20px; font-weight:700; color:#fff; letter-spacing:1px; margin-bottom:8px; }
+        .ann-card-title { font-family:'Genos',sans-serif; font-size:20px; font-weight:700; color:#fff; letter-spacing:1px; margin-bottom:8px; }
         .ann-card-msg { font-size:13px; color:rgba(255,255,255,0.45); line-height:1.7; white-space:pre-wrap; }
 
         .ann-card-img { margin-top:16px; border-radius:14px; overflow:hidden; border:1px solid rgba(255,60,30,0.1); }
@@ -88,30 +116,35 @@ export default function AnnouncementsPage() {
 
         .ann-empty { text-align:center; padding:80px 20px; opacity:0; animation:psFadeIn 0.6s ease 0.3s forwards; }
         .ann-empty-icon { font-size:48px; margin-bottom:16px; display:block; }
-        .ann-empty-title { font-family:var(--font-display); font-size:22px; font-weight:700; color:#fff; letter-spacing:1px; margin-bottom:8px; }
+        .ann-empty-title { font-family:'Genos',sans-serif; font-size:22px; font-weight:700; color:#fff; letter-spacing:1px; margin-bottom:8px; }
         .ann-empty-desc { font-size:13px; color:rgba(255,255,255,0.3); }
 
+        @keyframes psFadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
         @media (max-width:768px) {
+          .ann-topbar { padding:14px 16px; padding-left: 60px; }
+          .ann-container { padding:20px; }
           .ann-title { font-size:24px; }
           .ann-card { padding:18px; }
           .ann-card-title { font-size:17px; }
         }
       `}</style>
 
-      <div className="ann-wrapper">
+      <DashboardSidebar
+        teamNumber={teamNumber}
+        currentMember={currentMember}
+        loggedInRoll={loggedInRoll}
+        isLeader={isLeader}
+      />
+
+      <div className="ann-main">
+        {/* Top Bar */}
+        <div className="ann-topbar">
+          <div className="ann-topbar-title">{"\ud83d\udce2"} Announcements</div>
+        </div>
+
         <div className="ann-container">
-
-          {/* Header */}
-          <div className="ann-header">
-            <div className="ann-logo">
-              <div className="ann-logo-icon">PS</div>
-              <div className="ann-logo-text">{EVENT_CONFIG.eventName}</div>
-            </div>
-            <button className="ann-back" onClick={function () { router.back() }}>← Back</button>
-          </div>
-
           {/* Title */}
-          <div className="ann-title">📢 Announcements</div>
           <div className="ann-subtitle">Stay updated with the latest news and updates from the organizers.</div>
 
           {/* Content */}
@@ -121,7 +154,7 @@ export default function AnnouncementsPage() {
             </div>
           ) : announcements.length === 0 ? (
             <div className="ann-empty">
-              <span className="ann-empty-icon">📭</span>
+              <span className="ann-empty-icon">{"\ud83d\udced"}</span>
               <div className="ann-empty-title">No Announcements Yet</div>
               <div className="ann-empty-desc">Check back later for updates from the organizers.</div>
             </div>
@@ -149,7 +182,6 @@ export default function AnnouncementsPage() {
               })}
             </div>
           )}
-
         </div>
       </div>
     </div>
