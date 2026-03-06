@@ -138,6 +138,9 @@ export default function DashboardSidebar({ teamNumber: teamNumberProp, currentMe
 
   var userName = currentMember ? currentMember.member_name : "User"
   var userInitial = currentMember ? currentMember.member_name.charAt(0).toUpperCase() : "?"
+  var userPhotoUrl = currentMember && currentMember.member_college && currentMember.member_roll_number
+    ? "https://info.aec.edu.in/" + currentMember.member_college + "/StudentPhotos/" + currentMember.member_roll_number.replace(/\s/g, "") + ".jpg"
+    : null
 
   function renderIcon(iconId, size) {
     var sz = size || 20
@@ -192,13 +195,13 @@ export default function DashboardSidebar({ teamNumber: teamNumberProp, currentMe
         .ns-avatar {
           width: 36px; height: 36px; min-width: 36px;
           border-radius: 50%;
-          background: linear-gradient(140deg, #2a2a2a, #1a1a1a);
-          border: 2px solid rgba(255,255,255,0.08);
+          background: #0a0a0a;
+          border: 2px solid rgba(255,96,64,0.25);
           display: flex; align-items: center; justify-content: center;
           overflow: hidden;
           transition: border-color 0.3s ease, transform 0.2s ease;
         }
-        .ns-head:hover .ns-avatar { border-color: rgba(255,96,64,0.3); transform: scale(1.06); }
+        .ns-head:hover .ns-avatar { border-color: rgba(255,96,64,0.5); transform: scale(1.06); }
         .ns-avatar img {
           width: 100%; height: 100%; object-fit: cover; border-radius: 50%;
         }
@@ -440,7 +443,11 @@ export default function DashboardSidebar({ teamNumber: teamNumberProp, currentMe
         {/* Profile avatar + user name on expand */}
         <div className="ns-head" onClick={function () { toggleExpanded() }}>
           <div className="ns-avatar">
-            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=default&backgroundColor=0a0a0a" alt="avatar" />
+            {userPhotoUrl
+              ? <img src={userPhotoUrl} alt={userName} onError={function (e) { e.target.style.display = "none"; e.target.nextSibling.style.display = "flex" }} />
+              : null
+            }
+            <div className="ns-avatar-placeholder" style={{ display: userPhotoUrl ? "none" : "flex" }}>{userInitial}</div>
           </div>
           <span className="ns-brand">{teamNumber || "Team"}</span>
         </div>
