@@ -118,46 +118,49 @@ export default function RegisterAccountPage() {
 
       <style jsx>{`
         .ra-wrapper { position:relative; z-index:10; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; }
-        .ra-card { width:100%; max-width:440px; padding:40px 32px; border-radius:22px; border:1px solid rgba(255,60,30,0.12); background:linear-gradient(165deg,rgba(35,12,8,0.7),rgba(18,6,4,0.85)); backdrop-filter:blur(15px); opacity:0; animation:psFadeIn 0.7s ease forwards; }
+        .ra-card { width:100%; max-width:440px; padding:40px 32px; border-radius:22px; border:1px solid rgba(255,60,30,0.12); background:linear-gradient(165deg,rgba(35,12,8,0.7),rgba(18,6,4,0.85)); backdrop-filter:blur(15px); opacity:0; animation:psFadeIn 0.7s ease forwards; position:relative; }
+
+        .ra-back { position:absolute; top:16px; left:16px; width:36px; height:36px; border-radius:10px; border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.03); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.3s; color:rgba(255,255,255,0.4); z-index:10; }
+        .ra-back:hover { border-color:rgba(255,96,64,0.3); color:#ff6040; background:rgba(255,96,64,0.06); }
 
         .ra-logo { display:flex; align-items:center; gap:10px; justify-content:center; margin-bottom:6px; }
-        .ra-logo-icon { width:42px;height:42px; border-radius:12px; background:linear-gradient(135deg,#ff3020,#ff6040); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-weight:900; font-size:16px; color:#fff; }
-        .ra-logo-text { font-family:var(--font-display); font-size:22px; font-weight:800; color:#fff; letter-spacing:2px; text-transform:uppercase; }
-        .ra-subtitle { text-align:center; font-size:13px; color:rgba(255,255,255,0.3); margin-bottom:28px; }
+        .ra-logo-icon { width:42px;height:42px; border-radius:12px; background:linear-gradient(135deg,#ff3020,#ff6040); display:flex; align-items:center; justify-content:center; font-family:'DM Sans',sans-serif; font-weight:900; font-size:16px; color:#fff; }
+        .ra-logo-text { font-family:'DM Sans',sans-serif; font-size:22px; font-weight:800; color:#fff; letter-spacing:2px; text-transform:uppercase; }
+        .ra-subtitle { text-align:center; font-family:'DM Sans',sans-serif; font-size:13px; color:#BEBEBE; margin-bottom:28px; }
 
         /* Steps indicator */
         .ra-steps { display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:28px; }
-        .ra-step { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:13px; font-weight:700; transition:all 0.3s ease; }
+        .ra-step { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:700; transition:all 0.3s ease; }
         .ra-step.active { background:linear-gradient(135deg,#ff3020,#ff6040); color:#fff; box-shadow:0 0 20px rgba(255,50,30,0.3); }
-        .ra-step.done { background:rgba(255,60,30,0.15); color:var(--accent-light); border:1px solid rgba(255,60,30,0.3); }
+        .ra-step.done { background:rgba(255,60,30,0.15); color:#ff6040; border:1px solid rgba(255,60,30,0.3); }
         .ra-step.pending { background:rgba(255,255,255,0.03); color:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.06); }
         .ra-step-line { width:30px; height:2px; border-radius:1px; }
-        .ra-step-line.done { background:var(--accent-orange); }
+        .ra-step-line.done { background:#ff6040; }
         .ra-step-line.pending { background:rgba(255,255,255,0.06); }
 
-        .ra-step-label { text-align:center; font-family:var(--font-display); font-size:12px; color:var(--accent-light); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:20px; }
+        .ra-step-label { text-align:center; font-family:'DM Sans',sans-serif; font-size:12px; color:#ff6040; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:20px; }
 
         .ra-form { display:flex; flex-direction:column; gap:14px; }
-        .ra-email-hint { text-align:center; font-size:12px; color:rgba(255,255,255,0.35); margin-top:-6px; }
-        .ra-email-badge { display:inline-block; padding:2px 10px; border-radius:8px; background:rgba(255,60,30,0.08); border:1px solid rgba(255,60,30,0.15); color:var(--accent-light); font-size:11px; font-family:var(--font-display); letter-spacing:1px; }
+        .ra-email-hint { text-align:center; font-family:'DM Sans',sans-serif; font-size:12px; color:#BEBEBE; margin-top:-6px; }
+        .ra-email-badge { display:inline-block; padding:2px 10px; border-radius:8px; background:rgba(255,60,30,0.08); border:1px solid rgba(255,60,30,0.15); color:#ff6040; font-size:11px; font-family:'DM Sans',sans-serif; letter-spacing:1px; }
 
         .ra-resend { text-align:center; margin-top:4px; }
-        .ra-resend-btn { background:transparent; border:none; font-size:12px; color:var(--accent-orange); cursor:pointer; font-family:var(--font-display); letter-spacing:1px; }
+        .ra-resend-btn { background:transparent; border:none; font-size:12px; color:#ff6040; cursor:pointer; font-family:'DM Sans',sans-serif; letter-spacing:1px; }
         .ra-resend-btn:disabled { color:rgba(255,255,255,0.2); cursor:default; }
 
-        .ra-dev-otp { text-align:center; padding:8px; border-radius:10px; background:rgba(255,170,64,0.08); border:1px solid rgba(255,170,64,0.2); font-family:var(--font-display); font-size:12px; color:#ffaa40; letter-spacing:2px; margin-top:4px; }
+        .ra-dev-otp { text-align:center; padding:8px; border-radius:10px; background:rgba(255,170,64,0.08); border:1px solid rgba(255,170,64,0.2); font-family:'DM Sans',sans-serif; font-size:12px; color:#ffaa40; letter-spacing:2px; margin-top:4px; }
 
         /* Password requirements */
         .ra-pw-reqs { display:flex; flex-direction:column; gap:6px; padding:14px; border-radius:12px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); }
-        .ra-pw-req { display:flex; align-items:center; gap:8px; font-size:12px; transition:color 0.3s; }
-        .ra-pw-req.met { color:var(--accent-light); }
-        .ra-pw-req.unmet { color:rgba(255,255,255,0.25); }
+        .ra-pw-req { display:flex; align-items:center; gap:8px; font-family:'DM Sans',sans-serif; font-size:12px; transition:color 0.3s; }
+        .ra-pw-req.met { color:#ff6040; }
+        .ra-pw-req.unmet { color:#BEBEBE; }
         .ra-pw-dot { width:6px; height:6px; border-radius:50%; transition:background 0.3s; }
-        .ra-pw-dot.met { background:var(--accent-orange); box-shadow:0 0 6px rgba(255,60,30,0.4); }
+        .ra-pw-dot.met { background:#ff6040; box-shadow:0 0 6px rgba(255,60,30,0.4); }
         .ra-pw-dot.unmet { background:rgba(255,255,255,0.1); }
 
-        .ra-link { text-align:center; font-size:12px; color:rgba(255,255,255,0.3); margin-top:16px; }
-        .ra-link a { color:var(--accent-orange); text-decoration:none; font-family:var(--font-display); letter-spacing:1px; }
+        .ra-link { text-align:center; font-family:'DM Sans',sans-serif; font-size:12px; color:#BEBEBE; margin-top:16px; }
+        .ra-link a { color:#ff6040; text-decoration:none; font-family:'DM Sans',sans-serif; letter-spacing:1px; }
         .ra-link a:hover { text-decoration:underline; }
 
         @media (max-width:500px) {
@@ -168,6 +171,11 @@ export default function RegisterAccountPage() {
 
       <div className="ra-wrapper">
         <div className="ra-card">
+          {/* Back Button */}
+          <button className="ra-back" onClick={function () { router.push("/") }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+
           <div className="ra-logo">
             <div className="ra-logo-icon">PS</div>
             <div className="ra-logo-text">{EVENT_CONFIG.eventName}</div>
@@ -194,14 +202,14 @@ export default function RegisterAccountPage() {
                   onChange={function (e) { setRollNumber(e.target.value.toUpperCase()) }}
                   placeholder="e.g. 22A31A0501"
                   className="ps-input"
-                  style={{ width: "100%", textAlign: "center", fontSize: 16, letterSpacing: 2, fontFamily: "var(--font-display)" }}
+                  style={{ width: "100%", textAlign: "center", fontSize: 16, letterSpacing: 2, fontFamily: "'DM Sans',sans-serif" }}
                   autoFocus
                 />
                 <div className="ra-email-hint">
                   OTP will be sent to <span className="ra-email-badge">{rollNumber ? rollNumber.toLowerCase() + "@outlook.com" : "rollnumber@outlook.com"}</span>
                 </div>
                 <button type="submit" className="ps-btn ps-btn-primary" style={{ width: "100%" }} disabled={loading}>
-                  {loading ? "Sending OTP..." : "Send OTP →"}
+                  {loading ? "Sending OTP..." : "Send OTP \u2192"}
                 </button>
               </form>
             </div>
@@ -221,13 +229,13 @@ export default function RegisterAccountPage() {
                   onChange={function (e) { setOtp(e.target.value.replace(/\D/g, "").slice(0, 6)) }}
                   placeholder="Enter 6-digit OTP"
                   className="ps-input"
-                  style={{ width: "100%", textAlign: "center", fontSize: 22, letterSpacing: 8, fontFamily: "var(--font-display)" }}
+                  style={{ width: "100%", textAlign: "center", fontSize: 22, letterSpacing: 8, fontFamily: "'DM Sans',sans-serif" }}
                   maxLength={6}
                   autoFocus
                 />
                 {devOtp && <div className="ra-dev-otp">DEV OTP: {devOtp}</div>}
                 <button type="submit" className="ps-btn ps-btn-primary" style={{ width: "100%" }} disabled={loading}>
-                  {loading ? "Verifying..." : "Verify OTP →"}
+                  {loading ? "Verifying..." : "Verify OTP \u2192"}
                 </button>
                 <div className="ra-resend">
                   <button
@@ -279,14 +287,14 @@ export default function RegisterAccountPage() {
                     return (
                       <div key={i} className={"ra-pw-req " + (req.met ? "met" : "unmet")}>
                         <div className={"ra-pw-dot " + (req.met ? "met" : "unmet")}></div>
-                        {req.met ? "✓" : "○"} {req.label}
+                        {req.met ? "\u2713" : "\u25cb"} {req.label}
                       </div>
                     )
                   })}
                 </div>
 
                 <button type="submit" className="ps-btn ps-btn-primary" style={{ width: "100%", opacity: allValid ? 1 : 0.4 }} disabled={loading || !allValid}>
-                  {loading ? "Creating Account..." : "Create Account →"}
+                  {loading ? "Creating Account..." : "Create Account \u2192"}
                 </button>
               </form>
             </div>

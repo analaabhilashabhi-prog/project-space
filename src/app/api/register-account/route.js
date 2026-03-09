@@ -18,19 +18,41 @@ export async function POST(request) {
         return Response.json({ error: "Roll number is required" }, { status: 400 })
       }
 
+      const roll = rollNumber.toUpperCase()
+
       // Check if account already exists
       const { data: existingUser } = await supabase
         .from("user_passwords")
         .select("roll_number")
-        .eq("roll_number", rollNumber.toUpperCase())
+        .eq("roll_number", roll)
         .single()
 
       if (existingUser) {
-        return Response.json({
-          success: false,
-          status: "already_exists",
-          message: "Account already exists for this roll number. Please login instead.",
-        })
+        // Check if they have a team registered
+        const { data: teamData } = await supabase
+          .from("team_members")
+          .select("is_leader, teams(team_number)")
+          .eq("member_roll_number", roll)
+          .single()
+
+        if (teamData && teamData.teams) {
+          // Has account AND has team - just login
+          return Response.json({
+            success: false,
+            status: "already_exists",
+            hasTeam: true,
+            teamNumber: teamData.teams.team_number,
+            message: "Account already exists! Please login to access your team dashboard.",
+          })
+        } else {
+          // Has account but NO team - login and register team
+          return Response.json({
+            success: false,
+            status: "already_exists",
+            hasTeam: false,
+            message: "Account already exists! Please login to register your team.",
+          })
+        }
       }
 
       // Generate 6-digit OTP
@@ -40,7 +62,7 @@ export async function POST(request) {
 
       // Store OTP
       const { error: dbError } = await supabase.from("otp_codes").insert({
-        roll_number: rollNumber.toUpperCase(),
+        roll_number: roll,
         otp_code: otpCode,
         email: email,
         expires_at: expiresAt.toISOString(),
@@ -49,8 +71,8 @@ export async function POST(request) {
 
       if (dbError) {
         console.error("OTP DB Error:", JSON.stringify(dbError))
-        return Response.json({ 
-          error: "Failed to generate OTP. DB error: " + dbError.message + " (code: " + dbError.code + "). Make sure the otp_codes table exists in Supabase." 
+        return Response.json({
+          error: "Failed to generate OTP. DB error: " + dbError.message + " (code: " + dbError.code + "). Make sure the otp_codes table exists in Supabase."
         }, { status: 500 })
       }
 
@@ -155,7 +177,7 @@ export async function POST(request) {
         return Response.json({ error: "Failed to create account" }, { status: 500 })
       }
 
-      return Response.json({ success: true, message: "Account created! Please login." })
+      return Response.json({ success: true, message: "Account created! Please login to register your team." })
     }
 
     return Response.json({ error: "Invalid action" }, { status: 400 })

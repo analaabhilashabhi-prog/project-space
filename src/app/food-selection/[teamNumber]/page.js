@@ -347,8 +347,8 @@ export default function FoodSelectionPage() {
         <DashboardSidebar teamNumber={teamNumber} currentMember={currentMember} loggedInRoll={loggedInRoll} isLeader={isLeader} />
         <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
           <div style={{ textAlign: "center" }}>
-            <div style={{ width: 48, height: 48, borderRadius: 12, background: "linear-gradient(135deg,#ff3020,#ff6040)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Genos',sans-serif", fontWeight: 900, fontSize: 18, color: "#fff", margin: "0 auto 12px", animation: "pulse 1s ease-in-out infinite" }}>PS</div>
-            <div style={{ fontFamily: "'Genos',sans-serif", fontSize: 13, letterSpacing: 3, color: "rgba(255,255,255,0.3)", textTransform: "uppercase" }}>Loading</div>
+            <div style={{ width: 48, height: 48, borderRadius: 12, background: "linear-gradient(135deg,#ff3020,#ff6040)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'DM Sans',sans-serif", fontWeight: 900, fontSize: 18, color: "#fff", margin: "0 auto 12px", animation: "pulse 1s ease-in-out infinite" }}>PS</div>
+            <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 13, letterSpacing: 3, color: "rgba(255,255,255,0.3)", textTransform: "uppercase" }}>Loading</div>
           </div>
         </div>
         <style>{`@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}`}</style>
@@ -372,7 +372,7 @@ export default function FoodSelectionPage() {
         .scroll-area::-webkit-scrollbar-thumb{background:rgba(255,96,64,0.15);border-radius:10px}
 
         .day-chip{flex-shrink:0;padding:10px 22px;border-radius:10px;background:rgba(255,255,255,0.015);border:1px solid rgba(255,255,255,0.04);cursor:pointer;transition:all 0.3s;text-align:center;min-width:85px;position:relative}
-        .day-chip:hover{border-color:rgba(255,255,255,0.08);transform:translateY(-1px)}
+        .day-chip:hover{border-color:rgba(190,190,190,0.15);transform:translateY(-1px)}
         .day-chip.on{background:linear-gradient(135deg,rgba(255,48,32,0.06),rgba(255,96,64,0.025));border-color:rgba(255,96,64,0.2)}
 
         .food-card{border-radius:12px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);padding:14px 10px;text-align:center;cursor:pointer;transition:all 0.3s cubic-bezier(0.23,1,0.32,1);position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-height:100px}
@@ -397,7 +397,7 @@ export default function FoodSelectionPage() {
         .shimmer::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.02),transparent);animation:shimmerAnim 1.5s infinite}
 
         .nut-card{padding:10px 8px;border-radius:8px;background:rgba(255,255,255,0.015);border:1px solid rgba(255,255,255,0.03);text-align:center;transition:all 0.25s}
-        .nut-card:hover{border-color:rgba(255,255,255,0.08);transform:translateY(-1px)}
+        .nut-card:hover{border-color:rgba(190,190,190,0.15);transform:translateY(-1px)}
 
         .ing-chip{font-size:9px;font-weight:500;padding:4px 10px;border-radius:5px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04);color:rgba(255,255,255,0.35);transition:all 0.2s}
         .ing-chip:hover{border-color:rgba(255,96,64,0.15);color:rgba(255,255,255,0.5)}
@@ -407,7 +407,7 @@ export default function FoodSelectionPage() {
         .allergy-chip.safe{background:rgba(52,211,153,0.05);border:1px solid rgba(52,211,153,0.1);color:rgba(52,211,153,0.5)}
 
         .ck-bar{border-radius:14px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;transition:all 0.3s}
-        .ck-bar:hover{border-color:rgba(255,255,255,0.08)}
+        .ck-bar:hover{border-color:rgba(190,190,190,0.15)}
 
         /* === LOCKED STATE === */
         .locked-overlay{position:relative}
@@ -433,7 +433,7 @@ export default function FoodSelectionPage() {
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ff6040" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
           </div>
           <div>
-            <div style={{ fontFamily: "'Genos',sans-serif", fontSize: 14, fontWeight: 600, color: "#ff6040", marginBottom: 2 }}>Missing Days!</div>
+            <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 14, fontWeight: 600, color: "#ff6040", marginBottom: 2 }}>Missing Days!</div>
             <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", lineHeight: 1.5 }}>{warning}</div>
           </div>
         </div>
@@ -441,7 +441,7 @@ export default function FoodSelectionPage() {
 
       {/* Save Indicator */}
       {(saving || saved) && (
-        <div style={{ position: "fixed", top: 20, right: 20, zIndex: 200, padding: "8px 16px", borderRadius: 10, background: saved ? "rgba(52,211,153,0.1)" : "rgba(255,255,255,0.05)", border: "1px solid " + (saved ? "rgba(52,211,153,0.2)" : "rgba(255,255,255,0.08)"), fontSize: 12, fontWeight: 600, color: saved ? "#34d399" : "rgba(255,255,255,0.4)", animation: "saveFlash 0.3s ease", display: "flex", alignItems: "center", gap: 6 }}>
+        <div style={{ position: "fixed", top: 20, right: 20, zIndex: 200, padding: "8px 16px", borderRadius: 10, background: saved ? "rgba(52,211,153,0.1)" : "rgba(255,255,255,0.05)", border: "1px solid " + (saved ? "rgba(52,211,153,0.2)" : "rgba(190,190,190,0.15)"), fontSize: 12, fontWeight: 600, color: saved ? "#34d399" : "rgba(255,255,255,0.4)", animation: "saveFlash 0.3s ease", display: "flex", alignItems: "center", gap: 6 }}>
           {saved ? "\u2713 Saved" : "Saving..."}
         </div>
       )}
@@ -453,14 +453,14 @@ export default function FoodSelectionPage() {
             <div style={{ width: 52, height: 52, borderRadius: 14, background: "rgba(255,96,64,0.08)", border: "1px solid rgba(255,96,64,0.12)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px" }}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ff6040" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
             </div>
-            <div style={{ fontFamily: "'Genos',sans-serif", fontSize: 20, fontWeight: 700, color: "#fff", textAlign: "center", marginBottom: 8 }}>Confirm Food Selection?</div>
-            <div style={{ fontFamily: "'Genos',sans-serif", fontSize: 14, fontWeight: 600, color: "#ff6040", textAlign: "center", marginBottom: 14 }}>All 7 days selected</div>
+            <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 20, fontWeight: 700, color: "#fff", textAlign: "center", marginBottom: 8 }}>Confirm Food Selection?</div>
+            <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 14, fontWeight: 600, color: "#ff6040", textAlign: "center", marginBottom: 14 }}>All 7 days selected</div>
             <div style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", textAlign: "center", marginBottom: 20, lineHeight: 1.7, padding: "12px 16px", borderRadius: 10, background: "rgba(255,96,64,0.04)", border: "1px solid rgba(255,96,64,0.08)", display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff6040" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
               <span>This action cannot be undone. Once confirmed, your food selections will be permanently locked and cannot be changed.</span>
             </div>
             <div style={{ display: "flex", gap: 10 }}>
-              <button onClick={function () { setShowConfirmOrder(false) }} style={{ flex: 1, padding: 12, borderRadius: 12, border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.03)", color: "rgba(255,255,255,0.5)", fontFamily: "'DM Sans',sans-serif", fontSize: 13, fontWeight: 500, cursor: "pointer", transition: "all 0.25s" }}>Cancel</button>
+              <button onClick={function () { setShowConfirmOrder(false) }} style={{ flex: 1, padding: 12, borderRadius: 12, border: "1px solid rgba(190,190,190,0.15)", background: "rgba(255,255,255,0.03)", color: "rgba(255,255,255,0.5)", fontFamily: "'DM Sans',sans-serif", fontSize: 13, fontWeight: 500, cursor: "pointer", transition: "all 0.25s" }}>Cancel</button>
               <button onClick={finalConfirm} style={{ flex: 1, padding: 12, borderRadius: 12, border: "none", background: "linear-gradient(135deg,#ff3020,#ff6040)", color: "#fff", fontFamily: "'DM Sans',sans-serif", fontSize: 13, fontWeight: 600, cursor: "pointer", transition: "all 0.25s", boxShadow: "0 4px 16px rgba(255,48,32,0.2)" }}>Yes, Confirm</button>
             </div>
           </div>
@@ -478,14 +478,14 @@ export default function FoodSelectionPage() {
       )}
 
       {/* MAIN */}
-      <div className="scroll-area" style={{ flex: 1, padding: "32px 44px 80px", overflowY: "auto", maxHeight: "100vh" }}>
+      <div className="scroll-area" style={{ flex: 1, padding: "16px 44px 80px", overflowY: "auto", maxHeight: "100vh" }}>
 
         {/* Progress Bar */}
         <div style={{ marginBottom: 16, display: "flex", alignItems: "center", gap: 12 }}>
           <div style={{ flex: 1, height: 4, background: "rgba(255,255,255,0.03)", borderRadius: 4, overflow: "hidden" }}>
             <div style={{ height: "100%", width: progressPct + "%", background: daysComplete === 7 ? "linear-gradient(90deg,#34d399,#22c55e)" : "linear-gradient(90deg,#ff3020,#ff6040)", borderRadius: 4, transition: "width 0.5s ease", boxShadow: daysComplete === 7 ? "0 0 10px rgba(52,211,153,0.2)" : "0 0 10px rgba(255,48,32,0.15)" }} />
           </div>
-          <span style={{ fontFamily: "'Genos',sans-serif", fontSize: 13, fontWeight: 600, color: daysComplete === 7 ? "#34d399" : "#ff6040", minWidth: 50 }}>{daysComplete}/7</span>
+          <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 13, fontWeight: 600, color: daysComplete === 7 ? "#34d399" : "#ff6040", minWidth: 50 }}>{daysComplete}/7</span>
         </div>
 
         {/* Locked Banner */}
@@ -496,7 +496,7 @@ export default function FoodSelectionPage() {
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34d399" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
               </div>
               <div>
-                <div style={{ fontFamily: "'Genos',sans-serif", fontSize: 15, fontWeight: 600, color: "#34d399", marginBottom: 2 }}>Food Selection Confirmed</div>
+                <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 15, fontWeight: 600, color: "#34d399", marginBottom: 2 }}>Food Selection Confirmed</div>
                 <div style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>Your selections are locked and cannot be changed.</div>
               </div>
             </div>
@@ -512,8 +512,8 @@ export default function FoodSelectionPage() {
           <div style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", marginBottom: 3, display: "flex", alignItems: "center", gap: 8 }}>
             Selecting for: <span style={{ color: "#ff6040", fontWeight: 600 }}>{memberName}</span>
           </div>
-          <div style={{ fontFamily: "'Genos',sans-serif", fontSize: 28, fontWeight: 700, marginBottom: 3 }}>Food Selection</div>
-          <div style={{ fontSize: 11, color: "rgba(255,255,255,0.2)" }}>Pick your snack and beverage for each day</div>
+          <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 28, fontWeight: 700, marginBottom: 3 }}>Food Selection</div>
+          <div style={{ fontSize: 11, color: "#BEBEBE" }}>Pick your snack and beverage for each day</div>
         </div>
 
         {/* Quick Actions — hidden when locked */}
@@ -536,15 +536,19 @@ export default function FoodSelectionPage() {
 
         {/* Day Chips */}
         <div style={{ marginBottom: 20 }}>
-          <div style={{ fontFamily: "'Genos',sans-serif", fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: 2, color: "rgba(255,255,255,0.15)", marginBottom: 10 }}>Select Day</div>
+          <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: 2, color: "#BEBEBE", marginBottom: 10 }}>Select Day</div>
           <div style={{ display: "flex", gap: 7, overflowX: "auto", scrollBehavior: "smooth", scrollbarWidth: "none" }}>
             {[1,2,3,4,5,6,7].map(function (d, i) {
               var done = dayData[i] && dayData[i].snack && dayData[i].bev
               return (
                 <div key={i} className={"day-chip " + (curDay === i ? "on" : "")} onClick={function () { if (!locked) setCurDay(i) }} style={{ cursor: locked ? "default" : "pointer", opacity: locked && curDay !== i ? 0.4 : 1 }}>
-                  <div style={{ fontFamily: "'Genos',sans-serif", fontSize: 18, fontWeight: 700, color: curDay === i ? "#ff6040" : "rgba(255,255,255,0.15)" }}>{d}</div>
-                  <div style={{ fontSize: 7, textTransform: "uppercase", letterSpacing: 1.5, color: curDay === i ? "rgba(255,96,64,0.35)" : "rgba(255,255,255,0.08)" }}>Day</div>
-                  <div style={{ position: "absolute", top: 4, right: 4, width: 8, height: 8, borderRadius: "50%", background: done ? "#34d399" : "#ff3020", boxShadow: "0 0 6px " + (done ? "rgba(52,211,153,0.3)" : "rgba(255,48,32,0.3)") }} />
+                  {done && (
+                    <div style={{ position: "absolute", top: 4, right: 4 }}>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#34d399" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                  )}
+                  <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 18, fontWeight: 700, color: curDay === i ? "#ff6040" : "#fff" }}>{d}</div>
+                  <div style={{ fontSize: 7, textTransform: "uppercase", letterSpacing: 1.5, color: curDay === i ? "rgba(255,96,64,0.5)" : "rgba(255,255,255,0.25)" }}>Day</div>
                 </div>
               )
             })}
@@ -590,7 +594,7 @@ export default function FoodSelectionPage() {
                       <div style={{ position: "absolute", bottom: 4, right: 4, width: 14, height: 14, borderRadius: "50%", background: "linear-gradient(135deg,#ff3020,#ff6040)", color: "#fff", fontSize: 8, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700 }}>{"\u2713"}</div>
                     )}
                     <div style={{ fontSize: 28, lineHeight: 1.2, transition: "transform 0.25s" }}>{d.e}</div>
-                    <div style={{ fontFamily: "'Genos',sans-serif", fontSize: 12, fontWeight: 600, color: isSelected ? "#fff" : "rgba(255,255,255,0.5)" }}>{d.n}</div>
+                    <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 12, fontWeight: 600, color: isSelected ? "#fff" : "rgba(255,255,255,0.5)" }}>{d.n}</div>
                   </div>
                 )
               })}
@@ -636,24 +640,24 @@ export default function FoodSelectionPage() {
                   <div style={{ padding: "28px 24px 18px", textAlign: "center", position: "relative" }}>
                     <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 50% 40%,rgba(255,96,64,0.04),transparent 70%)" }} />
                     <div style={{ fontSize: 56, display: "block", marginBottom: 12, position: "relative", zIndex: 1 }}>{FD[curView].e}</div>
-                    <div style={{ fontFamily: "'Genos',sans-serif", fontSize: 22, fontWeight: 700, color: "#fff", marginBottom: 3, position: "relative", zIndex: 1 }}>{FD[curView].n}</div>
+                    <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 22, fontWeight: 700, color: "#fff", marginBottom: 3, position: "relative", zIndex: 1 }}>{FD[curView].n}</div>
                     <div style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: 2, color: "rgba(255,96,64,0.5)", position: "relative", zIndex: 1 }}>{FD[curView].c}</div>
                   </div>
                   {/* Body */}
                   <div style={{ padding: "0 24px 24px", flex: 1, display: "flex", flexDirection: "column" }}>
                     <div style={{ fontSize: 11.5, lineHeight: 1.7, color: "rgba(255,255,255,0.38)", marginBottom: 16, paddingBottom: 16, borderBottom: "1px solid rgba(255,255,255,0.025)" }}>{detail.description}</div>
                     {detail.funFact && <div style={{ fontSize: 10, color: "rgba(255,255,255,0.25)", padding: "10px 14px", borderRadius: 8, background: "rgba(192,132,252,0.03)", border: "1px solid rgba(192,132,252,0.06)", marginBottom: 16, lineHeight: 1.5, fontStyle: "italic" }}>{"\ud83d\udca1 " + detail.funFact}</div>}
-                    <div style={{ fontFamily: "'Genos',sans-serif", fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: 2, color: "rgba(255,255,255,0.12)", marginBottom: 7 }}>Nutrition Info</div>
+                    <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: 2, color: "#BEBEBE", marginBottom: 7 }}>Nutrition Info</div>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 5, marginBottom: 16 }}>
                       {[{ v: detail.calories, l: "Calories", c: "#ff6040" }, { v: detail.protein, l: "Protein", c: "#34d399" }, { v: detail.carbs, l: "Carbs", c: "#60a5fa" }, { v: detail.fat, l: "Fat", c: "#fbbf24" }].map(function (n) {
-                        return <div key={n.l} className="nut-card"><div style={{ fontFamily: "'Genos',sans-serif", fontSize: 20, fontWeight: 700, color: n.c, marginBottom: 1 }}>{n.v}</div><div style={{ fontSize: 8, textTransform: "uppercase", letterSpacing: 1.5, color: "rgba(255,255,255,0.15)" }}>{n.l}</div></div>
+                        return <div key={n.l} className="nut-card"><div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 20, fontWeight: 700, color: n.c, marginBottom: 1 }}>{n.v}</div><div style={{ fontSize: 8, textTransform: "uppercase", letterSpacing: 1.5, color: "#BEBEBE" }}>{n.l}</div></div>
                       })}
                     </div>
-                    <div style={{ fontFamily: "'Genos',sans-serif", fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: 2, color: "rgba(255,255,255,0.12)", marginBottom: 7 }}>Ingredients</div>
+                    <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: 2, color: "#BEBEBE", marginBottom: 7 }}>Ingredients</div>
                     <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginBottom: 16 }}>
                       {(detail.ingredients || []).map(function (ing, i) { return <span key={i} className="ing-chip">{ing}</span> })}
                     </div>
-                    <div style={{ fontFamily: "'Genos',sans-serif", fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: 2, color: "rgba(255,255,255,0.12)", marginBottom: 7 }}>Allergy Info</div>
+                    <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: 2, color: "#BEBEBE", marginBottom: 7 }}>Allergy Info</div>
                     <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginBottom: 18 }}>
                       {(detail.allergens || []).map(function (a, i) {
                         return <span key={i} className={"allergy-chip " + (a.toLowerCase() === "none" ? "safe" : "warn")}>{a.toLowerCase() === "none" ? "\u2713 No Allergens" : "\u26a0\ufe0f " + a}</span>
@@ -695,21 +699,21 @@ export default function FoodSelectionPage() {
         {/* Checkout Bar — always shows current day selection */}
         <div className="ck-bar" style={{ marginTop: 24 }}>
           <div>
-            <div style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: 1.5, color: "rgba(255,255,255,0.12)", marginBottom: 3 }}>Day {curDay + 1} — {locked ? "Your Selection" : "Your Order"}</div>
+            <div style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: 1.5, color: "#BEBEBE", marginBottom: 3 }}>Day {curDay + 1} — {locked ? "Your Selection" : "Your Order"}</div>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               {curDayData.snack && FD[curDayData.snack] ? (
                 <div style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 12px", borderRadius: 7, background: "rgba(255,96,64,0.03)", border: "1px solid rgba(255,96,64,0.08)" }}>
                   <span style={{ fontSize: 16 }}>{FD[curDayData.snack].e}</span>
-                  <span style={{ fontFamily: "'Genos',sans-serif", fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.6)" }}>{FD[curDayData.snack].n}</span>
+                  <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.6)" }}>{FD[curDayData.snack].n}</span>
                 </div>
-              ) : <div style={{ padding: "5px 12px", borderRadius: 7, border: "1px dashed rgba(255,255,255,0.04)", fontSize: 9, color: "rgba(255,255,255,0.08)" }}>No snack</div>}
-              <span style={{ fontSize: 12, color: "rgba(255,255,255,0.07)" }}>+</span>
+              ) : <div style={{ padding: "5px 12px", borderRadius: 7, border: "1px dashed rgba(255,255,255,0.04)", fontSize: 9, color: "rgba(190,190,190,0.15)" }}>No snack</div>}
+              <span style={{ fontSize: 12, color: "rgba(190,190,190,0.12)" }}>+</span>
               {curDayData.bev && FD[curDayData.bev] ? (
                 <div style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 12px", borderRadius: 7, background: "rgba(255,96,64,0.03)", border: "1px solid rgba(255,96,64,0.08)" }}>
                   <span style={{ fontSize: 16 }}>{FD[curDayData.bev].e}</span>
-                  <span style={{ fontFamily: "'Genos',sans-serif", fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.6)" }}>{FD[curDayData.bev].n}</span>
+                  <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.6)" }}>{FD[curDayData.bev].n}</span>
                 </div>
-              ) : <div style={{ padding: "5px 12px", borderRadius: 7, border: "1px dashed rgba(255,255,255,0.04)", fontSize: 9, color: "rgba(255,255,255,0.08)" }}>No beverage</div>}
+              ) : <div style={{ padding: "5px 12px", borderRadius: 7, border: "1px dashed rgba(255,255,255,0.04)", fontSize: 9, color: "rgba(190,190,190,0.15)" }}>No beverage</div>}
               {comboName && <span style={{ fontSize: 9, fontWeight: 600, padding: "3px 10px", borderRadius: 5, background: "rgba(192,132,252,0.05)", border: "1px solid rgba(192,132,252,0.1)", color: "rgba(192,132,252,0.5)", marginLeft: 8 }}>{"\u2728 " + comboName}</span>}
             </div>
           </div>
@@ -729,7 +733,7 @@ export default function FoodSelectionPage() {
         {/* 7-Day Summary — shown after confirmation */}
         {locked && (
           <div style={{ marginTop: 20, borderRadius: 14, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", padding: 24, animation: "fadeUp 0.4s ease" }}>
-            <div style={{ fontFamily: "'Genos',sans-serif", fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: 3, color: "rgba(255,255,255,0.15)", marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
+            <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: 3, color: "#BEBEBE", marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#34d399" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
               Your Complete Selection
             </div>
@@ -739,7 +743,7 @@ export default function FoodSelectionPage() {
                 var bevItem = d.bev && FD[d.bev] ? FD[d.bev] : null
                 return (
                   <div key={i} onClick={function () { setCurDay(i) }} style={{ padding: "14px 8px", borderRadius: 12, background: curDay === i ? "rgba(255,96,64,0.04)" : "rgba(255,255,255,0.01)", border: "1px solid " + (curDay === i ? "rgba(255,96,64,0.15)" : "rgba(255,255,255,0.03)"), textAlign: "center", cursor: "pointer", transition: "all 0.25s" }}>
-                    <div style={{ fontFamily: "'Genos',sans-serif", fontSize: 11, fontWeight: 600, color: curDay === i ? "#ff6040" : "rgba(255,255,255,0.2)", letterSpacing: 1, marginBottom: 10 }}>DAY {i + 1}</div>
+                    <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 11, fontWeight: 600, color: curDay === i ? "#ff6040" : "rgba(255,255,255,0.2)", letterSpacing: 1, marginBottom: 10 }}>DAY {i + 1}</div>
                     {snackItem ? (
                       <div style={{ marginBottom: 6 }}>
                         <div style={{ fontSize: 22, marginBottom: 2 }}>{snackItem.e}</div>

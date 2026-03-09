@@ -5,38 +5,37 @@ import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabase"
 import DashboardSidebar from "@/components/DashboardSidebar"
 
-/* ===== ALL 26 TEAMS FROM EXCEL ===== */
-var TEAMS = [
-  { number:"PS-001", name:"Academic Architects", title:"EduConnect", tech:["Power Apps","Power Pages","SharePoint","Power Automate","Power BI"], tags:["EdTech","AI","Resource Sharing"], description:"An AI-powered academic resource sharing platform. Faculty upload study materials; students search, view, bookmark, and download resources. Students can also create and upload their own PPTs/PDFs, which are AI-scored and faculty-approved for rewards.", members:["23P31A4241","23P31A0575","23P31A0564","23P31A0509","23A91A1293","23P31A4224"], leader:"23P31A4241" },
-  { number:"PS-002", name:"CoreSix Review Team", title:"Project Review Platform", tech:["Power Apps","Power Automate","Excel","SharePoint","Power BI"], tags:["Automation","Education","Management"], description:"A mobile/web app using Microsoft Power Apps to automate the project review process for B.Tech students. Proctors create teams, schedule reviews, and record evaluations digitally.", members:["23P31A4255","23MH1A42C9","23MH1A4434","23P31A4261","23P31A04F8","23P31A4213"], leader:"23P31A4255" },
-  { number:"PS-003", name:"Data Forge", title:"Student 360\u00b0", tech:["Power Apps","Power BI","SharePoint","Power Automate","Flask","Gemini"], tags:["Analytics","AI","Assessment"], description:"An integrated analytics platform providing a 360-degree view of student performance. Students schedule exams, attend AI-based interviews, and attempt coding/MCQ assessments with automated scoring.", members:["23MH1A4224","23MH1A4229","23MH1A4271","23P31A4237","23P31A4248","23P31A4271"], leader:"23MH1A4224" },
-  { number:"PS-004", name:"Data Pioneers", title:"Student 360\u00b0", tech:["Power Apps","Power BI","SharePoint","Power Automate","Flask","Gemini","GitHub Copilot"], tags:["Analytics","AI","Placement"], description:"An integrated analytics platform with automated Index Score and Placement Index Score. Integrates coding platform and Git repository data to evaluate real-world technical skills.", members:["23MH1A4224","23MH1A4229","23MH1A4271","23P31A4237","23P31A4248","23P31A4271"], leader:"23MH1A4224" },
-  { number:"PS-005", name:"CampusID 360", title:"Smart ID Application & Tracking System", tech:["Power Apps","SharePoint","Power Automate","Copilot Studio","Power BI"], tags:["Automation","Identity","Tracking"], description:"Streamlines the entire ID issuance process. Students register, submit details online, complete secure payment. System validates data, checks for duplicates, and provides real-time status updates.", members:["23A91A6116","24A95A6109","23A91A61H5","23A91A61C7","24P35A4232","23MH1A05Q8"], leader:"23A91A61C7" },
-  { number:"PS-006", name:"AllocX", title:"Intelligent Resource Allocation for Events", tech:["Power Apps","Power Pages","Power Automate","Snowflake","Power BI","Excel"], tags:["Event Management","Analytics","Automation"], description:"A college-wide event management and analytics system. Manages event creation, registrations, scheduling, attendance/performance tracking, and rule-based e-certificate generation.", members:["23P31A4482","23P31A4488","23P31A4490","23P31A4497","23P31A42C0","23P31A42G3"], leader:"23P31A4490" },
-  { number:"PS-007", name:"Data-Dynamos", title:"Placement & Skill Gap Analytics", tech:["Excel","SharePoint","Power BI","Power Apps","Power Automate","Snowflake","OpenAI API"], tags:["Placement","AI","Resume Analysis"], description:"A data-driven system helping students track skills, analyze resumes, and measure placement readiness. LLM model analyzes resumes to extract skills and identify missing keywords.", members:["23MH1A4462","23MH1A4225","23MH1A4227","23MH1A4249","23A91A61J3","23A91A04N3"], leader:"23MH1A4227" },
-  { number:"PS-008", name:"TimeTactix", title:"Faculty Scheduling System", tech:["SharePoint","Power Automate","Excel","Power BI","Power Apps","Python","Scikit-learn"], tags:["Scheduling","ML","Automation"], description:"Efficiently allocates substitute teachers during faculty absences by identifying available staff with free periods and balanced workload. ML predicts the most suitable substitute faculty.", members:["23P31A4416","23P31A4419","23P31A4426","23P31A4434","24P31A4213","23MH1A4260"], leader:"23P31A4416" },
-  { number:"PS-009", name:"Infinity Crew", title:"TechStack Analysis", tech:["Power BI","Python","Excel","Power Automate","Pandas","NumPy","spaCy"], tags:["Data Science","NLP","Career Guidance"], description:"Analyzes the evolution of programming languages over 10-15 years. Identifies growth, decline, and popularity trends. Analyzes job market demand and provides career guidance.", members:["23MH1A4265","23MH1A4234","23MH1A4238","23MH1A4216","23MH1A4235","23MH1A4266"], leader:"23MH1A4235" },
-  { number:"PS-010", name:"CareerConnect", title:"SkillBridge \u2013 AI Smart Placement Portal", tech:["Power Automate","Power Apps","SharePoint","Power BI","HTML","CSS","APIs","AI"], tags:["Placement","AI","Skill Matching"], description:"A smart placement portal connecting students with jobs based purely on skills, not CGPA. AI extracts skills from resumes, matches with company requirements, and sends job notifications.", members:["23MH1A4464","23MH1A4463","23P31A1279","23P31A4487","23MH1A4273","23MH1A42B1"], leader:"23MH1A4463" },
-  { number:"PS-011", name:"PlaceMint", title:"Smart Drive", tech:["Power Apps","Power Automate","SharePoint","Outlook","Microsoft 365","Copilot"], tags:["Placement","Automation","Notifications"], description:"Brings all company drive information and registration links into one structured digital platform. Students view organized drive details and register directly through the system.", members:["23P31A4202","23P31A4217","23P31A4221","23P31A4231","23P31A4233","23P31A4265"], leader:"23P31A4265" },
-  { number:"PS-012", name:"C-Squad", title:"Campus Connect", tech:["Power BI","Power Apps","Power Pages","Power Automate","Dataverse","SharePoint","React"], tags:["Communication","Automation","Real-time"], description:"Streamlines college communication by centralizing and automating notifications for placements, university announcements, and examination results across campus.", members:["23MH1A05H2","23A91A1205","23P31A4436","23P31A4442","23MH1A4217","23MH1A05I6"], leader:"23MH1A05H2" },
-  { number:"PS-013", name:"Power Builders", title:"Project Space Planner", tech:["Excel","SharePoint","Power Automate","Power Apps","Power BI","Copilot Studio"], tags:["Project Management","Tracking","Analytics"], description:"A project tracking and management system to monitor team projects across multiple technologies. Tracks progress and completion percentage in real time with automated notifications.", members:["23A91A1228","23A91A1229","23A91A1226","23MH1A05P9","23P31A05I9","23MH1A4465"], leader:"23A91A1226" },
-  { number:"PS-014", name:"KADS", title:"Smart Student 360 Analytics Platform", tech:["Apache Kafka","Snowflake","DBT","Apache Airflow","Copilot Studio"], tags:["Data Engineering","ML","Prediction"], description:"Integrates student data using Kafka, Snowflake, DBT, and Airflow for a scalable data pipeline. ML algorithms predict future student performance with AI-powered chatbot access.", members:["23A91A61E2","23A91A6153","23MH1A4268","23MH1A4206","24P35A4225"], leader:"23A91A6153" },
-  { number:"PS-015", name:"core6", title:"Project Review Automator", tech:["Power Apps","Power Automate","Excel","SharePoint","Power BI","Outlook","Copilot"], tags:["Automation","Education","Review"], description:"A mobile and web-based application to automate the project review process. Proctors create teams, schedule reviews, and record evaluation details digitally with AI-assisted team division.", members:["23P31A4255","23P31A4261","23P31A04F8","23P31A4213","23MH1A4434","23MH1A42C9"], leader:"23P31A4255" },
-  { number:"PS-016", name:"DataIntel", title:"Academic SmartHub", tech:["Power Apps","Power Automate","Power BI","Excel","SharePoint","OpenAI API"], tags:["EdTech","AI","Exam Prep"], description:"An AI-Powered Academic Assistant that processes faculty-uploaded materials to generate key questions. Features practice quizzes, voice-based answering, personalized study roadmaps, and analytics.", members:["23A91A4459","23A91A4465","23A91A4429"], leader:"23A91A4429" },
-  { number:"PS-017", name:"SmartRegTeam", title:"EventSpace", tech:["HTML","CSS","Python","React","MySQL","Power BI","Power Apps","Power Automate"], tags:["Event Registration","Web App","Analytics"], description:"A smart web application for event registration. Students access the website anytime and complete registration conveniently, eliminating manual QR code sharing.", members:["23MH1A4244","23A91A6188","23A91A61A2","23P31A4210","23P31A4220","23P31A0505"], leader:"23P31A4210" },
-  { number:"PS-018", name:"Team Elite", title:"UCOS (University Core Operation System)", tech:["Power Apps","SharePoint","Power Automate","Python","Power BI"], tags:["College Management","Automation","Analytics"], description:"A smart college management application providing a single digital platform for students, faculty, and administrators. Features online approvals, risk scoring, and real-time dashboards.", members:["23P31A4205","23P31A0567","23P31A0578","23P31A0568","23P31A4443"], leader:"23P31A4205" },
-  { number:"PS-019", name:"404 Found", title:"ADITYA \u2013 Automated Digital Intelligence", tech:["Power Apps","Dataverse","Power Automate","Power BI","Copilot","AI Builder"], tags:["Grievance","AI","Smart City"], description:"An AI-powered grievance management system with smart complaint categorization, priority prediction, duplicate detection, sentiment analysis, and AI chatbot assistance.", members:["23P31A4402","23P31A4403","23P31A4404","23P31A4405","23P31A4421","23P31A4414"], leader:"23P31A4421" },
-  { number:"PS-020", name:"UniHostel Hub", title:"Centralized Hostel Management System", tech:["Power Apps","SharePoint","Power Automate","Outlook","Power Pages","Power BI","Twilio"], tags:["Hostel","Automation","Safety"], description:"A digital platform automating hostel operations: leave approvals, attendance, student movement monitoring, mess notifications, room allocation, and complaint tracking.", members:["23A91A6127","23A91A61D8","23A91A6136","23A91A4402","23A91A6172","23MH1A4432"], leader:"23A91A6136" },
-  { number:"PS-021", name:"DAM SIX", title:"Pranalasys \u2013 AI Attendance & Analytics", tech:["Azure AD","Power Automate","Dataverse","Power Apps","Power BI","Azure ML"], tags:["Attendance","AI","Smart Campus"], description:"An AI-integrated Smart Attendance and Mentor Analytics System with Face Recognition, automatic technology-wise segregation, and AI-based predictive analytics for irregular students.", members:["23P31A05G5","23P31A05H3","23A91A4409","23MH1A4409","23P31A4441","23P31A4465"], leader:"23P31A05G5" },
-  { number:"PS-022", name:"Academic Architects", title:"EduConnect", tech:["Power Pages","Power Apps","SharePoint","Excel","Snowflake","Power Automate","Power BI","OpenAI"], tags:["EdTech","AI","Self-Learning"], description:"A centralized academic platform improving resource accessibility. Students explore topics, create PPTs/PDFs which are AI-scored. Approved resources get contributor credit and reward marks.", members:["23A91A1293","23P31A4224","23P31A0509","23P31A0564","23P31A0575","23P31A4241"], leader:"23A91A1293" },
-  { number:"PS-023", name:"Delight", title:"Smart University Appointment System", tech:["HTML","CSS","JavaScript","Power Automate","SharePoint","AI Builder","Power BI"], tags:["Scheduling","AI","University"], description:"An AI-assisted platform for meeting and permission scheduling. Provides real-time faculty availability, request classification, priority analysis, and calendar coordination.", members:["24P35A4227","24P35A4230","24P35A4216","23A91A0546","23A91A0509","23A91A61A0"], leader:"23A91A0546" },
-  { number:"PS-024", name:"Attendly Crew", title:"Leavie \u2013 Green Signal", tech:["SharePoint","Power Automate","Power BI","Power Apps","Copilot Studio"], tags:["Leave Management","AI Chatbot","Automation"], description:"A Smart Leave and Outpass Management System. Students apply online and track status. AI agent 'Leavie' interacts with students, collects details, and auto-fills request forms.", members:["23A91A61G9","23A91A6171","23P31A4430","23P31A4444","23A91A05B1","23MH1A4404"], leader:"23P31A4430" },
-  { number:"PS-025", name:"Proctor Connect", title:"Proctor Buddy", tech:["Power Apps","Power Automate","SharePoint","AI Builder","Outlook","Power BI"], tags:["Monitoring","AI","Academic"], description:"A smart monitoring system for proctors and students. Tracks attendance and academic performance, auto-detects issues, sends alerts. Students can request data updates with proctor approval.", members:["23P31A0560","23P31A1223","23P31A1289","23P31A1226","24A95A6108","23A91A61C2"], leader:"23P31A0560" },
-  { number:"PS-026", name:"SmartTalent Squad", title:"HRGenie A", tech:["Power Apps","SharePoint","Power Automate","Teams","Power BI","Copilot Studio","Azure OpenAI"], tags:["HR","AI","NLP","Automation"], description:"An AI-Powered HR Assistant automating leave requests, HR queries, payroll access, and employee support using natural language understanding and automated workflows.", members:["23P31A4254","23MH1A4250","23P31A4274","23MH1A05O5","23A91A6151","23P31A4216"], leader:"23P31A4216" },
-]
+// Generate tags from technologies
+function generateTags(techs) {
+  var tagMap = {
+    "Power Apps": "Automation", "Power Automate": "Automation", "Power BI": "Analytics",
+    "SharePoint": "Data", "Dataverse": "Data", "Excel": "Data",
+    "AI Builder": "AI", "OpenAI API": "AI", "OpenAI": "AI", "Copilot Studio": "AI",
+    "Azure OpenAI": "AI", "Gemini": "AI", "Copilot": "AI", "AI": "AI",
+    "Python": "Development", "Flask": "Development", "FastAPI": "Development",
+    "HTML": "Web Dev", "CSS": "Web Dev", "JavaScript": "Web Dev", "React": "Web Dev", "Next.js": "Web Dev",
+    "Node.js": "Development", "MySQL": "Database", "MongoDB": "Database",
+    "TensorFlow": "ML", "Scikit-learn": "ML", "Pandas": "ML", "NumPy": "ML", "spaCy": "NLP",
+    "Snowflake": "Data Engineering", "Apache Kafka": "Data Engineering", "Apache Airflow": "Data Engineering", "DBT": "Data Engineering",
+    "Azure AD": "Cloud", "Azure ML": "Cloud", "Azure": "Cloud", "AWS": "Cloud",
+    "Flutter": "Mobile", "React Native": "Mobile",
+    "Arduino": "IoT", "Raspberry Pi": "IoT", "MQTT": "IoT",
+    "Twilio": "Communication", "Outlook": "Communication", "Teams": "Communication",
+  }
+  var tags = {}
+  ;(techs || []).forEach(function (t) {
+    var tag = tagMap[t]
+    if (tag) tags[tag] = true
+  })
+  var result = Object.keys(tags).slice(0, 3)
+  if (result.length === 0) result = ["Project"]
+  return result
+}
 
 export default function ExploreTeamsPage() {
   var router = useRouter()
+  var [allTeams, setAllTeams] = useState([])
+  var [teamsLoading, setTeamsLoading] = useState(true)
   var [currentIndex, setCurrentIndex] = useState(0)
   var [isLiked, setIsLiked] = useState({})
   var [filter, setFilter] = useState("All Teams")
@@ -55,28 +54,65 @@ export default function ExploreTeamsPage() {
     setLoggedInRoll(roll)
     setTeamNumber(storedTeam)
 
-    async function fetchMember() {
-      if (!roll || !storedTeam) return
+    async function loadData() {
+      // Fetch current member for sidebar
+      if (roll && storedTeam) {
+        try {
+          var teamRes = await supabase.from("teams").select("id").eq("team_number", storedTeam).single()
+          if (teamRes.data) {
+            var memberRes = await supabase.from("team_members").select("*").eq("team_id", teamRes.data.id).eq("member_roll_number", roll).single()
+            if (memberRes.data) { setCurrentMember(memberRes.data); setIsLeader(memberRes.data.is_leader || false) }
+          }
+        } catch (e) {}
+      }
+
+      // Fetch ALL teams with their members
       try {
-        var teamRes = await supabase.from("teams").select("id").eq("team_number", storedTeam).single()
-        if (teamRes.data) {
-          var memberRes = await supabase.from("team_members").select("*").eq("team_id", teamRes.data.id).eq("member_roll_number", roll).single()
-          if (memberRes.data) { setCurrentMember(memberRes.data); setIsLeader(memberRes.data.is_leader || false) }
+        var teamsRes = await supabase.from("teams").select("*").order("team_number", { ascending: true })
+        if (teamsRes.data) {
+          // Fetch all members to get counts and rolls
+          var membersRes = await supabase.from("team_members").select("team_id, member_roll_number, is_leader")
+
+          var membersByTeam = {}
+          var leaderByTeam = {}
+          if (membersRes.data) {
+            membersRes.data.forEach(function (m) {
+              if (!membersByTeam[m.team_id]) membersByTeam[m.team_id] = []
+              membersByTeam[m.team_id].push(m.member_roll_number)
+              if (m.is_leader) leaderByTeam[m.team_id] = m.member_roll_number
+            })
+          }
+
+          var mapped = teamsRes.data.map(function (t) {
+            return {
+              number: t.team_number,
+              title: t.project_title || "Untitled Project",
+              description: t.project_description || "",
+              tech: t.technologies || [],
+              tags: generateTags(t.technologies),
+              members: membersByTeam[t.id] || [],
+              leader: leaderByTeam[t.id] || t.leader_roll_number || "",
+              memberCount: t.member_count || (membersByTeam[t.id] ? membersByTeam[t.id].length : 0),
+            }
+          })
+          setAllTeams(mapped)
         }
-      } catch (e) {}
+      } catch (e) { console.error("Failed to load teams:", e) }
+      setTeamsLoading(false)
     }
-    fetchMember()
+
+    loadData()
   }, [])
 
-  var filters = ["All Teams", "EdTech", "AI", "Placement", "Automation", "IoT", "Analytics"]
+  var filters = ["All Teams", "AI", "Automation", "Analytics", "Development", "Web Dev", "Data Engineering", "ML", "Cloud", "Communication"]
 
-  var filteredTeams = TEAMS.filter(function (t) {
-    var matchesFilter = filter === "All Teams" || t.tags.some(function (tag) { return tag.toLowerCase().includes(filter.toLowerCase()) })
-    var matchesSearch = !searchQuery || t.title.toLowerCase().includes(searchQuery.toLowerCase()) || t.name.toLowerCase().includes(searchQuery.toLowerCase()) || t.tech.some(function (te) { return te.toLowerCase().includes(searchQuery.toLowerCase()) })
+  var filteredTeams = allTeams.filter(function (t) {
+    var matchesFilter = filter === "All Teams" || t.tags.some(function (tag) { return tag.toLowerCase().includes(filter.toLowerCase()) }) || t.tech.some(function (te) { return te.toLowerCase().includes(filter.toLowerCase()) })
+    var matchesSearch = !searchQuery || t.title.toLowerCase().includes(searchQuery.toLowerCase()) || t.number.toLowerCase().includes(searchQuery.toLowerCase()) || t.tech.some(function (te) { return te.toLowerCase().includes(searchQuery.toLowerCase()) })
     return matchesFilter && matchesSearch
   })
 
-  var team = filteredTeams[currentIndex] || filteredTeams[0] || TEAMS[0]
+  var team = filteredTeams[currentIndex] || filteredTeams[0] || allTeams[0]
 
   function goToTeam(idx) {
     setDetailAnim(false)
@@ -105,6 +141,30 @@ export default function ExploreTeamsPage() {
     window.addEventListener("keydown", handleKey)
     return function () { window.removeEventListener("keydown", handleKey) }
   })
+
+  if (teamsLoading) {
+    return (
+      <div style={{ display: "flex", minHeight: "100vh", background: "#000" }}>
+        <DashboardSidebar teamNumber={teamNumber} currentMember={currentMember} loggedInRoll={loggedInRoll} isLeader={isLeader} />
+        <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ textAlign: "center" }}>
+            <div style={{ width: 48, height: 48, borderRadius: 12, background: "linear-gradient(135deg,#ff3020,#ff6040)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'DM Sans',sans-serif", fontWeight: 900, fontSize: 18, color: "#fff", margin: "0 auto 12px", animation: "pulse 1s ease-in-out infinite" }}>PS</div>
+            <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 13, letterSpacing: 3, color: "rgba(255,255,255,0.3)", textTransform: "uppercase" }}>Loading Teams</div>
+          </div>
+        </div>
+        <style>{`@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}`}</style>
+      </div>
+    )
+  }
+
+  if (!team) {
+    return (
+      <div style={{ display: "flex", minHeight: "100vh", background: "#000" }}>
+        <DashboardSidebar teamNumber={teamNumber} currentMember={currentMember} loggedInRoll={loggedInRoll} isLeader={isLeader} />
+        <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'DM Sans',sans-serif", fontSize: 20, color: "rgba(255,255,255,0.3)" }}>No teams found</div>
+      </div>
+    )
+  }
 
   return (
     <div style={{ display: "flex", minHeight: "100vh", background: "#000", color: "#fff", fontFamily: "'DM Sans', sans-serif", overflow: "hidden" }}>
@@ -139,12 +199,12 @@ export default function ExploreTeamsPage() {
         .ex-detail.hide { opacity:0; transform:translateX(-20px); }
         .ex-detail.show { opacity:1; transform:translateX(0); }
 
-        .ex-d-num { font-family:'Genos',sans-serif; font-size:15px; font-weight:600; letter-spacing:3px; text-transform:uppercase; margin-bottom:4px; position:relative; z-index:2; }
+        .ex-d-num { font-family:'DM Sans',sans-serif; font-size:15px; font-weight:600; letter-spacing:3px; text-transform:uppercase; margin-bottom:4px; position:relative; z-index:2; }
         .ex-d-num span { background:linear-gradient(135deg,#ff3020,#ff8040); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
 
-        .ex-d-title { font-family:'Genos',sans-serif; font-weight:900; font-size:48px; line-height:1; color:#fff; margin-bottom:8px; text-transform:uppercase; letter-spacing:2px; position:relative; z-index:2; max-width:55%; word-wrap:break-word; background:linear-gradient(180deg,#fff 40%,rgba(255,255,255,0.5) 75%,rgba(255,255,255,0.15) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+        .ex-d-title { font-family:'DM Sans',sans-serif; font-weight:900; font-size:48px; line-height:1; color:#fff; margin-bottom:8px; text-transform:uppercase; letter-spacing:2px; position:relative; z-index:2; max-width:55%; word-wrap:break-word; background:linear-gradient(180deg,#fff 40%,rgba(255,255,255,0.5) 75%,rgba(255,255,255,0.15) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
 
-        .ex-d-team { font-family:'Genos',sans-serif; font-size:13px; font-weight:600; letter-spacing:2px; color:#666; text-transform:uppercase; margin-bottom:12px; position:relative; z-index:2; }
+        .ex-d-team { font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600; letter-spacing:2px; color:#666; text-transform:uppercase; margin-bottom:12px; position:relative; z-index:2; }
 
         .ex-d-meta { display:flex; align-items:center; gap:12px; margin-bottom:12px; flex-wrap:wrap; position:relative; z-index:2; }
         .ex-d-members { display:flex; align-items:center; gap:6px; font-size:13px; color:#777; }
@@ -188,7 +248,7 @@ export default function ExploreTeamsPage() {
         .ex-card.on::after { content:''; position:absolute; top:0;left:0;bottom:0; width:3px; background:linear-gradient(180deg,#ff3020,#ff8040); }
 
         .ex-c-top { display:flex; align-items:center; justify-content:space-between; width:100%; }
-        .ex-c-num { font-family:'Genos',sans-serif; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; background:linear-gradient(135deg,#ff3020,#ff8040); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; line-height:1; }
+        .ex-c-num { font-family:'DM Sans',sans-serif; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; background:linear-gradient(135deg,#ff3020,#ff8040); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; line-height:1; }
         .ex-c-members { display:flex; align-items:center; gap:3px; line-height:1; }
 
         /* ===== CAROUSEL NAV ===== */
@@ -241,7 +301,7 @@ export default function ExploreTeamsPage() {
           <div className={"ex-detail " + (detailAnim ? "show" : "hide")}>
             <div className="ex-d-num"><span>{team.number}</span></div>
             <h1 className="ex-d-title">{team.title}</h1>
-            <div className="ex-d-team">{team.name}</div>
+            <div className="ex-d-team">{team.number}</div>
 
             <div className="ex-d-meta">
               <div className="ex-d-members">{"\ud83d\udc65"} <span className="ct">{team.members.length}</span> Members</div>

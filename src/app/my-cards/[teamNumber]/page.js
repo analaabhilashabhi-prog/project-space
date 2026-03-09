@@ -93,7 +93,7 @@ export default function MyCardsPage() {
         <DashboardSidebar teamNumber={teamNumber} currentMember={currentMember} loggedInRoll={loggedInRoll} isLeader={isLeader} />
         <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 16, padding: 20, textAlign: "center", position: "relative", zIndex: 1 }}>
           <div style={{ fontSize: 40 }}>{"\ud83d\uded2"}</div>
-          <div style={{ fontSize: 22, fontFamily: "'Genos', sans-serif", color: "#fff", letterSpacing: 2 }}>No Snack Cards Yet</div>
+          <div style={{ fontSize: 22, fontFamily: "'DM Sans', sans-serif", color: "#fff", letterSpacing: 2 }}>No Snack Cards Yet</div>
           <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", maxWidth: 350 }}>Your team leader hasn&apos;t generated snack cards yet. Check back later.</div>
           <button onClick={function () { router.push("/member-login") }} style={{
             padding: "10px 24px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)",
@@ -112,19 +112,19 @@ export default function MyCardsPage() {
       <style jsx>{`
         .mc-main { flex:1; display:flex; flex-direction:column; height:100vh; overflow-y:auto; position:relative; z-index:1; }
         .mc-topbar { display:flex; align-items:center; justify-content:space-between; padding:18px 32px; border-bottom:1px solid rgba(255,255,255,0.05); background:rgba(10,10,10,0.8); backdrop-filter:blur(15px); position:sticky; top:0; z-index:40; }
-        .mc-topbar-title { font-family:'Genos',sans-serif; font-size:28px; font-weight:800; color:#fff; letter-spacing:1px; text-transform:uppercase; }
+        .mc-topbar-title { font-family:'DM Sans',sans-serif; font-size:28px; font-weight:800; color:#fff; letter-spacing:1px; text-transform:uppercase; }
         .mc-content { padding:24px 32px; flex:1; max-width:700px; }
 
         .mc-welcome { padding:16px 20px; border-radius:14px; border:1px solid rgba(255,60,30,0.12); background:rgba(255,60,30,0.03); margin-bottom:20px; }
-        .mc-welcome-name { font-family:'Genos',sans-serif; font-size:18px; font-weight:700; color:#fff; letter-spacing:1px; }
-        .mc-welcome-sub { font-size:11px; color:rgba(255,255,255,0.3); font-family:'Genos',sans-serif; letter-spacing:1px; margin-top:2px; }
+        .mc-welcome-name { font-family:'DM Sans',sans-serif; font-size:18px; font-weight:700; color:#fff; letter-spacing:1px; }
+        .mc-welcome-sub { font-size:11px; color:rgba(255,255,255,0.3); font-family:'DM Sans',sans-serif; letter-spacing:1px; margin-top:2px; }
 
         .mc-toggle { display:flex; gap:3px; padding:3px; border-radius:10px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); margin-bottom:14px; }
-        .mc-toggle-btn { flex:1; padding:8px; border-radius:8px; border:none; font-family:'Genos',sans-serif; font-size:11px; font-weight:600; letter-spacing:1px; text-transform:uppercase; cursor:pointer; transition:all 0.3s; background:transparent; color:rgba(255,255,255,0.3); }
+        .mc-toggle-btn { flex:1; padding:8px; border-radius:8px; border:none; font-family:'DM Sans',sans-serif; font-size:11px; font-weight:600; letter-spacing:1px; text-transform:uppercase; cursor:pointer; transition:all 0.3s; background:transparent; color:rgba(255,255,255,0.3); }
         .mc-toggle-btn.active { background:linear-gradient(135deg,#ff3020,#ff6040); color:#fff; }
 
         .mc-days { display:flex; gap:4px; margin-bottom:16px; overflow-x:auto; padding-bottom:4px; }
-        .mc-day { padding:7px 14px; border-radius:8px; border:none; font-family:'Genos',sans-serif; font-size:11px; font-weight:600; letter-spacing:1px; cursor:pointer; transition:all 0.3s; white-space:nowrap; }
+        .mc-day { padding:7px 14px; border-radius:8px; border:none; font-family:'DM Sans',sans-serif; font-size:11px; font-weight:600; letter-spacing:1px; cursor:pointer; transition:all 0.3s; white-space:nowrap; }
         .mc-day.active { background:linear-gradient(135deg,#ff3020,#ff6040); color:#fff; }
         .mc-day.inactive { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); color:rgba(255,255,255,0.3); }
 
@@ -137,15 +137,15 @@ export default function MyCardsPage() {
         .mc-card.expired::before { background:#555; }
 
         .mc-card-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; }
-        .mc-card-type { padding:2px 8px; border-radius:6px; font-family:'Genos',sans-serif; font-size:9px; font-weight:700; letter-spacing:1px; text-transform:uppercase; margin-bottom:4px; display:inline-block; }
+        .mc-card-type { padding:2px 8px; border-radius:6px; font-family:'DM Sans',sans-serif; font-size:9px; font-weight:700; letter-spacing:1px; text-transform:uppercase; margin-bottom:4px; display:inline-block; }
         .mc-type-snack { background:rgba(255,60,30,0.1); border:1px solid rgba(255,60,30,0.2); color:#ff6b2b; }
         .mc-type-bev { background:rgba(60,130,255,0.1); border:1px solid rgba(60,130,255,0.2); color:#6bb3ff; }
 
-        .mc-card-session { font-family:'Genos',sans-serif; font-size:12px; font-weight:700; color:#fff; letter-spacing:1px; text-transform:uppercase; }
-        .mc-card-snack { font-size:18px; font-weight:800; color:#ff6b2b; font-family:'Genos',sans-serif; letter-spacing:1px; margin-top:2px; }
-        .mc-card-time { font-size:10px; color:rgba(255,255,255,0.25); font-family:'Genos',sans-serif; letter-spacing:1px; margin-top:2px; }
+        .mc-card-session { font-family:'DM Sans',sans-serif; font-size:12px; font-weight:700; color:#fff; letter-spacing:1px; text-transform:uppercase; }
+        .mc-card-snack { font-size:18px; font-weight:800; color:#ff6b2b; font-family:'DM Sans',sans-serif; letter-spacing:1px; margin-top:2px; }
+        .mc-card-time { font-size:10px; color:rgba(255,255,255,0.25); font-family:'DM Sans',sans-serif; letter-spacing:1px; margin-top:2px; }
 
-        .mc-status { padding:3px 10px; border-radius:50px; font-family:'Genos',sans-serif; font-size:9px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; }
+        .mc-status { padding:3px 10px; border-radius:50px; font-family:'DM Sans',sans-serif; font-size:9px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; }
         .mc-status.active { background:rgba(68,255,102,0.1); border:1px solid rgba(68,255,102,0.2); color:#44ff66; }
         .mc-status.used { background:rgba(255,85,85,0.1); border:1px solid rgba(255,85,85,0.2); color:#ff5555; }
         .mc-status.expired { background:rgba(136,136,136,0.1); border:1px solid rgba(136,136,136,0.2); color:#888; }
@@ -159,8 +159,8 @@ export default function MyCardsPage() {
         .mc-summary { padding:18px; border-radius:14px; border:1px solid rgba(255,60,30,0.08); background:rgba(255,255,255,0.015); margin-bottom:8px; }
         .mc-sum-row { display:flex; align-items:center; justify-content:space-between; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.03); }
         .mc-sum-row:last-child { border-bottom:none; }
-        .mc-sum-name { font-family:'Genos',sans-serif; font-size:13px; font-weight:600; color:#fff; }
-        .mc-sum-nums { display:flex; gap:10px; font-family:'Genos',sans-serif; font-size:11px; letter-spacing:0.5px; }
+        .mc-sum-name { font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600; color:#fff; }
+        .mc-sum-nums { display:flex; gap:10px; font-family:'DM Sans',sans-serif; font-size:11px; letter-spacing:0.5px; }
 
         .mc-empty { text-align:center; padding:30px; color:rgba(255,255,255,0.25); font-size:13px; }
 

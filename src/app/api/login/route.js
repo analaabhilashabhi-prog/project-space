@@ -16,6 +16,7 @@ export async function POST(request) {
 
     const roll = rollNumber.toUpperCase()
 
+    // Check if account exists in user_passwords
     const { data: userData, error: userError } = await supabase
       .from("user_passwords")
       .select("*")
@@ -24,24 +25,27 @@ export async function POST(request) {
 
     if (userError || !userData) {
       return Response.json({
-        error: "No account found. Please set your password first.",
+        error: "No account found. Please create an account first.",
         status: "no_account",
       }, { status: 400 })
     }
 
+    // Verify password
     const isMatch = await bcrypt.compare(password, userData.password_hash)
     if (!isMatch) {
       return Response.json({ error: "Incorrect password. Please try again." }, { status: 400 })
     }
 
+    // Check team membership
     const { data: memberData } = await supabase
       .from("team_members")
-      .select("team_id, is_leader, member_name, teams(team_number, project_title)")
+      .select("team_id, is_leader, member_name, teams(team_number, project_title, leader_roll_number)")
       .eq("member_roll_number", roll)
       .single()
 
     if (memberData && memberData.teams) {
       if (memberData.is_leader) {
+        // Team Lead - full access
         return Response.json({
           success: true,
           status: "team_lead",
@@ -49,16 +53,19 @@ export async function POST(request) {
           message: "Welcome back, Team Lead!",
         })
       } else {
+        // Team Member - also allowed to login and view team dashboard
         return Response.json({
           success: true,
           status: "team_member",
           teamNumber: memberData.teams.team_number,
           memberName: memberData.member_name,
+          projectTitle: memberData.teams.project_title,
           message: "Welcome back, " + memberData.member_name + "!",
         })
       }
     }
 
+    // No team found - check if registrations are open
     const { data: settings } = await supabase
       .from("settings")
       .select("value")
@@ -67,11 +74,15 @@ export async function POST(request) {
 
     const registrationOpen = settings && settings.value === "true"
 
+    // Return new_user status with registration info
     return Response.json({
       success: true,
       status: "new_user",
       registrationOpen: registrationOpen,
-      message: "Login successful!",
+      rollNumber: roll,
+      message: registrationOpen 
+        ? "Login successful! You can now register your team." 
+        : "Login successful! Team registrations are currently closed.",
     })
   } catch (error) {
     console.error("Login Error:", error)

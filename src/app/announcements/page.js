@@ -92,11 +92,11 @@ export default function AnnouncementsPage() {
       <style jsx>{`
         .ann-main { flex:1; display:flex; flex-direction:column; height:100vh; overflow-y:auto; position:relative; z-index:1; }
         .ann-topbar { display:flex; align-items:center; justify-content:space-between; padding:18px 32px; border-bottom:1px solid rgba(255,255,255,0.05); background:rgba(10,10,10,0.8); backdrop-filter:blur(15px); position:sticky; top:0; z-index:40; }
-        .ann-topbar-title { font-family:'Genos',sans-serif; font-size:28px; font-weight:800; color:#fff; letter-spacing:1px; text-transform:uppercase; }
+        .ann-topbar-title { font-family:'DM Sans',sans-serif; font-size:28px; font-weight:800; color:#fff; letter-spacing:1px; text-transform:uppercase; }
 
         .ann-container { max-width:780px; padding:28px 32px; }
 
-        .ann-title { font-family:'Genos',sans-serif; font-size:32px; font-weight:900; color:#fff; text-transform:uppercase; letter-spacing:2px; margin-bottom:6px; opacity:0; animation:psFadeIn 0.6s ease 0.15s forwards; }
+        .ann-title { font-family:'DM Sans',sans-serif; font-size:32px; font-weight:900; color:#fff; text-transform:uppercase; letter-spacing:2px; margin-bottom:6px; opacity:0; animation:psFadeIn 0.6s ease 0.15s forwards; }
         .ann-subtitle { font-size:13px; color:rgba(255,255,255,0.3); margin-bottom:28px; opacity:0; animation:psFadeIn 0.5s ease 0.25s forwards; }
 
         .ann-list { display:flex; flex-direction:column; gap:16px; }
@@ -105,10 +105,10 @@ export default function AnnouncementsPage() {
         .ann-card:hover { border-color:rgba(255,60,30,0.25); }
 
         .ann-card-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
-        .ann-badge { padding:4px 12px; border-radius:20px; font-family:'Genos',sans-serif; font-size:11px; font-weight:600; letter-spacing:1px; text-transform:uppercase; display:inline-flex; align-items:center; gap:5px; }
-        .ann-date { font-size:11px; color:rgba(255,255,255,0.25); font-family:'Genos',sans-serif; letter-spacing:1px; }
+        .ann-badge { padding:4px 12px; border-radius:20px; font-family:'DM Sans',sans-serif; font-size:11px; font-weight:600; letter-spacing:1px; text-transform:uppercase; display:inline-flex; align-items:center; gap:5px; }
+        .ann-date { font-size:11px; color:rgba(255,255,255,0.25); font-family:'DM Sans',sans-serif; letter-spacing:1px; }
 
-        .ann-card-title { font-family:'Genos',sans-serif; font-size:20px; font-weight:700; color:#fff; letter-spacing:1px; margin-bottom:8px; }
+        .ann-card-title { font-family:'DM Sans',sans-serif; font-size:20px; font-weight:700; color:#fff; letter-spacing:1px; margin-bottom:8px; }
         .ann-card-msg { font-size:13px; color:rgba(255,255,255,0.45); line-height:1.7; white-space:pre-wrap; }
 
         .ann-card-img { margin-top:16px; border-radius:14px; overflow:hidden; border:1px solid rgba(255,60,30,0.1); }
@@ -116,7 +116,7 @@ export default function AnnouncementsPage() {
 
         .ann-empty { text-align:center; padding:80px 20px; opacity:0; animation:psFadeIn 0.6s ease 0.3s forwards; }
         .ann-empty-icon { font-size:48px; margin-bottom:16px; display:block; }
-        .ann-empty-title { font-family:'Genos',sans-serif; font-size:22px; font-weight:700; color:#fff; letter-spacing:1px; margin-bottom:8px; }
+        .ann-empty-title { font-family:'DM Sans',sans-serif; font-size:22px; font-weight:700; color:#fff; letter-spacing:1px; margin-bottom:8px; }
         .ann-empty-desc { font-size:13px; color:rgba(255,255,255,0.3); }
 
         @keyframes psFadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
