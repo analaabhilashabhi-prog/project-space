@@ -1,5 +1,4 @@
 import { createClient } from "@supabase/supabase-js"
-import bcrypt from "bcryptjs"
 
 export async function POST(request) {
   try {
@@ -17,11 +16,11 @@ export async function POST(request) {
         return Response.json({ error: "Meal code and PIN are required" }, { status: 400 })
       }
 
-      // Find the meal code
+      // Find the meal code in food_selections table
       const { data: codeData, error: codeErr } = await supabase
-        .from("food_codes")
+        .from("food_selections")
         .select("*")
-        .eq("meal_code", meal_code.trim())
+        .eq("coupon_code", meal_code.trim())
         .single()
 
       if (codeErr || !codeData) {
@@ -31,26 +30,27 @@ export async function POST(request) {
         })
       }
 
-      // Verify PIN
-      const pinMatch = await bcrypt.compare(pin, codeData.secret_pin)
-      if (!pinMatch) {
+      // Verify PIN (plain text comparison)
+      if (codeData.secret_pin !== pin) {
         return Response.json({
           result: "invalid",
           message: "Code + PIN combination doesn't match.",
         })
       }
 
-      // Check if already consumed
-      if (codeData.is_consumed) {
+      // Check if already delivered/consumed
+      if (codeData.delivered) {
         return Response.json({
           result: "already_consumed",
-          student_name: codeData.student_name,
-          roll_number: codeData.roll_number,
+          student_name: codeData.member_name,
+          roll_number: codeData.member_roll_number,
           team_number: codeData.team_number,
-          meal_slot: codeData.meal_slot,
-          food_item: codeData.food_item,
+          meal_slot: "snack", // We have both snack and beverage in one row
+          food_item: codeData.snack + " + " + codeData.beverage,
+          snack: codeData.snack,
+          beverage: codeData.beverage,
           day_number: codeData.day_number,
-          consumed_at: codeData.consumed_at,
+          consumed_at: codeData.delivered_at,
         })
       }
 
@@ -58,16 +58,18 @@ export async function POST(request) {
       return Response.json({
         result: "valid",
         code_id: codeData.id,
-        student_name: codeData.student_name,
-        roll_number: codeData.roll_number,
+        student_name: codeData.member_name,
+        roll_number: codeData.member_roll_number,
         team_number: codeData.team_number,
-        meal_slot: codeData.meal_slot,
-        food_item: codeData.food_item,
+        meal_slot: "combo",
+        food_item: codeData.snack + " + " + codeData.beverage,
+        snack: codeData.snack,
+        beverage: codeData.beverage,
         day_number: codeData.day_number,
       })
     }
 
-    // ========== ACTION: CONSUME (mark as consumed) ==========
+    // ========== ACTION: CONSUME (mark as delivered) ==========
     if (action === "consume") {
       const { code_id } = body
       if (!code_id) {
@@ -76,7 +78,7 @@ export async function POST(request) {
 
       // Get the code details
       const { data: codeData } = await supabase
-        .from("food_codes")
+        .from("food_selections")
         .select("*")
         .eq("id", code_id)
         .single()
@@ -85,37 +87,29 @@ export async function POST(request) {
         return Response.json({ error: "Code not found" }, { status: 400 })
       }
 
-      if (codeData.is_consumed) {
-        return Response.json({ error: "Already consumed" }, { status: 400 })
+      if (codeData.delivered) {
+        return Response.json({ error: "Already delivered" }, { status: 400 })
       }
 
       const now = new Date().toISOString()
 
-      // Mark as consumed in food_codes
+      // Mark as delivered in food_selections
       const { error: updateErr } = await supabase
-        .from("food_codes")
-        .update({ is_consumed: true, consumed_at: now })
+        .from("food_selections")
+        .update({ 
+          delivered: true, 
+          delivered_at: now,
+          delivered_by: "admin"
+        })
         .eq("id", code_id)
 
       if (updateErr) {
         return Response.json({ error: "Failed to update: " + updateErr.message }, { status: 500 })
       }
 
-      // Insert into food_consumed log
-      await supabase.from("food_consumed").insert({
-        roll_number: codeData.roll_number,
-        day_number: codeData.day_number,
-        meal_slot: codeData.meal_slot,
-        meal_code: codeData.meal_code,
-        food_item: codeData.food_item,
-        student_name: codeData.student_name,
-        team_number: codeData.team_number,
-        consumed_at: now,
-      })
-
       return Response.json({
         success: true,
-        message: "Marked as consumed",
+        message: "Marked as delivered",
         consumed_at: now,
       })
     }
@@ -124,18 +118,20 @@ export async function POST(request) {
     if (action === "stats") {
       const { day_number } = body
 
-      // Total codes for this day
+      // Total confirmed codes for this day
       const { count: totalCodes } = await supabase
-        .from("food_codes")
+        .from("food_selections")
         .select("id", { count: "exact", head: true })
         .eq("day_number", day_number || 1)
+        .eq("confirmed", true)
 
-      // Consumed codes for this day
+      // Delivered codes for this day
       const { count: consumedCodes } = await supabase
-        .from("food_codes")
+        .from("food_selections")
         .select("id", { count: "exact", head: true })
         .eq("day_number", day_number || 1)
-        .eq("is_consumed", true)
+        .eq("confirmed", true)
+        .eq("delivered", true)
 
       return Response.json({
         total: totalCodes || 0,

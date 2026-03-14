@@ -311,7 +311,7 @@ export default function AdminVerifyPage() {
               value={mealCode}
               onChange={function (e) { setMealCode(e.target.value.replace(/[^0-9]/g, "")) }}
               onKeyDown={handleCodeKeyDown}
-              placeholder="0000"
+              placeholder="00000"
               className="av-input"
               autoFocus
             />
@@ -325,11 +325,11 @@ export default function AdminVerifyPage() {
               ref={pinRef}
               type="password"
               inputMode="numeric"
-              maxLength={4}
+              maxLength={5}
               value={pin}
               onChange={function (e) { setPin(e.target.value.replace(/[^0-9]/g, "")) }}
               onKeyDown={handlePinKeyDown}
-              placeholder="----"
+              placeholder="-----"
               className="av-input"
             />
           </div>

@@ -10,28 +10,38 @@ var FD = {
 }
 
 var FALLBACK = {
-  sandwich:{description:"A wholesome veggie sandwich made with fresh lettuce, sliced tomatoes, cucumber, cheese, and tangy mint chutney layered between lightly toasted whole wheat bread.",calories:245,protein:"8g",carbs:"32g",fat:"10g",ingredients:["Whole Wheat Bread","Lettuce","Tomato","Cucumber","Cheese","Mint Chutney","Butter"],allergens:["Gluten","Dairy"],funFact:"The sandwich was named after John Montagu, the 4th Earl of Sandwich, who wanted to eat without leaving his card table!"},
+  sandwich:{description:"A wholesome veggie sandwich made with fresh lettuce, sliced tomatoes, cucumber, cheese, and tangy mint chutney layered between lightly toasted whole wheat bread.",calories:245,protein:"8g",carbs:"32g",fat:"10g",ingredients:["Whole Wheat Bread","Lettuce","Tomato","Cucumber","Cheese","Mint Chutney","Butter"],allergens:["Gluten","Dairy"],funFact:"The sandwich was named after John Montagu, the 4th Earl of Sandwich!"},
   samosa:{description:"A golden, crispy deep-fried pastry stuffed with a spiced filling of potatoes, green peas, cumin, and coriander. One of India's most beloved street foods.",calories:308,protein:"5g",carbs:"28g",fat:"18g",ingredients:["Refined Flour","Potato","Green Peas","Cumin Seeds","Coriander","Green Chili","Oil"],allergens:["Gluten"],funFact:"Samosas originated in the Middle East and were brought to India in the 13th century!"},
-  puff:{description:"Flaky, buttery puff pastry layers encasing a savory filling of spiced mixed vegetables and paneer.",calories:220,protein:"4g",carbs:"24g",fat:"12g",ingredients:["Puff Pastry","Mixed Vegetables","Paneer","Pepper","Salt","Butter"],allergens:["Gluten","Dairy"],funFact:"Puff pastry requires over 700 layers of dough and butter to achieve its signature flaky texture!"},
-  cake:{description:"A soft, moist vanilla sponge cake topped with silky whipped cream frosting and a generous drizzle of rich chocolate.",calories:320,protein:"4g",carbs:"45g",fat:"14g",ingredients:["Flour","Sugar","Eggs","Vanilla","Butter","Cream","Cocoa"],allergens:["Gluten","Dairy","Eggs"],funFact:"The word cake comes from the Old Norse word kaka and cakes have been baked since ancient Egypt!"},
-  biscuits:{description:"An assorted pack of cream-filled biscuits with a satisfying crunch on the outside and a sweet, smooth cream center.",calories:180,protein:"3g",carbs:"26g",fat:"7g",ingredients:["Wheat Flour","Sugar","Oil","Cream","Salt","Soda"],allergens:["Gluten"],funFact:"India is the third largest biscuit manufacturer in the world, producing over 3 million tonnes annually!"},
-  chips:{description:"Thinly sliced potato chips seasoned with a bold masala spice blend featuring turmeric, chili powder, and a tangy kick.",calories:160,protein:"2g",carbs:"15g",fat:"10g",ingredients:["Potato","Sunflower Oil","Masala Mix","Salt","Turmeric","Chili"],allergens:["None"],funFact:"Potato chips were invented by accident in 1853 when a chef sliced potatoes too thin!"},
-  vadapav:{description:"Mumbai's iconic street food \u2014 a spiced potato fritter tucked inside a soft pav bun with fiery garlic chutney.",calories:290,protein:"6g",carbs:"35g",fat:"13g",ingredients:["Pav","Potato Vada","Garlic Chutney","Chili","Coconut Chutney"],allergens:["Gluten"],funFact:"Vada Pav was invented in 1966 outside Dadar station in Mumbai and is called the Indian burger!"},
-  breadpakora:{description:"Soft bread slices stuffed with spiced potato, dipped in chickpea flour batter, and deep fried to golden perfection.",calories:275,protein:"6g",carbs:"30g",fat:"14g",ingredients:["Bread","Potato","Besan","Chili","Ginger","Coriander","Oil"],allergens:["Gluten"],funFact:"Bread Pakora becomes the most popular street food during the rainy season in North India!"},
-  tea:{description:"Piping hot Indian masala chai brewed with fresh ginger, crushed cardamom, simmered with milk and sweetened to perfection.",calories:80,protein:"3g",carbs:"12g",fat:"2g",ingredients:["Tea Leaves","Milk","Sugar","Ginger","Cardamom"],allergens:["Dairy"],funFact:"India is the second largest tea producer in the world, and masala chai dates back over 5,000 years!"},
-  coffee:{description:"Rich, aromatic South Indian filter coffee brewed from premium dark-roasted beans, blended with hot milk.",calories:95,protein:"3g",carbs:"10g",fat:"3g",ingredients:["Coffee Beans","Milk","Sugar","Water"],allergens:["Dairy"],funFact:"Legend says coffee was discovered by an Ethiopian goat herder who noticed his goats dancing after eating coffee berries!"},
-  juice:{description:"Freshly squeezed mixed fruit juice blending seasonal oranges, apples, and pineapple with no added sugar.",calories:120,protein:"1g",carbs:"28g",fat:"0g",ingredients:["Orange","Apple","Pineapple","Seasonal Fruits","Ice"],allergens:["None"],funFact:"Drinking fresh fruit juice within 15 minutes of preparation retains up to 90% of its nutritional value!"},
-  milk:{description:"Chilled flavored milk available in rich chocolate and sweet strawberry variants. Creamy and calcium-packed.",calories:150,protein:"8g",carbs:"18g",fat:"5g",ingredients:["Full Cream Milk","Cocoa/Strawberry","Sugar"],allergens:["Dairy"],funFact:"Humans are the only species that drink milk from another species \u2014 for over 10,000 years!"},
-  buttermilk:{description:"Traditional Indian spiced chaas made from fresh churned curd, seasoned with roasted cumin and rock salt.",calories:45,protein:"2g",carbs:"5g",fat:"1g",ingredients:["Curd","Water","Cumin","Rock Salt","Coriander","Curry Leaves"],allergens:["Dairy"],funFact:"Buttermilk is a natural probiotic that aids digestion and was historically the liquid left after churning butter!"},
-  water:{description:"Pure, triple-filtered packaged drinking water. The most essential beverage to stay hydrated.",calories:0,protein:"0g",carbs:"0g",fat:"0g",ingredients:["Purified Water"],allergens:["None"],funFact:"The human brain is 75% water, so staying hydrated literally helps you code better!"},
-  lemonade:{description:"Freshly squeezed lime juice with mint leaves, a pinch of black salt, and just the right amount of sweetness.",calories:65,protein:"0g",carbs:"16g",fat:"0g",ingredients:["Lime","Mint","Sugar","Black Salt","Water","Ice"],allergens:["None"],funFact:"Lemonade has been around since ancient Egypt where they called it qatarmizat!"},
-  coldcoffee:{description:"Iced blended coffee made with espresso, vanilla ice cream, cold milk, and topped with chocolate drizzle.",calories:210,protein:"5g",carbs:"28g",fat:"8g",ingredients:["Coffee","Ice Cream","Milk","Chocolate","Ice","Sugar"],allergens:["Dairy"],funFact:"Cold coffee became a global trend in the 1990s but has been enjoyed in India since the 1960s!"}
+  puff:{description:"Flaky, buttery puff pastry layers encasing a savory filling of spiced mixed vegetables and paneer.",calories:220,protein:"4g",carbs:"24g",fat:"12g",ingredients:["Puff Pastry","Mixed Vegetables","Paneer","Pepper","Salt","Butter"],allergens:["Gluten","Dairy"],funFact:"Puff pastry requires over 700 layers of dough and butter!"},
+  cake:{description:"A soft, moist vanilla sponge cake topped with silky whipped cream frosting and a generous drizzle of rich chocolate.",calories:320,protein:"4g",carbs:"45g",fat:"14g",ingredients:["Flour","Sugar","Eggs","Vanilla","Butter","Cream","Cocoa"],allergens:["Gluten","Dairy","Eggs"],funFact:"The word cake comes from the Old Norse word kaka!"},
+  biscuits:{description:"An assorted pack of cream-filled biscuits with a satisfying crunch on the outside and a sweet, smooth cream center.",calories:180,protein:"3g",carbs:"26g",fat:"7g",ingredients:["Wheat Flour","Sugar","Oil","Cream","Salt","Soda"],allergens:["Gluten"],funFact:"India is the third largest biscuit manufacturer in the world!"},
+  chips:{description:"Thinly sliced potato chips seasoned with a bold masala spice blend featuring turmeric, chili powder, and a tangy kick.",calories:160,protein:"2g",carbs:"15g",fat:"10g",ingredients:["Potato","Sunflower Oil","Masala Mix","Salt","Turmeric","Chili"],allergens:["None"],funFact:"Potato chips were invented by accident in 1853!"},
+  vadapav:{description:"Mumbai's iconic street food — a spiced potato fritter tucked inside a soft pav bun with fiery garlic chutney.",calories:290,protein:"6g",carbs:"35g",fat:"13g",ingredients:["Pav","Potato Vada","Garlic Chutney","Chili","Coconut Chutney"],allergens:["Gluten"],funFact:"Vada Pav was invented in 1966 outside Dadar station in Mumbai!"},
+  breadpakora:{description:"Soft bread slices stuffed with spiced potato, dipped in chickpea flour batter, and deep fried to golden perfection.",calories:275,protein:"6g",carbs:"30g",fat:"14g",ingredients:["Bread","Potato","Besan","Chili","Ginger","Coriander","Oil"],allergens:["Gluten"],funFact:"Bread Pakora is most popular during the rainy season in North India!"},
+  tea:{description:"Piping hot Indian masala chai brewed with fresh ginger, crushed cardamom, simmered with milk and sweetened to perfection.",calories:80,protein:"3g",carbs:"12g",fat:"2g",ingredients:["Tea Leaves","Milk","Sugar","Ginger","Cardamom"],allergens:["Dairy"],funFact:"Masala chai dates back over 5,000 years!"},
+  coffee:{description:"Rich, aromatic South Indian filter coffee brewed from premium dark-roasted beans, blended with hot milk.",calories:95,protein:"3g",carbs:"10g",fat:"3g",ingredients:["Coffee Beans","Milk","Sugar","Water"],allergens:["Dairy"],funFact:"Coffee was discovered by an Ethiopian goat herder!"},
+  juice:{description:"Freshly squeezed mixed fruit juice blending seasonal oranges, apples, and pineapple with no added sugar.",calories:120,protein:"1g",carbs:"28g",fat:"0g",ingredients:["Orange","Apple","Pineapple","Seasonal Fruits","Ice"],allergens:["None"],funFact:"Fresh juice retains 90% nutrition if consumed within 15 minutes!"},
+  milk:{description:"Chilled flavored milk available in rich chocolate and sweet strawberry variants. Creamy and calcium-packed.",calories:150,protein:"8g",carbs:"18g",fat:"5g",ingredients:["Full Cream Milk","Cocoa/Strawberry","Sugar"],allergens:["Dairy"],funFact:"Humans have been drinking milk for over 10,000 years!"},
+  buttermilk:{description:"Traditional Indian spiced chaas made from fresh churned curd, seasoned with roasted cumin and rock salt.",calories:45,protein:"2g",carbs:"5g",fat:"1g",ingredients:["Curd","Water","Cumin","Rock Salt","Coriander","Curry Leaves"],allergens:["Dairy"],funFact:"Buttermilk is a natural probiotic that aids digestion!"},
+  water:{description:"Pure, triple-filtered packaged drinking water. The most essential beverage to stay hydrated.",calories:0,protein:"0g",carbs:"0g",fat:"0g",ingredients:["Purified Water"],allergens:["None"],funFact:"The human brain is 75% water!"},
+  lemonade:{description:"Freshly squeezed lime juice with mint leaves, a pinch of black salt, and just the right amount of sweetness.",calories:65,protein:"0g",carbs:"16g",fat:"0g",ingredients:["Lime","Mint","Sugar","Black Salt","Water","Ice"],allergens:["None"],funFact:"Lemonade has been around since ancient Egypt!"},
+  coldcoffee:{description:"Iced blended coffee made with espresso, vanilla ice cream, cold milk, and topped with chocolate drizzle.",calories:210,protein:"5g",carbs:"28g",fat:"8g",ingredients:["Coffee","Ice Cream","Milk","Chocolate","Ice","Sugar"],allergens:["Dairy"],funFact:"Cold coffee has been enjoyed in India since the 1960s!"}
 }
 
 var COMBOS = {"Sandwich+Coffee":"The Classic","Samosa+Tea":"The OG Desi","Puff+Coffee":"The Cozy","Biscuits+Tea":"The Desi","Chips+Lemonade":"The Chill","Vada Pav+Buttermilk":"The Mumbai","Cake+Cold Coffee":"The Treat","Samosa+Juice":"The Street","Bread Pakora+Tea":"The Rainy Day","Sandwich+Juice":"The Healthy","Chips+Cold Coffee":"The Binge","Cake+Milk":"The Sweet Tooth","Samosa+Coffee":"The Hustler"}
-var POPULAR = ["sandwich","samosa","chips","coffee","juice"]
 var SNACK_IDS = ["sandwich","samosa","puff","cake","biscuits","chips","vadapav","breadpakora"]
 var BEV_IDS = ["tea","coffee","juice","milk","buttermilk","water","lemonade","coldcoffee"]
+var EVENT_DATES = ["May 6","May 7","May 8","May 9","May 10","May 11","May 12"]
+var EVENT_DAYS = ["Wed","Thu","Fri","Sat","Sun","Mon","Tue"]
+
+// Generate 5-digit numeric meal code
+function generateMealCode() {
+  var code = ""
+  for (var i = 0; i < 5; i++) {
+    code += Math.floor(Math.random() * 10).toString()
+  }
+  return code
+}
 
 export default function FoodSelectionPage() {
   var params = useParams()
@@ -49,16 +59,17 @@ export default function FoodSelectionPage() {
   var [cat, setCat] = useState("snacks")
   var [dayData, setDayData] = useState([{},{},{},{},{},{},{}])
   var [curView, setCurView] = useState(null)
-  var [aiData, setAiData] = useState({})
-  var [aiLoading, setAiLoading] = useState(false)
   var [saving, setSaving] = useState(false)
   var [saved, setSaved] = useState(false)
-  var [warning, setWarning] = useState(null)
-  var [confetti, setConfetti] = useState(false)
-  var [focusIdx, setFocusIdx] = useState(-1)
   var [locked, setLocked] = useState(false)
-  var [showConfirmOrder, setShowConfirmOrder] = useState(false)
-  var gridRef = useRef(null)
+  var [showCart, setShowCart] = useState(false)
+  var [showOtpModal, setShowOtpModal] = useState(false)
+  var [secretPin, setSecretPin] = useState("")
+  var [confirmPin, setConfirmPin] = useState("")
+  var [pinError, setPinError] = useState("")
+  var [coupons, setCoupons] = useState([])
+  var [showCoupons, setShowCoupons] = useState(false)
+  var [deliveredDays, setDeliveredDays] = useState([])
 
   // Load data
   useEffect(function () {
@@ -79,14 +90,14 @@ export default function FoodSelectionPage() {
       var me = (memRes.data || []).find(function (m) { return m.member_roll_number === roll })
       if (me) { setCurrentMember(me); setIsLeader(me.is_leader || false); setSelectedMember(me) }
 
-      // Load existing food selections for this member
       if (me) {
         var foodRes = await supabase.from("food_selections").select("*").eq("member_roll_number", me.member_roll_number)
         if (foodRes.data && foodRes.data.length > 0) {
           var loaded = [{},{},{},{},{},{},{}]
-          // Build a reverse lookup: name → key (e.g. "Sandwich" → "sandwich")
           var nameToKey = {}
           Object.keys(FD).forEach(function (k) { nameToKey[FD[k].n.toLowerCase()] = k; nameToKey[k] = k })
+          var loadedCoupons = []
+          var delivered = []
           foodRes.data.forEach(function (f) {
             var idx = f.day_number - 1
             if (idx >= 0 && idx < 7) {
@@ -98,19 +109,25 @@ export default function FoodSelectionPage() {
                 var snackKey = nameToKey[f.snack.toLowerCase()] || nameToKey[f.snack] || f.snack
                 loaded[idx].snack = snackKey
               }
+              if (f.coupon_code) {
+                loadedCoupons.push({ day: idx + 1, code: f.coupon_code, snack: f.snack, beverage: f.beverage })
+              }
+              if (f.delivered) {
+                delivered.push(idx + 1)
+              }
             }
           })
           setDayData(loaded)
+          if (loadedCoupons.length > 0) setCoupons(loadedCoupons)
+          if (delivered.length > 0) setDeliveredDays(delivered)
 
-          // Check if already locked
           var lockKey = "ps_food_locked_" + me.member_roll_number
           var isLocked = localStorage.getItem(lockKey) === "true"
-          // Also check if any row has confirmed=true
           if (!isLocked && foodRes.data) {
             var anyConfirmed = foodRes.data.some(function (f) { return f.confirmed === true })
             if (anyConfirmed) { isLocked = true; localStorage.setItem(lockKey, "true") }
           }
-          if (isLocked) setLocked(true)
+          if (isLocked) { setLocked(true); setShowCoupons(true) }
         }
       }
       setLoading(false)
@@ -124,23 +141,19 @@ export default function FoodSelectionPage() {
     setSaving(true)
     setSaved(false)
     try {
-      // Delete existing for this day
-      var delRes = await supabase.from("food_selections").delete().eq("member_roll_number", selectedMember.member_roll_number).eq("day_number", dayIdx + 1)
-      if (delRes.error) console.error("Delete error:", delRes.error)
-      // Insert new if we have selections
+      await supabase.from("food_selections").delete().eq("member_roll_number", selectedMember.member_roll_number).eq("day_number", dayIdx + 1)
       if (data.snack || data.bev) {
-        var insRes = await supabase.from("food_selections").insert({
+        await supabase.from("food_selections").insert({
           team_id: team.id,
           team_number: teamNumber,
           member_roll_number: selectedMember.member_roll_number,
           member_name: selectedMember.member_name,
           day_number: dayIdx + 1,
           day_date: "Day " + (dayIdx + 1),
-          snack: data.snack || null,
-          beverage: data.bev || null,
+          snack: data.snack ? FD[data.snack].n : null,
+          beverage: data.bev ? FD[data.bev].n : null,
           confirmed: false
         })
-        if (insRes.error) console.error("Insert error:", insRes.error)
       }
       setSaved(true)
       setTimeout(function () { setSaved(false) }, 2000)
@@ -148,9 +161,9 @@ export default function FoodSelectionPage() {
     setSaving(false)
   }
 
-  // Select food
-  function selectFood(id, type) {
+  function addToDay(id) {
     if (locked) return
+    var type = FD[id].c === "Snack" ? "snack" : "bev"
     var newData = dayData.map(function (d, i) {
       if (i !== curDay) return d
       var nd = Object.assign({}, d)
@@ -161,185 +174,92 @@ export default function FoodSelectionPage() {
     saveDay(curDay, newData[curDay])
   }
 
-  // Deselect
-  function deselectFood(id, type) {
+  function removeFromDay(dayIdx, type) {
     if (locked) return
     var newData = dayData.map(function (d, i) {
-      if (i !== curDay) return d
+      if (i !== dayIdx) return d
       var nd = Object.assign({}, d)
-      if (type === "snack") delete nd.snack; else delete nd.bev
+      delete nd[type]
       return nd
     })
     setDayData(newData)
-    saveDay(curDay, newData[curDay])
+    saveDay(dayIdx, newData[dayIdx])
   }
 
-  // Clear ALL 7 days
-  function clearAll() {
-    if (locked) return
-    var newData = [{},{},{},{},{},{},{}]
-    setDayData(newData)
-    if (selectedMember) {
-      setSaving(true)
-      supabase.from("food_selections").delete().eq("member_roll_number", selectedMember.member_roll_number).then(function () {
-        setSaving(false)
-        setSaved(true)
-        setTimeout(function () { setSaved(false) }, 2000)
-      })
-    }
-    setCurView(null)
-  }
-
-  // Random all
-  async function randomAll() {
-    if (locked) return
-    var newData = []
-    for (var i = 0; i < 7; i++) {
-      newData.push({ snack: SNACK_IDS[Math.floor(Math.random() * SNACK_IDS.length)], bev: BEV_IDS[Math.floor(Math.random() * BEV_IDS.length)] })
-    }
-    setDayData(newData)
-
-    // Save all 7 days
-    if (selectedMember && team) {
-      setSaving(true)
-      try {
-        // Delete all existing for this member
-        await supabase.from("food_selections").delete().eq("member_roll_number", selectedMember.member_roll_number)
-        // Insert all 7 days
-        var rows = []
-        for (var j = 0; j < 7; j++) {
-          rows.push({ team_id: team.id, team_number: teamNumber, member_roll_number: selectedMember.member_roll_number, member_name: selectedMember.member_name, day_number: j + 1, day_date: "Day " + (j + 1), snack: newData[j].snack, beverage: newData[j].bev, confirmed: false })
-        }
-        await supabase.from("food_selections").insert(rows)
-        setSaved(true)
-        setTimeout(function () { setSaved(false) }, 2000)
-      } catch (e) {}
-      setSaving(false)
-    }
-    setConfetti(true)
-    setTimeout(function () { setConfetti(false) }, 4000)
-  }
-
-  // Copy day 1 to all
-  async function copyToAll() {
-    if (locked) return
-    var d = dayData[0]
-    if (!d.snack && !d.bev) return
-
-    var newData = []
-    for (var i = 0; i < 7; i++) { newData.push({ snack: d.snack, bev: d.bev }) }
-    setDayData(newData)
-
-    // Save all 7 days
-    if (selectedMember && team) {
-      setSaving(true)
-      try {
-        await supabase.from("food_selections").delete().eq("member_roll_number", selectedMember.member_roll_number)
-        var rows = []
-        for (var j = 0; j < 7; j++) {
-          rows.push({ team_id: team.id, team_number: teamNumber, member_roll_number: selectedMember.member_roll_number, member_name: selectedMember.member_name, day_number: j + 1, day_date: "Day " + (j + 1), snack: d.snack || null, beverage: d.bev || null, confirmed: false })
-        }
-        await supabase.from("food_selections").insert(rows)
-        setSaved(true)
-        setTimeout(function () { setSaved(false) }, 2000)
-      } catch (e) {}
-      setSaving(false)
-    }
-  }
-
-  // Confirm order — step 1: validate, show modal
-  function confirmOrder() {
-    if (locked) return
-    var missing = []
-    dayData.forEach(function (d, i) { if (!d.snack || !d.bev) missing.push("Day " + (i + 1)) })
-    if (missing.length > 0) {
-      setWarning("You haven't selected food for: " + missing.join(", "))
-      setTimeout(function () { setWarning(null) }, 4000)
-      return
-    }
-    setShowConfirmOrder(true)
-  }
-
-  // Confirm order — step 2: actually lock
-  async function finalConfirm() {
-    setShowConfirmOrder(false)
-    if (selectedMember) {
-      var lockKey = "ps_food_locked_" + selectedMember.member_roll_number
-      localStorage.setItem(lockKey, "true")
-      // Mark all rows as confirmed in Supabase
-      await supabase.from("food_selections").update({ confirmed: true }).eq("member_roll_number", selectedMember.member_roll_number)
-    }
-    setLocked(true)
-    setConfetti(true)
-    setTimeout(function () { setConfetti(false) }, 4000)
-  }
-
-  // AI fetch
-  async function fetchAI(id) {
-    if (aiData[id]) return
-    setAiLoading(true)
-    try {
-      var d = FD[id]
-      var resp = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 1000, messages: [{ role: "user", content: "You are a food nutrition expert. Give accurate info about this Indian snack/beverage: \"" + d.n + "\". Respond ONLY with JSON (no markdown, no backticks): {description, calories (number), protein, carbs, fat, ingredients (array), allergens (array from: Gluten, Dairy, Nuts, Soy, Eggs, None), funFact}" }] })
-      })
-      if (!resp.ok) throw new Error("API " + resp.status)
-      var data = await resp.json()
-      var text = data.content[0].text.replace(/```json|```/g, "").trim()
-      var parsed = JSON.parse(text)
-      setAiData(function (p) { var n = Object.assign({}, p); n[id] = parsed; return n })
-    } catch (e) {
-      setAiData(function (p) { var n = Object.assign({}, p); n[id] = FALLBACK[id]; return n })
-    }
-    setAiLoading(false)
-  }
-
-  // View food detail
   function viewFood(id) {
     setCurView(id)
-    // Set fallback immediately so detail shows instantly
-    if (!aiData[id] && FALLBACK[id]) {
-      setAiData(function (p) { var n = Object.assign({}, p); n[id] = FALLBACK[id]; return n })
-    }
-    // Then fetch AI in background to upgrade the data
-    fetchAI(id)
   }
 
-  // Keyboard nav
-  useEffect(function () {
-    function handleKey(e) {
-      // Number keys 1-7 for day selection
-      if (e.key >= "1" && e.key <= "7") { setCurDay(parseInt(e.key) - 1); return }
-      var items = cat === "snacks" ? SNACK_IDS : BEV_IDS
-      var cols = 4
-      if (e.key === "ArrowRight") { setFocusIdx(function (p) { return Math.min(p + 1, items.length - 1) }); e.preventDefault() }
-      if (e.key === "ArrowLeft") { setFocusIdx(function (p) { return Math.max(p - 1, 0) }); e.preventDefault() }
-      if (e.key === "ArrowDown") { setFocusIdx(function (p) { return Math.min(p + cols, items.length - 1) }); e.preventDefault() }
-      if (e.key === "ArrowUp") { setFocusIdx(function (p) { return Math.max(p - cols, 0) }); e.preventDefault() }
-      if (e.key === "Enter" && focusIdx >= 0 && focusIdx < items.length) {
-        var id = items[focusIdx]
-        var type = cat === "snacks" ? "snack" : "bev"
-        if (dayData[curDay][type] === id) deselectFood(id, type)
-        else selectFood(id, type)
-        viewFood(id)
-      }
-    }
-    window.addEventListener("keydown", handleKey)
-    return function () { window.removeEventListener("keydown", handleKey) }
+  // Cart calculations
+  var totalItems = 0
+  var daysComplete = 0
+  dayData.forEach(function (d) {
+    if (d.snack) totalItems++
+    if (d.bev) totalItems++
+    if (d.snack && d.bev) daysComplete++
   })
+  var cartReady = daysComplete === 7
 
-  // Computed
-  var daysComplete = dayData.filter(function (d) { return d.snack && d.bev }).length
-  var progressPct = Math.round((daysComplete / 7) * 100)
-  var curDayData = dayData[curDay] || {}
-  var comboName = null
-  if (curDayData.snack && curDayData.bev && FD[curDayData.snack] && FD[curDayData.bev]) {
-    comboName = COMBOS[FD[curDayData.snack].n + "+" + FD[curDayData.bev].n] || "The Wildcard"
+  // Handle OTP creation - must be exactly 5 digits
+  function handleCreateOtp() {
+    setPinError("")
+    if (secretPin.length !== 5) {
+      setPinError("PIN must be exactly 5 digits")
+      return
+    }
+    if (!/^\d{5}$/.test(secretPin)) {
+      setPinError("PIN must contain only numbers")
+      return
+    }
+    if (secretPin !== confirmPin) {
+      setPinError("PINs do not match")
+      return
+    }
+    generateCoupons()
   }
-  var detail = curView ? (aiData[curView] || FALLBACK[curView]) : null
+
+  async function generateCoupons() {
+    if (!selectedMember || !team) return
+    var newCoupons = []
+    var updates = []
+    
+    for (var i = 0; i < 7; i++) {
+      var code = generateMealCode() // 5-digit numeric code
+      newCoupons.push({
+        day: i + 1,
+        code: code,
+        snack: dayData[i].snack ? FD[dayData[i].snack].n : null,
+        beverage: dayData[i].bev ? FD[dayData[i].bev].n : null
+      })
+      updates.push(
+        supabase.from("food_selections")
+          .update({ 
+            confirmed: true, 
+            coupon_code: code,
+            secret_pin: secretPin 
+          })
+          .eq("member_roll_number", selectedMember.member_roll_number)
+          .eq("day_number", i + 1)
+      )
+    }
+    
+    await Promise.all(updates)
+    
+    var lockKey = "ps_food_locked_" + selectedMember.member_roll_number
+    localStorage.setItem(lockKey, "true")
+    
+    setCoupons(newCoupons)
+    setLocked(true)
+    setShowOtpModal(false)
+    setShowCart(false)
+    setShowCoupons(true)
+  }
+
+  var detail = curView ? FALLBACK[curView] : null
   var memberName = selectedMember ? selectedMember.member_name : "User"
+  var memberRoll = selectedMember ? selectedMember.member_roll_number : ""
+  var curDayData = dayData[curDay] || {}
+  var isCurrentlyAdded = curView && (curDayData.snack === curView || curDayData.bev === curView)
 
   if (loading) {
     return (
@@ -361,411 +281,402 @@ export default function FoodSelectionPage() {
       <style jsx>{`
         @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
         @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
-        @keyframes cardPop{0%{transform:scale(1)}30%{transform:scale(1.06)}100%{transform:scale(1)}}
-        @keyframes shimmerAnim{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
-        @keyframes cfall{0%{opacity:1;transform:translateY(0) rotate(0) scale(1)}50%{opacity:1}100%{opacity:0;transform:translateY(100vh) rotate(720deg) scale(0.3)}}
-        @keyframes toastIn{from{transform:translateX(-50%) translateY(-80px);opacity:0}to{transform:translateX(-50%) translateY(0);opacity:1}}
-        @keyframes saveFlash{0%{opacity:0;transform:scale(0.9)}50%{opacity:1;transform:scale(1.05)}100%{opacity:1;transform:scale(1)}}
-
+        @keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+        @keyframes modalIn{from{opacity:0;transform:scale(0.9)}to{opacity:1;transform:scale(1)}}
         .scroll-area::-webkit-scrollbar{width:5px}
         .scroll-area::-webkit-scrollbar-track{background:transparent}
         .scroll-area::-webkit-scrollbar-thumb{background:rgba(255,96,64,0.15);border-radius:10px}
 
-        .day-chip{flex-shrink:0;padding:10px 22px;border-radius:10px;background:rgba(255,255,255,0.015);border:1px solid rgba(255,255,255,0.04);cursor:pointer;transition:all 0.3s;text-align:center;min-width:85px;position:relative}
-        .day-chip:hover{border-color:rgba(190,190,190,0.15);transform:translateY(-1px)}
-        .day-chip.on{background:linear-gradient(135deg,rgba(255,48,32,0.06),rgba(255,96,64,0.025));border-color:rgba(255,96,64,0.2)}
+        .day-chip{padding:12px 20px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);cursor:pointer;transition:all 0.3s;text-align:center;min-width:70px;position:relative}
+        .day-chip:hover{border-color:rgba(255,255,255,0.12);transform:translateY(-2px)}
+        .day-chip.on{background:linear-gradient(135deg,rgba(255,48,32,0.1),rgba(255,96,64,0.05));border-color:rgba(255,96,64,0.3)}
+        .day-chip.complete::after{content:'✓';position:absolute;top:4px;right:4px;font-size:10px;color:#34d399}
 
-        .food-card{border-radius:12px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);padding:14px 10px;text-align:center;cursor:pointer;transition:all 0.3s cubic-bezier(0.23,1,0.32,1);position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-height:100px}
-        .food-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 40%,rgba(255,96,64,0.06),transparent 70%);opacity:0;transition:opacity 0.3s}
-        .food-card:hover{border-color:rgba(255,255,255,0.1);transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,0.2)}
-        .food-card:hover::before{opacity:0.4}
-        .food-card.selected{border-color:rgba(255,96,64,0.3);background:rgba(255,96,64,0.03)}
-        .food-card.selected::before{opacity:1}
-        .food-card.focused{box-shadow:0 0 0 2px rgba(255,96,64,0.4);border-color:rgba(255,96,64,0.3)}
-        .food-card.viewing{border-color:rgba(255,96,64,0.2);box-shadow:0 0 0 1px rgba(255,96,64,0.08)}
-        .food-card.pop{animation:cardPop 0.3s ease}
+        .cat-tab{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;padding:8px 24px;border:none;border-radius:8px;cursor:pointer;transition:all 0.3s;color:rgba(255,255,255,0.4);background:transparent}
+        .cat-tab.on{background:linear-gradient(135deg,#ff3020,#ff6040);color:#fff}
+        .cat-tab:not(.on):hover{color:rgba(255,255,255,0.6)}
 
-        .food-empty{border-radius:12px;background:rgba(255,255,255,0.006);border:1px dashed rgba(255,255,255,0.03);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:14px;min-height:100px}
+        .food-card{border-radius:12px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);padding:16px 12px;text-align:center;cursor:pointer;transition:all 0.3s;position:relative;display:flex;flex-direction:column;align-items:center;gap:6px}
+        .food-card:hover{border-color:rgba(255,255,255,0.12);transform:translateY(-2px);background:rgba(255,255,255,0.03)}
+        .food-card.selected{border-color:rgba(255,96,64,0.3);background:rgba(255,96,64,0.05)}
+        .food-card.viewing{border-color:rgba(255,96,64,0.4);box-shadow:0 0 0 1px rgba(255,96,64,0.2)}
 
-        .cat-tab{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;padding:7px 24px;border:none;border-radius:8px;cursor:pointer;transition:all 0.3s;color:rgba(255,255,255,0.25);background:transparent}
-        .cat-tab.on{background:linear-gradient(135deg,#ff3020,#ff6040);color:#fff;box-shadow:0 3px 12px rgba(255,48,32,0.15)}
-        .cat-tab:not(.on):hover{color:rgba(255,255,255,0.45)}
+        .cart-btn{position:relative;padding:10px 20px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.02);cursor:pointer;transition:all 0.3s;display:flex;align-items:center;gap:10px}
+        .cart-btn.ready{border-color:rgba(255,96,64,0.3);background:rgba(255,96,64,0.05)}
+        .cart-btn.ready:hover{background:rgba(255,96,64,0.1);transform:scale(1.02)}
+        .cart-btn:not(.ready){opacity:0.5;cursor:not-allowed}
+        .cart-badge{position:absolute;top:-6px;right:-6px;background:linear-gradient(135deg,#ff3020,#ff6040);color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px;min-width:20px;text-align:center}
 
-        .detail-panel{border-radius:16px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);overflow:hidden;flex:1;display:flex;flex-direction:column}
+        .detail-panel{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:24px;animation:slideIn 0.3s ease}
+        .nut-box{padding:12px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);text-align:center}
+        .ing-chip{font-size:10px;padding:5px 12px;border-radius:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);color:rgba(255,255,255,0.5)}
+        .allergy-chip{font-size:10px;padding:5px 12px;border-radius:6px;display:flex;align-items:center;gap:4px}
+        .allergy-chip.warn{background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.15);color:rgba(251,191,36,0.8)}
+        .allergy-chip.safe{background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.15);color:rgba(52,211,153,0.8)}
 
-        .shimmer{background:rgba(255,255,255,0.03);border-radius:6px;position:relative;overflow:hidden}
-        .shimmer::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.02),transparent);animation:shimmerAnim 1.5s infinite}
+        .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(12px);z-index:1000;display:flex;align-items:center;justify-content:center}
+        .modal-box{background:#0a0a0a;border:1px solid rgba(255,255,255,0.1);border-radius:20px;max-width:500px;width:90%;max-height:90vh;overflow-y:auto;animation:modalIn 0.3s ease}
 
-        .nut-card{padding:10px 8px;border-radius:8px;background:rgba(255,255,255,0.015);border:1px solid rgba(255,255,255,0.03);text-align:center;transition:all 0.25s}
-        .nut-card:hover{border-color:rgba(190,190,190,0.15);transform:translateY(-1px)}
-
-        .ing-chip{font-size:9px;font-weight:500;padding:4px 10px;border-radius:5px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04);color:rgba(255,255,255,0.35);transition:all 0.2s}
-        .ing-chip:hover{border-color:rgba(255,96,64,0.15);color:rgba(255,255,255,0.5)}
-
-        .allergy-chip{font-size:9px;font-weight:600;padding:4px 10px;border-radius:5px;display:flex;align-items:center;gap:4px}
-        .allergy-chip.warn{background:rgba(251,191,36,0.06);border:1px solid rgba(251,191,36,0.12);color:rgba(251,191,36,0.6)}
-        .allergy-chip.safe{background:rgba(52,211,153,0.05);border:1px solid rgba(52,211,153,0.1);color:rgba(52,211,153,0.5)}
-
-        .ck-bar{border-radius:14px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;transition:all 0.3s}
-        .ck-bar:hover{border-color:rgba(190,190,190,0.15)}
-
-        /* === LOCKED STATE === */
-        .locked-overlay{position:relative}
-        .locked-overlay::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,0.5);border-radius:12px;pointer-events:all;z-index:10}
-        .locked-banner{padding:16px 24px;border-radius:12px;background:rgba(52,211,153,0.06);border:1px solid rgba(52,211,153,0.15);display:flex;align-items:center;gap:12px;margin-bottom:16px;animation:fadeUp 0.4s ease}
-        .locked-banner-icon{width:36px;height:36px;border-radius:10px;background:rgba(52,211,153,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-
-        /* === CONFIRM ORDER MODAL === */
-        .confirm-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.85);backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:center;opacity:0;animation:fadeUp 0.25s ease forwards}
-        .confirm-box{width:400px;max-width:90vw;background:#111;border:1px solid rgba(255,96,64,0.15);border-radius:20px;padding:32px;box-shadow:0 24px 80px rgba(0,0,0,0.6);animation:photoZoom 0.3s cubic-bezier(0.23,1,0.32,1) forwards;position:relative;overflow:hidden}
-        .confirm-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#ff3020,#ff6040,transparent)}
-        @keyframes photoZoom{from{transform:scale(0.85);opacity:0}to{transform:scale(1);opacity:1}}
-
-        .confetti-p{position:absolute;top:-20px;opacity:0;animation:cfall 3s ease-out forwards}
+        .coupon-card{background:#0a0a0a;border:1px solid rgba(255,96,64,0.15);border-radius:14px;overflow:hidden;position:relative}
+        .coupon-card.delivered{opacity:0.5;pointer-events:none}
+        .coupon-card.delivered::after{content:'DELIVERED';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-15deg);font-size:24px;font-weight:900;color:rgba(52,211,153,0.3);letter-spacing:4px}
       `}</style>
 
       <DashboardSidebar teamNumber={teamNumber} currentMember={currentMember} loggedInRoll={loggedInRoll} isLeader={isLeader} />
 
-      {/* Warning Toast */}
-      {warning && (
-        <div style={{ position: "fixed", top: 20, left: "50%", transform: "translateX(-50%)", zIndex: 200, padding: "14px 28px", borderRadius: 12, background: "rgba(255,48,32,0.12)", border: "1px solid rgba(255,48,32,0.25)", backdropFilter: "blur(12px)", display: "flex", alignItems: "center", gap: 12, maxWidth: 500, animation: "toastIn 0.4s ease" }}>
-          <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(255,48,32,0.15)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ff6040" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          </div>
-          <div>
-            <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 14, fontWeight: 600, color: "#ff6040", marginBottom: 2 }}>Missing Days!</div>
-            <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", lineHeight: 1.5 }}>{warning}</div>
-          </div>
-        </div>
-      )}
-
       {/* Save Indicator */}
       {(saving || saved) && (
-        <div style={{ position: "fixed", top: 20, right: 20, zIndex: 200, padding: "8px 16px", borderRadius: 10, background: saved ? "rgba(52,211,153,0.1)" : "rgba(255,255,255,0.05)", border: "1px solid " + (saved ? "rgba(52,211,153,0.2)" : "rgba(190,190,190,0.15)"), fontSize: 12, fontWeight: 600, color: saved ? "#34d399" : "rgba(255,255,255,0.4)", animation: "saveFlash 0.3s ease", display: "flex", alignItems: "center", gap: 6 }}>
-          {saved ? "\u2713 Saved" : "Saving..."}
+        <div style={{ position: "fixed", top: 20, right: 20, zIndex: 200, padding: "8px 16px", borderRadius: 10, background: saved ? "rgba(52,211,153,0.1)" : "rgba(255,255,255,0.05)", border: "1px solid " + (saved ? "rgba(52,211,153,0.2)" : "rgba(255,255,255,0.1)"), fontSize: 12, fontWeight: 600, color: saved ? "#34d399" : "rgba(255,255,255,0.5)", display: "flex", alignItems: "center", gap: 6 }}>
+          {saved ? "✓ Saved" : "Saving..."}
         </div>
       )}
 
-      {/* Confirm Order Modal */}
-      {showConfirmOrder && (
-        <div className="confirm-overlay" onClick={function () { setShowConfirmOrder(false) }}>
-          <div className="confirm-box" onClick={function (e) { e.stopPropagation() }}>
-            <div style={{ width: 52, height: 52, borderRadius: 14, background: "rgba(255,96,64,0.08)", border: "1px solid rgba(255,96,64,0.12)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px" }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ff6040" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-            <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 20, fontWeight: 700, color: "#fff", textAlign: "center", marginBottom: 8 }}>Confirm Food Selection?</div>
-            <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 14, fontWeight: 600, color: "#ff6040", textAlign: "center", marginBottom: 14 }}>All 7 days selected</div>
-            <div style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", textAlign: "center", marginBottom: 20, lineHeight: 1.7, padding: "12px 16px", borderRadius: 10, background: "rgba(255,96,64,0.04)", border: "1px solid rgba(255,96,64,0.08)", display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff6040" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-              <span>This action cannot be undone. Once confirmed, your food selections will be permanently locked and cannot be changed.</span>
-            </div>
-            <div style={{ display: "flex", gap: 10 }}>
-              <button onClick={function () { setShowConfirmOrder(false) }} style={{ flex: 1, padding: 12, borderRadius: 12, border: "1px solid rgba(190,190,190,0.15)", background: "rgba(255,255,255,0.03)", color: "rgba(255,255,255,0.5)", fontFamily: "'DM Sans',sans-serif", fontSize: 13, fontWeight: 500, cursor: "pointer", transition: "all 0.25s" }}>Cancel</button>
-              <button onClick={finalConfirm} style={{ flex: 1, padding: 12, borderRadius: 12, border: "none", background: "linear-gradient(135deg,#ff3020,#ff6040)", color: "#fff", fontFamily: "'DM Sans',sans-serif", fontSize: 13, fontWeight: 600, cursor: "pointer", transition: "all 0.25s", boxShadow: "0 4px 16px rgba(255,48,32,0.2)" }}>Yes, Confirm</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Confetti */}
-      {confetti && (
-        <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 100, overflow: "hidden" }}>
-          {Array.from({ length: 70 }).map(function (_, i) {
-            var cols = ["#ff3020","#ff6040","#ff8040","#34d399","#60a5fa","#c084fc","#fbbf24","#fff"]
-            return <div key={i} className="confetti-p" style={{ left: Math.random()*100+"%", backgroundColor: cols[Math.floor(Math.random()*cols.length)], width: Math.random()*7+3, height: Math.random()*7+3, borderRadius: Math.random()>0.5?"50%":"2px", animationDelay: Math.random()*0.5+"s", animationDuration: Math.random()*2+2+"s" }} />
-          })}
-        </div>
-      )}
-
-      {/* MAIN */}
-      <div className="scroll-area" style={{ flex: 1, padding: "16px 44px 80px", overflowY: "auto", maxHeight: "100vh" }}>
-
-        {/* Progress Bar */}
-        <div style={{ marginBottom: 16, display: "flex", alignItems: "center", gap: 12 }}>
-          <div style={{ flex: 1, height: 4, background: "rgba(255,255,255,0.03)", borderRadius: 4, overflow: "hidden" }}>
-            <div style={{ height: "100%", width: progressPct + "%", background: daysComplete === 7 ? "linear-gradient(90deg,#34d399,#22c55e)" : "linear-gradient(90deg,#ff3020,#ff6040)", borderRadius: 4, transition: "width 0.5s ease", boxShadow: daysComplete === 7 ? "0 0 10px rgba(52,211,153,0.2)" : "0 0 10px rgba(255,48,32,0.15)" }} />
-          </div>
-          <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 13, fontWeight: 600, color: daysComplete === 7 ? "#34d399" : "#ff6040", minWidth: 50 }}>{daysComplete}/7</span>
-        </div>
-
-        {/* Locked Banner */}
-        {locked && (
-          <div className="locked-banner" style={{ justifyContent: "space-between" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <div className="locked-banner-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34d399" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-              </div>
-              <div>
-                <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 15, fontWeight: 600, color: "#34d399", marginBottom: 2 }}>Food Selection Confirmed</div>
-                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>Your selections are locked and cannot be changed.</div>
+      {/* Cart Modal */}
+      {showCart && (
+        <div className="modal-overlay" onClick={function(){ setShowCart(false) }}>
+          <div className="modal-box" onClick={function(e){ e.stopPropagation() }} style={{ padding: 0 }}>
+            <div style={{ padding: "24px 28px", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <div>
+                  <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 22, fontWeight: 700 }}>Your Cart</div>
+                  <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", marginTop: 4 }}>{daysComplete}/7 days complete</div>
+                </div>
+                <button onClick={function(){ setShowCart(false) }} style={{ width: 36, height: 36, borderRadius: 10, border: "1px solid rgba(255,255,255,0.1)", background: "transparent", color: "rgba(255,255,255,0.5)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
               </div>
             </div>
-            <button onClick={function () { router.push("/food-cards/" + teamNumber) }} style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 12, fontWeight: 600, padding: "10px 22px", border: "none", borderRadius: 10, background: "linear-gradient(135deg,#ff3020,#ff6040)", color: "#fff", cursor: "pointer", transition: "all 0.3s", boxShadow: "0 4px 16px rgba(255,48,32,0.2)", display: "flex", alignItems: "center", gap: 7, flexShrink: 0 }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-              View Food Cards
-            </button>
-          </div>
-        )}
-
-        {/* Header */}
-        <div style={{ marginBottom: 20 }}>
-          <div style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", marginBottom: 3, display: "flex", alignItems: "center", gap: 8 }}>
-            Selecting for: <span style={{ color: "#ff6040", fontWeight: 600 }}>{memberName}</span>
-          </div>
-          <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 28, fontWeight: 700, marginBottom: 3 }}>Food Selection</div>
-          <div style={{ fontSize: 11, color: "#BEBEBE" }}>Pick your snack and beverage for each day</div>
-        </div>
-
-        {/* Quick Actions — hidden when locked */}
-        {!locked && (
-        <div style={{ display: "flex", gap: 8, marginBottom: 18, flexWrap: "wrap" }}>
-          <button onClick={randomAll} style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 10, fontWeight: 600, padding: "7px 14px", borderRadius: 8, cursor: "pointer", transition: "all 0.25s", display: "flex", alignItems: "center", gap: 6, border: "1px solid rgba(255,96,64,0.1)", background: "rgba(255,96,64,0.03)", color: "rgba(255,96,64,0.5)" }}>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.5 2v6h-6"/><path d="M21.34 15.57a10 10 0 1 1-.57-8.38"/></svg>
-            Random All 7 Days
-          </button>
-          <button onClick={copyToAll} style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 10, fontWeight: 600, padding: "7px 14px", borderRadius: 8, cursor: "pointer", transition: "all 0.25s", display: "flex", alignItems: "center", gap: 6, border: "1px solid rgba(192,132,252,0.1)", background: "rgba(192,132,252,0.03)", color: "rgba(192,132,252,0.5)" }}>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-            Copy Day 1 to All
-          </button>
-          <button onClick={clearAll} style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 10, fontWeight: 600, padding: "7px 14px", borderRadius: 8, cursor: "pointer", transition: "all 0.25s", display: "flex", alignItems: "center", gap: 6, border: "1px solid rgba(255,48,48,0.1)", background: "rgba(255,48,48,0.03)", color: "rgba(255,48,48,0.4)" }}>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-            Clear All Selections
-          </button>
-        </div>
-        )}
-
-        {/* Day Chips */}
-        <div style={{ marginBottom: 20 }}>
-          <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: 2, color: "#BEBEBE", marginBottom: 10 }}>Select Day</div>
-          <div style={{ display: "flex", gap: 7, overflowX: "auto", scrollBehavior: "smooth", scrollbarWidth: "none" }}>
-            {[1,2,3,4,5,6,7].map(function (d, i) {
-              var done = dayData[i] && dayData[i].snack && dayData[i].bev
-              return (
-                <div key={i} className={"day-chip " + (curDay === i ? "on" : "")} onClick={function () { if (!locked) setCurDay(i) }} style={{ cursor: locked ? "default" : "pointer", opacity: locked && curDay !== i ? 0.4 : 1 }}>
-                  {done && (
-                    <div style={{ position: "absolute", top: 4, right: 4 }}>
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#34d399" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                    </div>
-                  )}
-                  <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 18, fontWeight: 700, color: curDay === i ? "#ff6040" : "#fff" }}>{d}</div>
-                  <div style={{ fontSize: 7, textTransform: "uppercase", letterSpacing: 1.5, color: curDay === i ? "rgba(255,96,64,0.5)" : "rgba(255,255,255,0.25)" }}>Day</div>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-
-        {/* Category Tabs */}
-        <div style={{ display: "flex", marginBottom: 18, background: "rgba(255,255,255,0.015)", border: "1px solid rgba(255,255,255,0.04)", borderRadius: 10, padding: 3, width: "fit-content" }}>
-          <button className={"cat-tab " + (cat === "snacks" ? "on" : "")} onClick={function () { setCat("snacks"); setFocusIdx(-1) }}>Snacks</button>
-          <button className={"cat-tab " + (cat === "beverages" ? "on" : "")} onClick={function () { setCat("beverages"); setFocusIdx(-1) }}>Beverages</button>
-        </div>
-
-        {/* Content Split */}
-        <div style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
-
-          {/* Food Grid */}
-          <div style={{ flex: 7, minWidth: 0 }}>
-            <div ref={gridRef} style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gridAutoRows: "1fr", gap: 8 }}>
-              {(cat === "snacks" ? SNACK_IDS : BEV_IDS).map(function (id, i) {
-                var d = FD[id]
-                var type = cat === "snacks" ? "snack" : "bev"
-                var isSelected = curDayData[type] === id
-                var isViewing = curView === id
-                var isFocused = focusIdx === i
-                var isPop = POPULAR.indexOf(id) >= 0
-                return (
-                  <div key={id}
-                    className={"food-card " + (isSelected ? "selected " : "") + (isViewing && !locked ? "viewing " : "") + (isFocused && !locked ? "focused " : "")}
-                    style={{ opacity: locked && !isSelected ? 0.15 : 1, pointerEvents: locked ? "none" : "auto", cursor: locked ? "default" : "pointer" }}
-                    onClick={function () {
-                      if (locked) return
-                      viewFood(id)
-                      if (!isSelected) selectFood(id, type)
-                    }}
-                  >
-                    {isPop && !locked && <div style={{ position: "absolute", top: 6, left: 6, fontSize: 6, fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.7, padding: "2px 5px", background: "linear-gradient(135deg,#ff3020,#ff6040)", color: "#fff", borderRadius: 4, zIndex: 2 }}>Popular</div>}
-                    {isSelected && !locked && (
-                      <button onClick={function (e) { e.stopPropagation(); deselectFood(id, type) }} style={{ position: "absolute", top: 4, right: 4, width: 18, height: 18, borderRadius: "50%", background: "rgba(255,48,32,0.15)", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", zIndex: 5, transition: "all 0.2s" }}>
-                        <svg width="8" height="8" viewBox="0 0 18 18" fill="none" stroke="#ff6040" strokeWidth="2.5" strokeLinecap="round"><line x1="4" y1="4" x2="14" y2="14"/><line x1="14" y1="4" x2="4" y2="14"/></svg>
-                      </button>
-                    )}
-                    {isSelected && (
-                      <div style={{ position: "absolute", bottom: 4, right: 4, width: 14, height: 14, borderRadius: "50%", background: "linear-gradient(135deg,#ff3020,#ff6040)", color: "#fff", fontSize: 8, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700 }}>{"\u2713"}</div>
-                    )}
-                    <div style={{ fontSize: 28, lineHeight: 1.2, transition: "transform 0.25s" }}>{d.e}</div>
-                    <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 12, fontWeight: 600, color: isSelected ? "#fff" : "rgba(255,255,255,0.5)" }}>{d.n}</div>
-                  </div>
-                )
-              })}
-              {/* Empty slots — hidden when locked */}
-              {!locked && Array.from({ length: 8 }).map(function (_, i) {
-                return (
-                  <div key={"empty-" + i} className="food-empty">
-                    <div style={{ fontSize: 16, opacity: 0.1 }}>{cat === "snacks" ? "\ud83c\udf7d\ufe0f" : "\ud83e\udd64"}</div>
-                    <div style={{ fontSize: 7, color: "rgba(255,255,255,0.06)" }}>Coming Soon</div>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-
-          {/* Detail Panel — hidden when locked */}
-          {!locked && (
-          <div style={{ flex: 3, minWidth: 260 }}>
-            <div className="detail-panel">
-              {!curView && !aiLoading && (
-                <div style={{ padding: "32px 20px", textAlign: "center", flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-                  <div style={{ fontSize: 36, marginBottom: 10, opacity: 0.2 }}>{"\ud83c\udf7d\ufe0f"}</div>
-                  <div style={{ fontSize: 11, color: "rgba(255,255,255,0.1)", lineHeight: 1.5 }}>Click any item to see details</div>
-                </div>
-              )}
-              {curView && aiLoading && !detail && (
-                <div style={{ padding: "28px 24px", display: "flex", flexDirection: "column", alignItems: "center", gap: 14, flex: 1 }}>
-                  <div className="shimmer" style={{ width: 56, height: 56, borderRadius: "50%" }} />
-                  <div className="shimmer" style={{ width: 120, height: 18, borderRadius: 6 }} />
-                  <div className="shimmer" style={{ width: 60, height: 10, borderRadius: 6 }} />
-                  <div className="shimmer" style={{ width: "100%", height: 50, borderRadius: 6 }} />
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 5, width: "100%" }}>
-                    <div className="shimmer" style={{ height: 48, borderRadius: 7 }} />
-                    <div className="shimmer" style={{ height: 48, borderRadius: 7 }} />
-                    <div className="shimmer" style={{ height: 48, borderRadius: 7 }} />
-                    <div className="shimmer" style={{ height: 48, borderRadius: 7 }} />
-                  </div>
-                </div>
-              )}
-              {curView && detail && (
-                <div style={{ display: "flex", flexDirection: "column", flex: 1, animation: "fadeUp 0.25s ease" }}>
-                  {/* Hero */}
-                  <div style={{ padding: "28px 24px 18px", textAlign: "center", position: "relative" }}>
-                    <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 50% 40%,rgba(255,96,64,0.04),transparent 70%)" }} />
-                    <div style={{ fontSize: 56, display: "block", marginBottom: 12, position: "relative", zIndex: 1 }}>{FD[curView].e}</div>
-                    <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 22, fontWeight: 700, color: "#fff", marginBottom: 3, position: "relative", zIndex: 1 }}>{FD[curView].n}</div>
-                    <div style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: 2, color: "rgba(255,96,64,0.5)", position: "relative", zIndex: 1 }}>{FD[curView].c}</div>
-                  </div>
-                  {/* Body */}
-                  <div style={{ padding: "0 24px 24px", flex: 1, display: "flex", flexDirection: "column" }}>
-                    <div style={{ fontSize: 11.5, lineHeight: 1.7, color: "rgba(255,255,255,0.38)", marginBottom: 16, paddingBottom: 16, borderBottom: "1px solid rgba(255,255,255,0.025)" }}>{detail.description}</div>
-                    {detail.funFact && <div style={{ fontSize: 10, color: "rgba(255,255,255,0.25)", padding: "10px 14px", borderRadius: 8, background: "rgba(192,132,252,0.03)", border: "1px solid rgba(192,132,252,0.06)", marginBottom: 16, lineHeight: 1.5, fontStyle: "italic" }}>{"\ud83d\udca1 " + detail.funFact}</div>}
-                    <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: 2, color: "#BEBEBE", marginBottom: 7 }}>Nutrition Info</div>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 5, marginBottom: 16 }}>
-                      {[{ v: detail.calories, l: "Calories", c: "#ff6040" }, { v: detail.protein, l: "Protein", c: "#34d399" }, { v: detail.carbs, l: "Carbs", c: "#60a5fa" }, { v: detail.fat, l: "Fat", c: "#fbbf24" }].map(function (n) {
-                        return <div key={n.l} className="nut-card"><div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 20, fontWeight: 700, color: n.c, marginBottom: 1 }}>{n.v}</div><div style={{ fontSize: 8, textTransform: "uppercase", letterSpacing: 1.5, color: "#BEBEBE" }}>{n.l}</div></div>
-                      })}
-                    </div>
-                    <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: 2, color: "#BEBEBE", marginBottom: 7 }}>Ingredients</div>
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginBottom: 16 }}>
-                      {(detail.ingredients || []).map(function (ing, i) { return <span key={i} className="ing-chip">{ing}</span> })}
-                    </div>
-                    <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: 2, color: "#BEBEBE", marginBottom: 7 }}>Allergy Info</div>
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginBottom: 18 }}>
-                      {(detail.allergens || []).map(function (a, i) {
-                        return <span key={i} className={"allergy-chip " + (a.toLowerCase() === "none" ? "safe" : "warn")}>{a.toLowerCase() === "none" ? "\u2713 No Allergens" : "\u26a0\ufe0f " + a}</span>
-                      })}
-                    </div>
-                    <div style={{ display: "flex", gap: 8, marginTop: "auto" }}>
-                      {curView && FD[curView] && (function () {
-                        var type = FD[curView].c === "Snack" ? "snack" : "bev"
-                        var isAdded = dayData[curDay] && dayData[curDay][type] === curView
-                        return (
-                          <button onClick={function () {
-                            var t = FD[curView].c === "Snack" ? "snack" : "bev"
-                            var added = dayData[curDay] && dayData[curDay][t] === curView
-                            if (added) deselectFood(curView, t)
-                            else selectFood(curView, t)
-                          }} style={{
-                            flex: 1, fontFamily: "'DM Sans',sans-serif", fontSize: 12, fontWeight: 600, padding: 12,
-                            border: isAdded ? "1px solid rgba(52,211,153,0.18)" : "none",
-                            borderRadius: 10,
-                            background: isAdded ? "rgba(52,211,153,0.1)" : "linear-gradient(135deg,#ff3020,#ff6040)",
-                            color: isAdded ? "#34d399" : "#fff",
-                            cursor: "pointer", transition: "all 0.3s",
-                            boxShadow: isAdded ? "none" : "0 4px 14px rgba(255,48,32,0.18)",
-                            display: "flex", alignItems: "center", justifyContent: "center", gap: 6
-                          }}>
-                            {isAdded ? "\u2713 Added" : "Add to Cart"}
-                          </button>
-                        )
-                      })()}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-          )}
-        </div>
-
-        {/* Checkout Bar — always shows current day selection */}
-        <div className="ck-bar" style={{ marginTop: 24 }}>
-          <div>
-            <div style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: 1.5, color: "#BEBEBE", marginBottom: 3 }}>Day {curDay + 1} — {locked ? "Your Selection" : "Your Order"}</div>
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              {curDayData.snack && FD[curDayData.snack] ? (
-                <div style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 12px", borderRadius: 7, background: "rgba(255,96,64,0.03)", border: "1px solid rgba(255,96,64,0.08)" }}>
-                  <span style={{ fontSize: 16 }}>{FD[curDayData.snack].e}</span>
-                  <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.6)" }}>{FD[curDayData.snack].n}</span>
-                </div>
-              ) : <div style={{ padding: "5px 12px", borderRadius: 7, border: "1px dashed rgba(255,255,255,0.04)", fontSize: 9, color: "rgba(190,190,190,0.15)" }}>No snack</div>}
-              <span style={{ fontSize: 12, color: "rgba(190,190,190,0.12)" }}>+</span>
-              {curDayData.bev && FD[curDayData.bev] ? (
-                <div style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 12px", borderRadius: 7, background: "rgba(255,96,64,0.03)", border: "1px solid rgba(255,96,64,0.08)" }}>
-                  <span style={{ fontSize: 16 }}>{FD[curDayData.bev].e}</span>
-                  <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.6)" }}>{FD[curDayData.bev].n}</span>
-                </div>
-              ) : <div style={{ padding: "5px 12px", borderRadius: 7, border: "1px dashed rgba(255,255,255,0.04)", fontSize: 9, color: "rgba(190,190,190,0.15)" }}>No beverage</div>}
-              {comboName && <span style={{ fontSize: 9, fontWeight: 600, padding: "3px 10px", borderRadius: 5, background: "rgba(192,132,252,0.05)", border: "1px solid rgba(192,132,252,0.1)", color: "rgba(192,132,252,0.5)", marginLeft: 8 }}>{"\u2728 " + comboName}</span>}
-            </div>
-          </div>
-          {locked ? (
-            <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 24px", borderRadius: 10, background: "rgba(52,211,153,0.08)", border: "1px solid rgba(52,211,153,0.15)", color: "#34d399", fontSize: 12, fontWeight: 600, fontFamily: "'DM Sans',sans-serif" }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-              Confirmed
-            </div>
-          ) : (
-            <button onClick={confirmOrder} style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 12, fontWeight: 600, padding: "10px 24px", border: "none", borderRadius: 10, background: "linear-gradient(135deg,#ff3020,#ff6040)", color: "#fff", cursor: "pointer", transition: "all 0.3s", boxShadow: "0 3px 14px rgba(255,48,32,0.18)", display: "flex", alignItems: "center", gap: 6 }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-              Confirm
-            </button>
-          )}
-        </div>
-
-        {/* 7-Day Summary — shown after confirmation */}
-        {locked && (
-          <div style={{ marginTop: 20, borderRadius: 14, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", padding: 24, animation: "fadeUp 0.4s ease" }}>
-            <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: 3, color: "#BEBEBE", marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#34d399" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-              Your Complete Selection
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: 8 }}>
-              {dayData.map(function (d, i) {
+            <div style={{ padding: "20px 28px", maxHeight: "50vh", overflowY: "auto" }}>
+              {dayData.map(function(d, i) {
                 var snackItem = d.snack && FD[d.snack] ? FD[d.snack] : null
                 var bevItem = d.bev && FD[d.bev] ? FD[d.bev] : null
                 return (
-                  <div key={i} onClick={function () { setCurDay(i) }} style={{ padding: "14px 8px", borderRadius: 12, background: curDay === i ? "rgba(255,96,64,0.04)" : "rgba(255,255,255,0.01)", border: "1px solid " + (curDay === i ? "rgba(255,96,64,0.15)" : "rgba(255,255,255,0.03)"), textAlign: "center", cursor: "pointer", transition: "all 0.25s" }}>
-                    <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 11, fontWeight: 600, color: curDay === i ? "#ff6040" : "rgba(255,255,255,0.2)", letterSpacing: 1, marginBottom: 10 }}>DAY {i + 1}</div>
-                    {snackItem ? (
-                      <div style={{ marginBottom: 6 }}>
-                        <div style={{ fontSize: 22, marginBottom: 2 }}>{snackItem.e}</div>
-                        <div style={{ fontSize: 9, color: "rgba(255,255,255,0.45)", fontWeight: 500 }}>{snackItem.n}</div>
+                  <div key={i} style={{ padding: "16px 0", borderBottom: i < 6 ? "1px solid rgba(255,255,255,0.04)" : "none" }}>
+                    <div style={{ fontSize: 11, fontWeight: 600, color: "rgba(255,255,255,0.3)", marginBottom: 10, display: "flex", alignItems: "center", gap: 8 }}>
+                      <span style={{ color: snackItem && bevItem ? "#34d399" : "#ff6040" }}>{snackItem && bevItem ? "✓" : "○"}</span>
+                      Day {i + 1} • {EVENT_DAYS[i]}, {EVENT_DATES[i]}
+                    </div>
+                    <div style={{ display: "flex", gap: 10 }}>
+                      <div style={{ flex: 1, padding: "10px 14px", borderRadius: 10, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", display: "flex", alignItems: "center", gap: 10 }}>
+                        <span style={{ fontSize: 20 }}>{snackItem ? snackItem.e : "—"}</span>
+                        <span style={{ fontSize: 13, color: snackItem ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.2)" }}>{snackItem ? snackItem.n : "No snack"}</span>
                       </div>
-                    ) : (
-                      <div style={{ fontSize: 9, color: "rgba(255,255,255,0.1)", marginBottom: 6, padding: "10px 0" }}>—</div>
-                    )}
-                    <div style={{ width: "60%", height: 1, background: "rgba(255,255,255,0.04)", margin: "0 auto 6px" }} />
-                    {bevItem ? (
-                      <div>
-                        <div style={{ fontSize: 22, marginBottom: 2 }}>{bevItem.e}</div>
-                        <div style={{ fontSize: 9, color: "rgba(255,255,255,0.45)", fontWeight: 500 }}>{bevItem.n}</div>
+                      <div style={{ flex: 1, padding: "10px 14px", borderRadius: 10, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", display: "flex", alignItems: "center", gap: 10 }}>
+                        <span style={{ fontSize: 20 }}>{bevItem ? bevItem.e : "—"}</span>
+                        <span style={{ fontSize: 13, color: bevItem ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.2)" }}>{bevItem ? bevItem.n : "No beverage"}</span>
                       </div>
-                    ) : (
-                      <div style={{ fontSize: 9, color: "rgba(255,255,255,0.1)", padding: "10px 0" }}>—</div>
-                    )}
+                    </div>
                   </div>
                 )
               })}
             </div>
+            <div style={{ padding: "20px 28px", borderTop: "1px solid rgba(255,255,255,0.06)", background: "rgba(255,255,255,0.01)" }}>
+              <button onClick={function(){ setShowCart(false); setShowOtpModal(true) }} style={{ width: "100%", padding: "14px", borderRadius: 12, border: "none", background: "linear-gradient(135deg,#ff3020,#ff6040)", color: "#fff", fontFamily: "'DM Sans',sans-serif", fontSize: 14, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Create Secret PIN &amp; Confirm
+              </button>
+              <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", textAlign: "center", marginTop: 10 }}>This action cannot be undone</div>
+            </div>
           </div>
+        </div>
+      )}
+
+      {/* OTP Creation Modal */}
+      {showOtpModal && (
+        <div className="modal-overlay" onClick={function(){ setShowOtpModal(false) }}>
+          <div className="modal-box" onClick={function(e){ e.stopPropagation() }} style={{ padding: "32px" }}>
+            <div style={{ textAlign: "center", marginBottom: 28 }}>
+              <div style={{ width: 60, height: 60, borderRadius: 16, background: "rgba(255,96,64,0.1)", border: "1px solid rgba(255,96,64,0.15)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ff6040" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              </div>
+              <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 22, fontWeight: 700, marginBottom: 6 }}>Create Your Secret PIN</div>
+              <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", lineHeight: 1.6 }}>Enter a 5-digit PIN to secure your food coupons. Keep it safe!</div>
+            </div>
+            
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "rgba(255,255,255,0.5)", marginBottom: 8, textTransform: "uppercase", letterSpacing: 1 }}>Enter 5-Digit PIN</label>
+              <input type="password" value={secretPin} onChange={function(e){ setSecretPin(e.target.value.replace(/\D/g, "").slice(0,5)) }} placeholder="•••••" maxLength={5} style={{ width: "100%", padding: "14px 16px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.02)", color: "#fff", fontFamily: "'DM Sans',sans-serif", fontSize: 24, letterSpacing: 12, textAlign: "center", outline: "none" }} />
+            </div>
+            
+            <div style={{ marginBottom: 20 }}>
+              <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "rgba(255,255,255,0.5)", marginBottom: 8, textTransform: "uppercase", letterSpacing: 1 }}>Confirm PIN</label>
+              <input type="password" value={confirmPin} onChange={function(e){ setConfirmPin(e.target.value.replace(/\D/g, "").slice(0,5)) }} placeholder="•••••" maxLength={5} style={{ width: "100%", padding: "14px 16px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.02)", color: "#fff", fontFamily: "'DM Sans',sans-serif", fontSize: 24, letterSpacing: 12, textAlign: "center", outline: "none" }} />
+            </div>
+            
+            {pinError && (
+              <div style={{ padding: "10px 14px", borderRadius: 8, background: "rgba(255,48,48,0.1)", border: "1px solid rgba(255,48,48,0.2)", color: "#ff6060", fontSize: 12, marginBottom: 16, textAlign: "center" }}>{pinError}</div>
+            )}
+            
+            <div style={{ display: "flex", gap: 10 }}>
+              <button onClick={function(){ setShowOtpModal(false); setSecretPin(""); setConfirmPin(""); setPinError("") }} style={{ flex: 1, padding: "12px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.1)", background: "transparent", color: "rgba(255,255,255,0.5)", fontFamily: "'DM Sans',sans-serif", fontSize: 13, fontWeight: 500, cursor: "pointer" }}>Cancel</button>
+              <button onClick={handleCreateOtp} style={{ flex: 1, padding: "12px", borderRadius: 10, border: "none", background: "linear-gradient(135deg,#ff3020,#ff6040)", color: "#fff", fontFamily: "'DM Sans',sans-serif", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Generate Coupons</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MAIN CONTENT */}
+      <div className="scroll-area" style={{ flex: 1, padding: "24px 40px 80px", overflowY: "auto", maxHeight: "100vh" }}>
+
+        {/* === COUPONS VIEW (After confirmation) === */}
+        {showCoupons && locked && (
+          <div style={{ animation: "fadeUp 0.4s ease" }}>
+            {/* Header */}
+            <div style={{ marginBottom: 24 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+                <div style={{ width: 40, height: 40, borderRadius: 12, background: "rgba(52,211,153,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#34d399" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <div>
+                  <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 24, fontWeight: 700 }}>Your Food Coupons</div>
+                  <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)" }}>Show these at the food counter with your 5-digit PIN</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Coupons Grid */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 16 }}>
+              {coupons.map(function(coupon, i) {
+                var isDelivered = deliveredDays.indexOf(coupon.day) >= 0
+                var snackKey = Object.keys(FD).find(function(k){ return FD[k].n === coupon.snack })
+                var bevKey = Object.keys(FD).find(function(k){ return FD[k].n === coupon.beverage })
+                return (
+                  <div key={i} className={"coupon-card " + (isDelivered ? "delivered" : "")}>
+                    <div style={{ height: 3, background: isDelivered ? "rgba(255,255,255,0.1)" : "linear-gradient(90deg,#ff3020,#ff6040)" }} />
+                    <div style={{ padding: "20px" }}>
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+                        <div>
+                          <div style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1 }}>{EVENT_DAYS[coupon.day - 1]} • {EVENT_DATES[coupon.day - 1]}, 2026</div>
+                          <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 20, fontWeight: 700, marginTop: 4 }}>Day {coupon.day}</div>
+                        </div>
+                        <div style={{ padding: "10px 16px", borderRadius: 10, background: "rgba(255,96,64,0.08)", border: "1px solid rgba(255,96,64,0.15)" }}>
+                          <div style={{ fontSize: 9, fontWeight: 600, color: "rgba(255,255,255,0.4)", marginBottom: 2 }}>MEAL CODE</div>
+                          <div style={{ fontFamily: "monospace", fontSize: 20, fontWeight: 700, color: "#ff6040", letterSpacing: 3 }}>{coupon.code}</div>
+                        </div>
+                      </div>
+                      <div style={{ display: "flex", gap: 12 }}>
+                        <div style={{ flex: 1, padding: "12px", borderRadius: 10, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", display: "flex", alignItems: "center", gap: 10 }}>
+                          <span style={{ fontSize: 24 }}>{snackKey ? FD[snackKey].e : "🍽️"}</span>
+                          <div>
+                            <div style={{ fontSize: 9, color: "rgba(255,255,255,0.3)", textTransform: "uppercase" }}>Snack</div>
+                            <div style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.8)" }}>{coupon.snack}</div>
+                          </div>
+                        </div>
+                        <div style={{ flex: 1, padding: "12px", borderRadius: 10, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", display: "flex", alignItems: "center", gap: 10 }}>
+                          <span style={{ fontSize: 24 }}>{bevKey ? FD[bevKey].e : "🥤"}</span>
+                          <div>
+                            <div style={{ fontSize: 9, color: "rgba(255,255,255,0.3)", textTransform: "uppercase" }}>Beverage</div>
+                            <div style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.8)" }}>{coupon.beverage}</div>
+                          </div>
+                        </div>
+                      </div>
+                      {isDelivered && (
+                        <div style={{ marginTop: 12, padding: "8px 12px", borderRadius: 8, background: "rgba(52,211,153,0.1)", border: "1px solid rgba(52,211,153,0.2)", display: "flex", alignItems: "center", justifyContent: "center", gap: 6, color: "#34d399", fontSize: 12, fontWeight: 600 }}>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                          Delivered
+                        </div>
+                      )}
+                    </div>
+                    <div style={{ padding: "12px 20px", borderTop: "1px solid rgba(255,255,255,0.04)", background: "rgba(255,255,255,0.01)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                      <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)" }}>{memberName} • {memberRoll}</div>
+                      <div style={{ fontSize: 9, color: "rgba(255,96,64,0.5)" }}>Team {teamNumber}</div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+
+            {/* Info Box */}
+            <div style={{ marginTop: 24, padding: "20px 24px", borderRadius: 14, background: "rgba(96,165,250,0.05)", border: "1px solid rgba(96,165,250,0.1)", display: "flex", alignItems: "flex-start", gap: 16 }}>
+              <div style={{ width: 44, height: 44, borderRadius: 12, background: "rgba(96,165,250,0.1)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              </div>
+              <div>
+                <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 14, fontWeight: 600, color: "rgba(255,255,255,0.8)", marginBottom: 4 }}>How to redeem</div>
+                <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", lineHeight: 1.7 }}>
+                  1. Go to the food counter on the respective day<br/>
+                  2. Show your 5-digit meal code to the admin<br/>
+                  3. Enter your 5-digit secret PIN when asked<br/>
+                  4. Collect your snack and beverage!
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* === SELECTION VIEW === */}
+        {!showCoupons && (
+          <>
+            {/* Header with Cart */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 28 }}>
+              <div>
+                <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", marginBottom: 4 }}>
+                  Selecting for: <span style={{ color: "#ff6040", fontWeight: 600 }}>{memberName}</span>
+                </div>
+                <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 28, fontWeight: 700 }}>Food Selection</div>
+              </div>
+              <button className={"cart-btn " + (cartReady ? "ready" : "")} onClick={function(){ if (cartReady) setShowCart(true) }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={cartReady ? "#ff6040" : "rgba(255,255,255,0.4)"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                <span style={{ fontSize: 13, fontWeight: 600, color: cartReady ? "#ff6040" : "rgba(255,255,255,0.4)" }}>{totalItems}/14</span>
+                {cartReady && <div className="cart-badge">✓</div>}
+              </button>
+            </div>
+
+            {/* Two Column Layout */}
+            <div style={{ display: "flex", gap: 24 }}>
+              
+              {/* LEFT COLUMN */}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                {/* Day Chips */}
+                <div style={{ marginBottom: 20 }}>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 10 }}>Select Day</div>
+                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                    {[1,2,3,4,5,6,7].map(function(d, i) {
+                      var done = dayData[i] && dayData[i].snack && dayData[i].bev
+                      return (
+                        <div key={i} className={"day-chip " + (curDay === i ? "on " : "") + (done ? "complete" : "")} onClick={function(){ setCurDay(i) }}>
+                          <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 18, fontWeight: 700, color: curDay === i ? "#ff6040" : "#fff" }}>{d}</div>
+                          <div style={{ fontSize: 8, color: curDay === i ? "rgba(255,96,64,0.6)" : "rgba(255,255,255,0.3)", marginTop: 2 }}>{EVENT_DAYS[i]}</div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+
+                {/* Category Tabs */}
+                <div style={{ display: "flex", marginBottom: 16, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: 10, padding: 3, width: "fit-content" }}>
+                  <button className={"cat-tab " + (cat === "snacks" ? "on" : "")} onClick={function(){ setCat("snacks") }}>Snacks</button>
+                  <button className={"cat-tab " + (cat === "beverages" ? "on" : "")} onClick={function(){ setCat("beverages") }}>Beverages</button>
+                </div>
+
+                {/* Food Grid */}
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10 }}>
+                  {(cat === "snacks" ? SNACK_IDS : BEV_IDS).map(function(id) {
+                    var d = FD[id]
+                    var type = cat === "snacks" ? "snack" : "bev"
+                    var isSelected = curDayData[type] === id
+                    var isViewing = curView === id
+                    return (
+                      <div key={id} className={"food-card " + (isSelected ? "selected " : "") + (isViewing ? "viewing" : "")} onClick={function(){ viewFood(id) }}>
+                        {isSelected && <div style={{ position: "absolute", top: 6, right: 6, width: 16, height: 16, borderRadius: "50%", background: "linear-gradient(135deg,#ff3020,#ff6040)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 9, color: "#fff" }}>✓</div>}
+                        <div style={{ fontSize: 32 }}>{d.e}</div>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: isSelected ? "#fff" : "rgba(255,255,255,0.6)" }}>{d.n}</div>
+                      </div>
+                    )
+                  })}
+                </div>
+
+                {/* Current Day Summary */}
+                <div style={{ marginTop: 20, padding: "16px 20px", borderRadius: 12, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
+                  <div style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 10 }}>Day {curDay + 1} Selection</div>
+                  <div style={{ display: "flex", gap: 10 }}>
+                    <div style={{ flex: 1, padding: "10px 14px", borderRadius: 8, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <span style={{ fontSize: 18 }}>{curDayData.snack && FD[curDayData.snack] ? FD[curDayData.snack].e : "—"}</span>
+                        <span style={{ fontSize: 12, color: curDayData.snack ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.2)" }}>{curDayData.snack && FD[curDayData.snack] ? FD[curDayData.snack].n : "No snack"}</span>
+                      </div>
+                      {curDayData.snack && <button onClick={function(){ removeFromDay(curDay, "snack") }} style={{ width: 20, height: 20, borderRadius: 5, border: "none", background: "rgba(255,48,48,0.1)", color: "#ff6060", fontSize: 10, cursor: "pointer" }}>✕</button>}
+                    </div>
+                    <div style={{ flex: 1, padding: "10px 14px", borderRadius: 8, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <span style={{ fontSize: 18 }}>{curDayData.bev && FD[curDayData.bev] ? FD[curDayData.bev].e : "—"}</span>
+                        <span style={{ fontSize: 12, color: curDayData.bev ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.2)" }}>{curDayData.bev && FD[curDayData.bev] ? FD[curDayData.bev].n : "No beverage"}</span>
+                      </div>
+                      {curDayData.bev && <button onClick={function(){ removeFromDay(curDay, "bev") }} style={{ width: 20, height: 20, borderRadius: 5, border: "none", background: "rgba(255,48,48,0.1)", color: "#ff6060", fontSize: 10, cursor: "pointer" }}>✕</button>}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* RIGHT COLUMN - Detail Panel */}
+              <div style={{ width: 340, flexShrink: 0 }}>
+                {!curView && (
+                  <div style={{ padding: "60px 24px", textAlign: "center", borderRadius: 16, background: "rgba(255,255,255,0.01)", border: "1px dashed rgba(255,255,255,0.06)" }}>
+                    <div style={{ fontSize: 40, marginBottom: 12, opacity: 0.2 }}>🍽️</div>
+                    <div style={{ fontSize: 12, color: "rgba(255,255,255,0.2)" }}>Click any item to see details</div>
+                  </div>
+                )}
+                {curView && detail && (
+                  <div className="detail-panel">
+                    {/* Header */}
+                    <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 20 }}>
+                      <div style={{ width: 64, height: 64, borderRadius: 16, background: "rgba(255,96,64,0.08)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 36 }}>{FD[curView].e}</div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 20, fontWeight: 700 }}>{FD[curView].n}</div>
+                        <div style={{ fontSize: 11, color: "rgba(255,96,64,0.6)", textTransform: "uppercase", letterSpacing: 1 }}>{FD[curView].c}</div>
+                      </div>
+                    </div>
+
+                    {/* Description */}
+                    <div style={{ fontSize: 13, lineHeight: 1.7, color: "rgba(255,255,255,0.5)", marginBottom: 20, paddingBottom: 20, borderBottom: "1px solid rgba(255,255,255,0.05)" }}>{detail.description}</div>
+
+                    {/* Nutrition */}
+                    <div style={{ marginBottom: 20 }}>
+                      <div style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 10 }}>Nutrition</div>
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                        <div className="nut-box">
+                          <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 22, fontWeight: 700, color: "#ff6040" }}>{detail.calories}</div>
+                          <div style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", textTransform: "uppercase" }}>Calories</div>
+                        </div>
+                        <div className="nut-box">
+                          <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 22, fontWeight: 700, color: "#34d399" }}>{detail.protein}</div>
+                          <div style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", textTransform: "uppercase" }}>Protein</div>
+                        </div>
+                        <div className="nut-box">
+                          <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 22, fontWeight: 700, color: "#60a5fa" }}>{detail.carbs}</div>
+                          <div style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", textTransform: "uppercase" }}>Carbs</div>
+                        </div>
+                        <div className="nut-box">
+                          <div style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 22, fontWeight: 700, color: "#fbbf24" }}>{detail.fat}</div>
+                          <div style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", textTransform: "uppercase" }}>Fat</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Ingredients */}
+                    <div style={{ marginBottom: 20 }}>
+                      <div style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 10 }}>Ingredients</div>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                        {detail.ingredients.map(function(ing, i) { return <span key={i} className="ing-chip">{ing}</span> })}
+                      </div>
+                    </div>
+
+                    {/* Allergens */}
+                    <div style={{ marginBottom: 24 }}>
+                      <div style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 10 }}>Allergens</div>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                        {detail.allergens.map(function(a, i) {
+                          return <span key={i} className={"allergy-chip " + (a.toLowerCase() === "none" ? "safe" : "warn")}>{a.toLowerCase() === "none" ? "✓ None" : "⚠ " + a}</span>
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Add Button */}
+                    <button onClick={function(){ addToDay(curView) }} disabled={isCurrentlyAdded} style={{
+                      width: "100%",
+                      padding: "14px",
+                      borderRadius: 12,
+                      border: isCurrentlyAdded ? "1px solid rgba(52,211,153,0.2)" : "none",
+                      background: isCurrentlyAdded ? "rgba(52,211,153,0.1)" : "linear-gradient(135deg,#ff3020,#ff6040)",
+                      color: isCurrentlyAdded ? "#34d399" : "#fff",
+                      fontFamily: "'DM Sans',sans-serif",
+                      fontSize: 14,
+                      fontWeight: 600,
+                      cursor: isCurrentlyAdded ? "default" : "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 8
+                    }}>
+                      {isCurrentlyAdded ? (
+                        <>✓ Added to Day {curDay + 1}</>
+                      ) : (
+                        <>Add to Day {curDay + 1}</>
+                      )}
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </>
         )}
 
       </div>
