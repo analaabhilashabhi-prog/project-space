@@ -13,14 +13,6 @@ var transporter = nodemailer.createTransport({
   },
 })
 
-function getStudentEmail(roll) {
-  var r = roll.toUpperCase()
-  if (r.indexOf("P3") !== -1) return r.toLowerCase() + "@acet.ac.in"
-  if (r.indexOf("MH") !== -1) return r.toLowerCase() + "@acoe.edu.in"
-  if (r.indexOf("A9") !== -1) return r.toLowerCase() + "@aec.edu.in"
-  return r.toLowerCase() + "@aec.edu.in"
-}
-
 export async function POST(request) {
   try {
     var body = await request.json()
@@ -31,12 +23,33 @@ export async function POST(request) {
       var rollNumber = body.rollNumber
       if (!rollNumber) return Response.json({ error: "Roll number is required" }, { status: 400 })
 
-      var roll = rollNumber.toUpperCase()
+      var roll = rollNumber.toUpperCase().trim()
 
-      // Check if this roll is a team leader in registered_teams
-      var leaderCheck = await supabase.from("registered_teams").select("id, project_title, technology").eq("leader_roll", roll).single()
+      // Check student exists
+      var studentRes = await supabase
+        .from("students")
+        .select("roll_number, name, email")
+        .eq("roll_number", roll)
+        .single()
 
-      if (!leaderCheck.data) {
+      if (studentRes.error || !studentRes.data) {
+        return Response.json({
+          success: false,
+          status: "not_found",
+          error: "Roll number not found. Please check and try again."
+        }, { status: 404 })
+      }
+
+      var student = studentRes.data
+
+      // Must be a team leader — check registered_teams.leader_roll
+      var leaderRes = await supabase
+        .from("registered_teams")
+        .select("id, technology")
+        .eq("leader_roll", roll)
+        .maybeSingle()
+
+      if (leaderRes.error || !leaderRes.data) {
         return Response.json({
           success: false,
           status: "not_leader",
@@ -45,45 +58,35 @@ export async function POST(request) {
       }
 
       // Check if account already exists
-      var existingUser = await supabase.from("user_passwords").select("roll_number").eq("roll_number", roll).single()
+      var existingUser = await supabase
+        .from("user_passwords")
+        .select("roll_number")
+        .eq("roll_number", roll)
+        .single()
 
       if (existingUser.data) {
-        var teamData = await supabase.from("team_members").select("is_leader, teams(team_number)").eq("member_roll_number", roll).single()
-
-        if (teamData.data && teamData.data.teams) {
-          return Response.json({
-            success: false,
-            status: "already_exists",
-            hasTeam: true,
-            teamNumber: teamData.data.teams.team_number,
-            message: "Account already exists! Please login to access your team dashboard.",
-          })
-        } else {
-          return Response.json({
-            success: false,
-            status: "already_exists",
-            hasTeam: false,
-            message: "Account already exists! Please login to register your team.",
-          })
-        }
+        return Response.json({
+          success: false,
+          status: "already_exists",
+          message: "Account already exists! Please login instead.",
+        })
       }
 
-      // Get correct email from students table first, fallback to pattern
-      var studentData = await supabase.from("students").select("email, name").eq("roll_number", roll).single()
-      var email = (studentData.data && studentData.data.email) ? studentData.data.email : getStudentEmail(roll)
-
-      // For testing: override to test email
-      var sendToEmail = "harshavardhini@technicalhub.io"
+      if (!student.email) {
+        return Response.json({
+          success: false,
+          error: "No email found for this roll number. Contact your administrator."
+        }, { status: 400 })
+      }
 
       // Generate 6-digit OTP
       var otpCode = String(Math.floor(100000 + Math.random() * 900000))
       var expiresAt = new Date(Date.now() + 10 * 60 * 1000)
 
-      // Store OTP
       var otpInsert = await supabase.from("otp_codes").insert({
         roll_number: roll,
         otp_code: otpCode,
-        email: email,
+        email: student.email,
         expires_at: expiresAt.toISOString(),
         used: false,
       })
@@ -93,31 +96,27 @@ export async function POST(request) {
         return Response.json({ error: "Failed to generate OTP: " + otpInsert.error.message }, { status: 500 })
       }
 
-      // Send OTP via email (Nodemailer)
+      // Send OTP to student's actual email
       try {
         await transporter.sendMail({
           from: '"Project Space" <' + process.env.SMTP_USER + '>',
-          to: sendToEmail,
+          to: student.email,
           subject: "Your OTP for " + EVENT_CONFIG.eventName + ": " + otpCode,
-          html: buildOTPEmail(roll, otpCode, studentData.data ? studentData.data.name : null),
+          html: buildOTPEmail(roll, otpCode, student.name),
         })
-        console.log("OTP sent to:", sendToEmail, "for roll:", roll)
+        console.log("OTP sent to:", student.email, "for roll:", roll)
       } catch (emailErr) {
-        console.log("Email send failed:", emailErr.message)
-        console.log("[TEST MODE] OTP for " + roll + ": " + otpCode)
+        console.error("Email send failed:", emailErr.message)
+        console.log("[DEV] OTP for " + roll + ": " + otpCode)
       }
 
       var isDev = process.env.NODE_ENV === "development"
-      var maskedEmail = email.replace(/(.{3}).*(@.*)/, "$1***$2")
+      var maskedEmail = student.email.replace(/(.{3}).*(@.*)/, "$1***$2")
 
       return Response.json({
         success: true,
         email: maskedEmail,
         devOtp: isDev ? otpCode : undefined,
-        teamInfo: {
-          projectTitle: leaderCheck.data.project_title,
-          technology: leaderCheck.data.technology,
-        }
       })
     }
 
@@ -128,7 +127,15 @@ export async function POST(request) {
 
       if (!rollNumber || !otp) return Response.json({ error: "Roll number and OTP are required" }, { status: 400 })
 
-      var otpData = await supabase.from("otp_codes").select("*").eq("roll_number", rollNumber.toUpperCase()).eq("otp_code", otp).eq("used", false).order("created_at", { ascending: false }).limit(1).single()
+      var otpData = await supabase
+        .from("otp_codes")
+        .select("*")
+        .eq("roll_number", rollNumber.toUpperCase())
+        .eq("otp_code", otp)
+        .eq("used", false)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .single()
 
       if (otpData.error || !otpData.data) {
         return Response.json({ error: "Invalid OTP. Please try again." }, { status: 400 })
@@ -153,28 +160,41 @@ export async function POST(request) {
       if (!rollNumber || !password) return Response.json({ error: "Roll number and password are required" }, { status: 400 })
       if (password.length < 8) return Response.json({ error: "Password must be at least 8 characters" }, { status: 400 })
 
-      var roll = rollNumber.toUpperCase()
+      var roll = rollNumber.toUpperCase().trim()
 
-      // Double check - must be a leader
-      var leaderCheck = await supabase.from("registered_teams").select("id").eq("leader_roll", roll).single()
-      if (!leaderCheck.data) {
+      // Must still be a leader — check registered_teams.leader_roll
+      var leaderRes = await supabase
+        .from("registered_teams")
+        .select("id")
+        .eq("leader_roll", roll)
+        .maybeSingle()
+
+      if (leaderRes.error || !leaderRes.data) {
         return Response.json({ error: "Only team leaders can create accounts." }, { status: 403 })
       }
 
-      var existingUser = await supabase.from("user_passwords").select("roll_number").eq("roll_number", roll).single()
+      var existingUser = await supabase
+        .from("user_passwords")
+        .select("roll_number")
+        .eq("roll_number", roll)
+        .single()
+
       if (existingUser.data) {
-        return Response.json({ error: "Account already exists" }, { status: 400 })
+        return Response.json({ error: "Account already exists. Please login." }, { status: 400 })
       }
+
+      var studentRes = await supabase
+        .from("students")
+        .select("email")
+        .eq("roll_number", roll)
+        .single()
 
       var salt = await bcrypt.genSalt(10)
       var passwordHash = await bcrypt.hash(password, salt)
 
-      var studentData = await supabase.from("students").select("email").eq("roll_number", roll).single()
-      var email = (studentData.data && studentData.data.email) ? studentData.data.email : getStudentEmail(roll)
-
       var insertResult = await supabase.from("user_passwords").insert({
         roll_number: roll,
-        email: email,
+        email: studentRes.data ? studentRes.data.email : null,
         password_hash: passwordHash,
       })
 
@@ -183,60 +203,7 @@ export async function POST(request) {
         return Response.json({ error: "Failed to create account" }, { status: 500 })
       }
 
-      return Response.json({ success: true, message: "Account created! Please login to register your team." })
-    }
-
-    // ========== ACTION 4: GET TEAM DATA (for auto-fill) ==========
-    if (action === "get_team_data") {
-      var rollNumber = body.rollNumber
-      if (!rollNumber) return Response.json({ error: "Roll number required" }, { status: 400 })
-
-      var roll = rollNumber.toUpperCase()
-
-      // Get team from registered_teams
-      var teamRes = await supabase.from("registered_teams").select("*").eq("leader_roll", roll).single()
-      if (!teamRes.data) return Response.json({ error: "No team found for this leader" }, { status: 404 })
-
-      var team = teamRes.data
-
-      // Get all member roll numbers
-      var memberRolls = [team.leader_roll, team.member2_roll, team.member3_roll, team.member4_roll, team.member5_roll, team.member6_roll].filter(function (r) { return r && r !== "NULL" && r !== "NIL" && r.trim() !== "" })
-
-      // Fetch student details for all members from students table
-      var studentsRes = await supabase.from("students").select("roll_number, name, email, phone, gender, branch, college, technology").in("roll_number", memberRolls)
-      var studentsMap = {}
-      if (studentsRes.data) {
-        studentsRes.data.forEach(function (s) { studentsMap[s.roll_number] = s })
-      }
-
-      // Build members array
-      var members = memberRolls.map(function (r, i) {
-        var s = studentsMap[r] || {}
-        return {
-          rollNumber: r,
-          name: s.name || "",
-          email: s.email || getStudentEmail(r),
-          phone: s.phone || "",
-          gender: s.gender || "",
-          branch: s.branch || "",
-          college: s.college || "",
-          isLeader: i === 0,
-          editable: true,
-        }
-      })
-
-      return Response.json({
-        success: true,
-        teamData: {
-          technology: team.technology || "",
-          projectTitle: team.project_title || "",
-          projectDescription: team.project_description || "",
-          problemStatement: team.problem_statement || "",
-          usesAI: team.uses_ai || false,
-          members: members,
-          totalMembers: memberRolls.length,
-        }
-      })
+      return Response.json({ success: true, message: "Account created! Please login." })
     }
 
     return Response.json({ error: "Invalid action" }, { status: 400 })

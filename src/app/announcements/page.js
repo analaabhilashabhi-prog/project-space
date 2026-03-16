@@ -86,7 +86,7 @@ export default function AnnouncementsPage() {
   }
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "#0a0a0a", color: "#fff", fontFamily: "'DM Sans', sans-serif", overflow: "hidden" }}>
+    <div style={{ display: "flex", minHeight: "100vh", background: "#0a0a0a", color: "#fff", fontFamily: "var(--font-primary)", overflow: "hidden" }}>
       <SubtleBackground />
 
       <style jsx>{`

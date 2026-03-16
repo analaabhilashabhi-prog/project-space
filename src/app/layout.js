@@ -28,7 +28,9 @@ export default function RootLayout({ children }) {
     <html lang="en" className={`${geist.variable} ${geistMono.variable}`}>
       <head>
         <link rel="icon" href="/images/logo.png" />
-        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
       </head>
       <body className="antialiased">
         <Toaster
@@ -42,7 +44,7 @@ export default function RootLayout({ children }) {
               borderRadius: "12px",
               fontSize: "14px",
               padding: "12px 16px",
-              fontFamily: "'DM Sans', serif",
+              fontFamily: "'Open Sans', sans-serif",
             },
             success: {
               iconTheme: {

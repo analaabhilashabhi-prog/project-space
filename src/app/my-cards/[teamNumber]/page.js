@@ -88,17 +88,17 @@ export default function MyCardsPage() {
 
   if (!team || cards.length === 0) {
     return (
-      <div style={{ display: "flex", minHeight: "100vh", background: "#0a0a0a", color: "#fff", fontFamily: "'DM Sans', sans-serif", overflow: "hidden" }}>
+      <div style={{ display: "flex", minHeight: "100vh", background: "#0a0a0a", color: "#fff", fontFamily: "var(--font-primary)", overflow: "hidden" }}>
         <SubtleBackground />
         <DashboardSidebar teamNumber={teamNumber} currentMember={currentMember} loggedInRoll={loggedInRoll} isLeader={isLeader} />
         <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 16, padding: 20, textAlign: "center", position: "relative", zIndex: 1 }}>
           <div style={{ fontSize: 40 }}>{"\ud83d\uded2"}</div>
-          <div style={{ fontSize: 22, fontFamily: "'DM Sans', sans-serif", color: "#fff", letterSpacing: 2 }}>No Snack Cards Yet</div>
+          <div style={{ fontSize: 22, fontFamily: "var(--font-primary)", color: "#fff", letterSpacing: 2 }}>No Snack Cards Yet</div>
           <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", maxWidth: 350 }}>Your team leader hasn&apos;t generated snack cards yet. Check back later.</div>
           <button onClick={function () { router.push("/member-login") }} style={{
             padding: "10px 24px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)",
             background: "transparent", color: "rgba(255,255,255,0.5)", fontSize: 13, cursor: "pointer",
-            fontFamily: "'DM Sans', sans-serif", transition: "all 0.3s ease",
+            fontFamily: "var(--font-primary)", transition: "all 0.3s ease",
           }}>{"\u2190"} Back</button>
         </div>
       </div>
@@ -106,7 +106,7 @@ export default function MyCardsPage() {
   }
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "#0a0a0a", color: "#fff", fontFamily: "'DM Sans', sans-serif", overflow: "hidden" }}>
+    <div style={{ display: "flex", minHeight: "100vh", background: "#0a0a0a", color: "#fff", fontFamily: "var(--font-primary)", overflow: "hidden" }}>
       <SubtleBackground />
 
       <style jsx>{`

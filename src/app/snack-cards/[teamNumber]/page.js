@@ -197,7 +197,7 @@ export default function SnackCardsPage() {
   for (var d = 1; d <= 7; d++) { if (daySet[d]) availableDays.push(d) }
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "#0a0a0a", color: "#fff", fontFamily: "'DM Sans', sans-serif", overflow: "hidden" }}>
+    <div style={{ display: "flex", minHeight: "100vh", background: "#0a0a0a", color: "#fff", fontFamily: "var(--font-primary)", overflow: "hidden" }}>
       <SubtleBackground />
 
       <style jsx>{`
@@ -243,7 +243,7 @@ export default function SnackCardsPage() {
               <button onClick={function () { router.push("/food-selection/" + teamNumber) }} style={{
                 padding: "12px 28px", borderRadius: 12, border: "none",
                 background: "linear-gradient(135deg,#ff3020,#ff6040)", color: "#fff",
-                fontSize: 14, fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
+                fontSize: 14, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-primary)",
               }}>
                 Go to Food Selection
               </button>

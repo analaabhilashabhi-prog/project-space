@@ -167,7 +167,7 @@ export default function ExploreTeamsPage() {
   }
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "#000", color: "#fff", fontFamily: "'DM Sans', sans-serif", overflow: "hidden" }}>
+    <div style={{ display: "flex", minHeight: "100vh", background: "#000", color: "#fff", fontFamily: "var(--font-primary)", overflow: "hidden" }}>
 
       <style jsx>{`
         /* ===== BACKGROUND ===== */

@@ -1,371 +1,244 @@
 import { supabase } from "@/lib/supabase"
 
-// Technology-specific milestone templates
-var TECH_MILESTONES = {
-  // Power Platform
-  "Power Apps": [
-    { name: "App Layout Designed", desc: "Canvas/Model-driven app layout finalized" },
-    { name: "Power App Screens Built", desc: "All app screens and navigation created" },
-    { name: "Data Connections Set", desc: "SharePoint/Dataverse connections configured" },
+// Technology-specific milestone phases
+var MILESTONES = {
+  "Data Specialist": [
+    { phase: 1, name: "Dataset & Problem", icon: "data1", desc: "Dataset identified + problem defined" },
+    { phase: 2, name: "Data Cleaning & EDA", icon: "data2", desc: "Data cleaned & exploratory analysis done" },
+    { phase: 3, name: "Model Design", icon: "data3", desc: "Model/dashboard architecture designed" },
+    { phase: 4, name: "Core Analysis", icon: "data4", desc: "Core analysis/model working" },
+    { phase: 5, name: "Visualization", icon: "data5", desc: "Visualization & insights complete" },
+    { phase: 6, name: "Deployment", icon: "data6", desc: "Final insights + deployed" },
   ],
-  "Power Automate": [
-    { name: "Workflows Designed", desc: "Automation flows planned and documented" },
-    { name: "Flows Built & Tested", desc: "All Power Automate flows working" },
+  "AWS Development": [
+    { phase: 1, name: "Architecture Design", icon: "aws1", desc: "Architecture designed + services chosen" },
+    { phase: 2, name: "IAM & Networking", icon: "aws2", desc: "IAM + networking setup done" },
+    { phase: 3, name: "Core Service Deploy", icon: "aws3", desc: "Core service deployed (EC2/Lambda/S3)" },
+    { phase: 4, name: "Integration", icon: "aws4", desc: "Services integrated + working" },
+    { phase: 5, name: "Security & Monitoring", icon: "aws5", desc: "Security + monitoring configured" },
+    { phase: 6, name: "Final Deployment", icon: "aws6", desc: "Final deployment + documentation" },
   ],
-  "Power BI": [
-    { name: "Dashboard Designed", desc: "BI dashboard layout and KPIs planned" },
-    { name: "Reports & Visuals Ready", desc: "Power BI dashboards with live data" },
+  "ServiceNow": [
+    { phase: 1, name: "Scope & Requirements", icon: "snow1", desc: "Requirement + scope defined" },
+    { phase: 2, name: "Tables & Forms", icon: "snow2", desc: "Tables + forms created" },
+    { phase: 3, name: "Workflows Built", icon: "snow3", desc: "Workflows/Flow Designer built" },
+    { phase: 4, name: "Business Rules", icon: "snow4", desc: "Business rules + integrations done" },
+    { phase: 5, name: "Testing & UAT", icon: "snow5", desc: "Testing + UAT complete" },
+    { phase: 6, name: "Production Ready", icon: "snow6", desc: "Production-ready + demo done" },
   ],
-  "SharePoint": [
-    { name: "SharePoint Lists Created", desc: "All data lists and columns configured" },
+  "Google Flutter": [
+    { phase: 1, name: "Wireframes & Plan", icon: "fl1", desc: "UI wireframes + app structure planned" },
+    { phase: 2, name: "Screens Designed", icon: "fl2", desc: "Screens designed in Flutter" },
+    { phase: 3, name: "Core Navigation", icon: "fl3", desc: "Core feature/navigation working" },
+    { phase: 4, name: "API Integration", icon: "fl4", desc: "API/backend integration done" },
+    { phase: 5, name: "Device Testing", icon: "fl5", desc: "Testing on device complete" },
+    { phase: 6, name: "APK & Demo", icon: "fl6", desc: "APK built + demo ready" },
   ],
-  "Dataverse": [
-    { name: "Dataverse Schema Set", desc: "Tables, columns, and relationships defined" },
+  "Full Stack": [
+    { phase: 1, name: "Schema & Stack", icon: "fs1", desc: "Tech stack + DB schema finalized" },
+    { phase: 2, name: "Backend APIs", icon: "fs2", desc: "Backend APIs built" },
+    { phase: 3, name: "Frontend Connected", icon: "fs3", desc: "Frontend connected to APIs" },
+    { phase: 4, name: "Auth & Features", icon: "fs4", desc: "Auth + core features working" },
+    { phase: 5, name: "Testing & Fixes", icon: "fs5", desc: "Testing + bug fixes done" },
+    { phase: 6, name: "Deployed Live", icon: "fs6", desc: "Deployed + live link ready" },
   ],
-  "Copilot Studio": [
-    { name: "Chatbot Built", desc: "AI chatbot configured and tested" },
-  ],
-  "AI Builder": [
-    { name: "AI Model Trained", desc: "AI Builder model configured and tested" },
-  ],
-
-  // Web Technologies
-  "HTML": [
-    { name: "UI Wireframes Done", desc: "Page layouts and wireframes finalized" },
-    { name: "Frontend Pages Built", desc: "All HTML/CSS pages completed" },
-  ],
-  "CSS": [],
-  "JavaScript": [
-    { name: "Frontend Logic Done", desc: "Client-side interactivity implemented" },
-  ],
-  "React": [
-    { name: "Component Architecture", desc: "React components planned and structured" },
-    { name: "Frontend UI Built", desc: "All React components and pages created" },
-  ],
-  "Next.js": [
-    { name: "App Structure Set", desc: "Next.js routes and layouts configured" },
-    { name: "Frontend Pages Built", desc: "All pages and components completed" },
-  ],
-  "Node.js": [
-    { name: "Backend APIs Built", desc: "All server endpoints created and tested" },
-  ],
-
-  // Python & ML
-  "Python": [
-    { name: "Backend Logic Done", desc: "Python scripts and processing ready" },
-  ],
-  "Flask": [
-    { name: "API Server Built", desc: "Flask routes and endpoints created" },
-  ],
-  "FastAPI": [
-    { name: "API Server Built", desc: "FastAPI endpoints created and tested" },
-  ],
-  "TensorFlow": [
-    { name: "ML Model Trained", desc: "Model trained and accuracy validated" },
-  ],
-  "Scikit-learn": [
-    { name: "ML Model Built", desc: "ML algorithms implemented and tested" },
-  ],
-  "OpenAI API": [
-    { name: "AI Integration Done", desc: "OpenAI API connected and prompts tested" },
-  ],
-  "Gemini": [
-    { name: "AI Integration Done", desc: "Gemini API connected and working" },
-  ],
-
-  // Data & Analytics
-  "Snowflake": [
-    { name: "Data Warehouse Set", desc: "Snowflake schema and pipelines configured" },
-  ],
-  "Apache Kafka": [
-    { name: "Data Pipeline Built", desc: "Kafka streaming pipeline operational" },
-  ],
-  "Apache Airflow": [
-    { name: "Workflow Orchestration Done", desc: "Airflow DAGs configured and running" },
-  ],
-  "Excel": [
-    { name: "Data Storage Ready", desc: "Excel/data files structured and connected" },
-  ],
-
-  // Database
-  "MySQL": [
-    { name: "Database Schema Set", desc: "Tables and relationships created" },
-  ],
-  "MongoDB": [
-    { name: "Database Schema Set", desc: "Collections and indexes configured" },
-  ],
-  "PostgreSQL": [
-    { name: "Database Schema Set", desc: "Tables and relationships created" },
-  ],
-  "Firebase": [
-    { name: "Backend Configured", desc: "Firebase services set up and connected" },
-  ],
-  "Supabase": [
-    { name: "Database Schema Set", desc: "Supabase tables and RLS configured" },
-  ],
-
-  // Mobile
-  "Flutter": [
-    { name: "App UI Built", desc: "Flutter screens and navigation completed" },
-  ],
-  "React Native": [
-    { name: "App UI Built", desc: "React Native screens completed" },
-  ],
-
-  // Cloud & DevOps
-  "Azure": [
-    { name: "Cloud Services Set", desc: "Azure services deployed and configured" },
-  ],
-  "AWS": [
-    { name: "Cloud Services Set", desc: "AWS services deployed and configured" },
-  ],
-  "Docker": [
-    { name: "Containers Ready", desc: "Docker containers built and tested" },
-  ],
-
-  // Communication
-  "Outlook": [
-    { name: "Email Notifications Set", desc: "Automated emails configured" },
-  ],
-  "Twilio": [
-    { name: "SMS/Notifications Set", desc: "Twilio messaging integrated" },
-  ],
-  "Microsoft Teams": [
-    { name: "Teams Integration Done", desc: "Teams notifications connected" },
+  "VLSI": [
+    { phase: 1, name: "Design Spec", icon: "vlsi1", desc: "Design specification defined" },
+    { phase: 2, name: "RTL Coding", icon: "vlsi2", desc: "RTL coding complete" },
+    { phase: 3, name: "Simulation", icon: "vlsi3", desc: "Simulation results verified" },
+    { phase: 4, name: "Synthesis", icon: "vlsi4", desc: "Synthesis done + timing met" },
+    { phase: 5, name: "Physical Design", icon: "vlsi5", desc: "Layout/physical design complete" },
+    { phase: 6, name: "Final Verification", icon: "vlsi6", desc: "Final verification + report done" },
   ],
 }
 
-// Universal milestones that every team gets
-var UNIVERSAL_START = [
-  { name: "Idea Finalized", desc: "Project concept locked and approved" },
-  { name: "Project Plan Ready", desc: "Architecture and timeline documented" },
-]
-
-var UNIVERSAL_END = [
-  { name: "Integration Complete", desc: "All modules connected end-to-end" },
-  { name: "Testing & QA Done", desc: "Bugs fixed, edge cases handled" },
-  { name: "Deployed & Live", desc: "Project deployed and accessible" },
-  { name: "Demo Presentation Ready", desc: "Final demo prepared and rehearsed" },
-]
-
-function generateMilestones(technologies) {
-  var techMilestones = []
-  var seenNames = {}
-
-  // Add tech-specific milestones (deduplicate by name)
-  for (var i = 0; i < technologies.length; i++) {
-    var tech = technologies[i]
-    // Try exact match first, then partial match
-    var templates = TECH_MILESTONES[tech]
-    if (!templates) {
-      // Try partial matching
-      var keys = Object.keys(TECH_MILESTONES)
-      for (var k = 0; k < keys.length; k++) {
-        if (tech.toLowerCase().includes(keys[k].toLowerCase()) || keys[k].toLowerCase().includes(tech.toLowerCase())) {
-          templates = TECH_MILESTONES[keys[k]]
-          break
-        }
-      }
-    }
-    if (templates) {
-      for (var j = 0; j < templates.length; j++) {
-        if (!seenNames[templates[j].name]) {
-          seenNames[templates[j].name] = true
-          techMilestones.push(templates[j])
-        }
-      }
-    }
-  }
-
-  // If we got too few tech milestones, add a generic one
-  if (techMilestones.length < 2) {
-    if (!seenNames["Core Features Built"]) {
-      techMilestones.push({ name: "Core Features Built", desc: "Main functionality implemented" })
-    }
-    if (!seenNames["UI/UX Completed"]) {
-      techMilestones.push({ name: "UI/UX Completed", desc: "User interface designed and built" })
-    }
-  }
-
-  // Cap tech milestones at 4 to keep total around 8-10
-  if (techMilestones.length > 4) {
-    techMilestones = techMilestones.slice(0, 4)
-  }
-
-  // Combine: universal start + tech-specific + universal end
-  var all = []
-  var finalSeen = {}
-  
-  function addIfNew(name, desc, order) {
-    if (finalSeen[name]) return false
-    finalSeen[name] = true
-    all.push({ name: name, desc: desc, order: order })
-    return true
-  }
-  
-  var orderNum = 1
-  for (var s = 0; s < UNIVERSAL_START.length; s++) {
-    if (addIfNew(UNIVERSAL_START[s].name, UNIVERSAL_START[s].desc, orderNum)) orderNum++
-  }
-  for (var t = 0; t < techMilestones.length; t++) {
-    if (addIfNew(techMilestones[t].name, techMilestones[t].desc, orderNum)) orderNum++
-  }
-  for (var e = 0; e < UNIVERSAL_END.length; e++) {
-    if (addIfNew(UNIVERSAL_END[e].name, UNIVERSAL_END[e].desc, orderNum)) orderNum++
-  }
-
-  return all
-}
+var CREDITS_PER_MILESTONE = 3
+var CREDITS_PER_REQUEST = 2
+var STARTING_CREDITS = 20
 
 export async function POST(request) {
   try {
     var body = await request.json()
-    var { teamNumber } = body
+    var action = body.action
 
-    if (!teamNumber) {
-      return Response.json({ error: "teamNumber is required" }, { status: 400 })
-    }
+    // ── GET MILESTONES FOR TEAM ──────────────────────────
+    if (action === "get_team") {
+      var { teamNumber, technology } = body
+      if (!teamNumber) return Response.json({ error: "Team number required" }, { status: 400 })
 
-    // Get team data
-    var { data: team, error: teamError } = await supabase
-      .from("teams")
-      .select("id, team_number, technologies")
-      .eq("team_number", teamNumber)
-      .single()
+      // Get or create credits
+      var creditsRes = await supabase
+        .from("team_credits")
+        .select("*")
+        .eq("team_number", teamNumber)
+        .maybeSingle()
 
-    if (teamError || !team) {
-      return Response.json({ error: "Team not found" }, { status: 404 })
-    }
+      if (!creditsRes.data) {
+        await supabase.from("team_credits").insert({ team_number: teamNumber, credits: STARTING_CREDITS, total_earned: STARTING_CREDITS, total_spent: 0 })
+        creditsRes = { data: { credits: STARTING_CREDITS, total_earned: STARTING_CREDITS, total_spent: 0 } }
+      }
 
-    // Check if milestones already exist
-    var { data: existing } = await supabase
-      .from("team_milestones")
-      .select("id")
-      .eq("team_id", team.id)
-      .limit(1)
-
-    if (existing && existing.length > 0) {
-      // Already generated — return existing milestones
-      var { data: milestones } = await supabase
+      // Get milestones
+      var milestonesRes = await supabase
         .from("team_milestones")
         .select("*")
-        .eq("team_id", team.id)
-        .order("milestone_order", { ascending: true })
+        .eq("team_number", teamNumber)
+        .order("phase")
 
-      return Response.json({ success: true, milestones: milestones, message: "Milestones already exist" })
+      // Get transactions
+      var txRes = await supabase
+        .from("credit_transactions")
+        .select("*")
+        .eq("team_number", teamNumber)
+        .order("created_at", { ascending: false })
+        .limit(20)
+
+      return Response.json({
+        milestones: milestonesRes.data || [],
+        credits: creditsRes.data,
+        transactions: txRes.data || [],
+        phaseDefinitions: technology ? (MILESTONES[technology] || []) : [],
+      })
     }
 
-    // Generate milestones based on technologies
-    var technologies = team.technologies || []
-    var generated = generateMilestones(technologies)
-
-    // Insert into Supabase
-    var rows = generated.map(function (m) {
-      return {
-        team_id: team.id,
-        team_number: team.team_number,
-        milestone_name: m.name,
-        milestone_description: m.desc,
-        milestone_order: m.order,
-        is_done: false,
+    // ── SUBMIT MILESTONE (team leader) ──────────────────────
+    if (action === "submit_milestone") {
+      var { teamNumber, technology, phase, phaseName } = body
+      if (!teamNumber || !technology || !phase || !phaseName) {
+        return Response.json({ error: "Missing fields" }, { status: 400 })
       }
-    })
 
-    var { data: inserted, error: insertError } = await supabase
-      .from("team_milestones")
-      .insert(rows)
-      .select()
+      // Check if already submitted or approved
+      var existing = await supabase
+        .from("team_milestones")
+        .select("id, status")
+        .eq("team_number", teamNumber)
+        .eq("phase", phase)
+        .maybeSingle()
 
-    if (insertError) {
-      return Response.json({ error: "Failed to create milestones: " + insertError.message }, { status: 500 })
+      if (existing.data) {
+        if (existing.data.status === "approved") {
+          return Response.json({ error: "This milestone is already approved." }, { status: 400 })
+        }
+        // Update to re-submitted
+        await supabase.from("team_milestones").update({ status: "submitted", submitted_at: new Date().toISOString() }).eq("id", existing.data.id)
+      } else {
+        await supabase.from("team_milestones").insert({
+          team_number: teamNumber, technology: technology,
+          phase: phase, phase_name: phaseName,
+          status: "submitted", submitted_at: new Date().toISOString(),
+        })
+      }
+
+      return Response.json({ success: true })
     }
 
-    return Response.json({ success: true, milestones: inserted, message: "Milestones generated" })
+    // ── APPROVE MILESTONE (mentor) ──────────────────────────
+    if (action === "approve_milestone") {
+      var { milestoneId, mentorName } = body
+      if (!milestoneId || !mentorName) return Response.json({ error: "Missing fields" }, { status: 400 })
+
+      var msRes = await supabase.from("team_milestones").select("*").eq("id", milestoneId).single()
+      if (msRes.error || !msRes.data) return Response.json({ error: "Milestone not found" }, { status: 404 })
+      if (msRes.data.status === "approved") return Response.json({ error: "Already approved" }, { status: 400 })
+
+      var ms = msRes.data
+
+      // Approve milestone
+      await supabase.from("team_milestones").update({
+        status: "approved",
+        approved_at: new Date().toISOString(),
+        approved_by: mentorName,
+        credits_awarded: CREDITS_PER_MILESTONE,
+      }).eq("id", milestoneId)
+
+      // Add credits
+      var creditsRes = await supabase.from("team_credits").select("credits, total_earned").eq("team_number", ms.team_number).single()
+      var currentCredits = creditsRes.data ? creditsRes.data.credits : STARTING_CREDITS
+      var currentEarned = creditsRes.data ? creditsRes.data.total_earned : STARTING_CREDITS
+
+      await supabase.from("team_credits").upsert({
+        team_number: ms.team_number,
+        credits: currentCredits + CREDITS_PER_MILESTONE,
+        total_earned: currentEarned + CREDITS_PER_MILESTONE,
+        updated_at: new Date().toISOString(),
+      }, { onConflict: "team_number" })
+
+      // Log transaction
+      await supabase.from("credit_transactions").insert({
+        team_number: ms.team_number,
+        amount: CREDITS_PER_MILESTONE,
+        reason: "Milestone " + ms.phase + " approved: " + ms.phase_name,
+      })
+
+      return Response.json({ success: true, creditsAwarded: CREDITS_PER_MILESTONE })
+    }
+
+    // ── GET PENDING MILESTONES FOR MENTOR (by technology) ──
+    if (action === "get_pending_for_mentor") {
+      var { technology } = body
+      if (!technology) return Response.json({ error: "Technology required" }, { status: 400 })
+
+      var res = await supabase
+        .from("team_milestones")
+        .select("*")
+        .eq("technology", technology)
+        .eq("status", "submitted")
+        .order("submitted_at")
+
+      return Response.json({ milestones: res.data || [] })
+    }
+
+    // ── DEDUCT CREDITS (when mentor request submitted) ──────
+    if (action === "deduct_credits") {
+      var { teamNumber, reason } = body
+      if (!teamNumber) return Response.json({ error: "Team number required" }, { status: 400 })
+
+      var creditsRes = await supabase.from("team_credits").select("credits, total_spent").eq("team_number", teamNumber).maybeSingle()
+
+      if (!creditsRes.data) {
+        // Init with starting credits
+        await supabase.from("team_credits").insert({ team_number: teamNumber, credits: STARTING_CREDITS, total_earned: STARTING_CREDITS, total_spent: 0 })
+        creditsRes = { data: { credits: STARTING_CREDITS, total_spent: 0 } }
+      }
+
+      var currentCredits = creditsRes.data.credits
+      if (currentCredits < CREDITS_PER_REQUEST) {
+        return Response.json({ error: "Not enough credits. Complete milestones to earn more.", insufficientCredits: true }, { status: 400 })
+      }
+
+      await supabase.from("team_credits").update({
+        credits: currentCredits - CREDITS_PER_REQUEST,
+        total_spent: (creditsRes.data.total_spent || 0) + CREDITS_PER_REQUEST,
+        updated_at: new Date().toISOString(),
+      }).eq("team_number", teamNumber)
+
+      await supabase.from("credit_transactions").insert({
+        team_number: teamNumber,
+        amount: -CREDITS_PER_REQUEST,
+        reason: reason || "Mentor request submitted",
+      })
+
+      return Response.json({ success: true, remaining: currentCredits - CREDITS_PER_REQUEST })
+    }
+
+    // ── GET CREDITS FOR TEAM ─────────────────────────────────
+    if (action === "get_credits") {
+      var { teamNumber } = body
+      if (!teamNumber) return Response.json({ error: "Team number required" }, { status: 400 })
+
+      var res = await supabase.from("team_credits").select("*").eq("team_number", teamNumber).maybeSingle()
+      if (!res.data) {
+        return Response.json({ credits: STARTING_CREDITS, total_earned: STARTING_CREDITS, total_spent: 0 })
+      }
+      return Response.json(res.data)
+    }
+
+    return Response.json({ error: "Invalid action" }, { status: 400 })
   } catch (err) {
+    console.error("milestones error:", err)
     return Response.json({ error: "Server error: " + err.message }, { status: 500 })
   }
 }
 
-// GET — fetch milestones for a team
-export async function GET(request) {
-  try {
-    var url = new URL(request.url)
-    var teamNumber = url.searchParams.get("teamNumber")
-
-    if (!teamNumber) {
-      return Response.json({ error: "teamNumber is required" }, { status: 400 })
-    }
-
-    var { data: milestones, error } = await supabase
-      .from("team_milestones")
-      .select("*")
-      .eq("team_number", teamNumber)
-      .order("milestone_order", { ascending: true })
-
-    if (error) {
-      return Response.json({ error: error.message }, { status: 500 })
-    }
-
-    return Response.json({ success: true, milestones: milestones || [] })
-  } catch (err) {
-    return Response.json({ error: "Server error: " + err.message }, { status: 500 })
-  }
-}
-
-// PATCH — toggle milestone done/not-done (leader only)
-export async function PATCH(request) {
-  try {
-    var body = await request.json()
-    var { milestoneId, isDone, doneBy } = body
-
-    if (!milestoneId) {
-      return Response.json({ error: "milestoneId is required" }, { status: 400 })
-    }
-
-    var updateData = {
-      is_done: isDone,
-      done_at: isDone ? new Date().toISOString() : null,
-      done_by: isDone ? doneBy : null,
-    }
-
-    var { data, error } = await supabase
-      .from("team_milestones")
-      .update(updateData)
-      .eq("id", milestoneId)
-      .select()
-      .single()
-
-    if (error) {
-      return Response.json({ error: error.message }, { status: 500 })
-    }
-
-    return Response.json({ success: true, milestone: data })
-  } catch (err) {
-    return Response.json({ error: "Server error: " + err.message }, { status: 500 })
-  }
-}
-
-// DELETE — clear milestones for a team (so they regenerate fresh)
-export async function DELETE(request) {
-  try {
-    var url = new URL(request.url)
-    var teamNumber = url.searchParams.get("teamNumber")
-
-    if (!teamNumber) {
-      return Response.json({ error: "teamNumber is required" }, { status: 400 })
-    }
-
-    var { error } = await supabase
-      .from("team_milestones")
-      .delete()
-      .eq("team_number", teamNumber)
-
-    if (error) {
-      return Response.json({ error: error.message }, { status: 500 })
-    }
-
-    return Response.json({ success: true, message: "Milestones cleared for " + teamNumber })
-  } catch (err) {
-    return Response.json({ error: "Server error: " + err.message }, { status: 500 })
-  }
-}
+export { MILESTONES }

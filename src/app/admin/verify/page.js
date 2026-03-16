@@ -196,7 +196,7 @@ export default function AdminVerifyPage() {
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "#0a0a0a", fontFamily: "'DM Sans', sans-serif", color: "#fff" }}>
+    <div style={{ minHeight: "100vh", background: "#0a0a0a", fontFamily: "var(--font-primary)", color: "#fff" }}>
       <style jsx>{`
         .av-header { display:flex; align-items:center; justify-content:space-between; padding:20px 32px; border-bottom:1px solid rgba(255,255,255,0.05); }
         .av-logo { display:flex; align-items:center; gap:12px; }

@@ -160,7 +160,7 @@ export default function EventSchedulePage() {
   var selectedDayData = SCHEDULE.find(function (s) { return s.day === selectedDay })
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "#000", color: "#fff", fontFamily: "'DM Sans', sans-serif" }}>
+    <div style={{ display: "flex", minHeight: "100vh", background: "#000", color: "#fff", fontFamily: "var(--font-primary)" }}>
       <style jsx>{`
         @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
         @keyframes nsPulse { 0%,100%{opacity:1} 50%{opacity:0.4} }

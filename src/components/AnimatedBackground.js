@@ -258,7 +258,7 @@ export default function AnimatedBackground() {
           --glass-border-hover: rgba(255,60,30,0.35);
           --glass-blur: blur(15px);
           --font-display: 'Genos', sans-serif;
-          --font-body: 'DM Sans', sans-serif;
+          --font-body: var(--font-primary);
           --glow-sm: 0 0 30px rgba(255,50,30,0.2);
           --glow-md: 0 0 50px rgba(255,50,30,0.3);
           --glow-lg: 0 0 50px rgba(255,50,30,0.5), 0 8px 35px rgba(255,50,30,0.3);

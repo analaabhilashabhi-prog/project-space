@@ -1,0 +1,66 @@
+/* ─────────────────────────────────────────────
+   Project Space — Global Typography CSS
+   Add @import in your globals.css
+   ───────────────────────────────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap');
+
+:root {
+  /* Font family */
+  --font-primary: 'Open Sans', sans-serif;
+
+  /* Font sizes */
+  --fs-display: 40px;   /* Hero / landing */
+  --fs-h1:      32px;   /* Page titles */
+  --fs-h2:      24px;   /* Section titles */
+  --fs-h3:      20px;   /* Card headings */
+  --fs-h4:      16px;   /* Sub-headings */
+  --fs-body:    14px;   /* Default body */
+  --fs-small:   12px;   /* Captions, hints */
+  --fs-tiny:    11px;   /* Labels, tags */
+  --fs-btn:     13px;   /* Buttons */
+  --fs-input:   14px;   /* Inputs */
+
+  /* Font weights */
+  --fw-regular: 400;
+  --fw-medium:  600;
+  --fw-bold:    700;
+  --fw-black:   800;
+
+  /* Letter spacing */
+  --ls-tight:  0px;
+  --ls-normal: 0.5px;
+  --ls-wide:   1.5px;
+  --ls-wider:  2px;
+  --ls-widest: 3px;
+
+  /* Line heights */
+  --lh-tight:  1.2;
+  --lh-normal: 1.5;
+  --lh-loose:  1.8;
+}
+
+/* ── Base reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: var(--font-primary);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-normal);
+}
+
+/* ── Utility classes ── */
+
+/* Headings */
+.ps-h1 { font-family:var(--font-primary); font-size:var(--fs-h1); font-weight:var(--fw-black); letter-spacing:var(--ls-wider); line-height:var(--lh-tight); }
+.ps-h2 { font-family:var(--font-primary); font-size:var(--fs-h2); font-weight:var(--fw-bold);  letter-spacing:var(--ls-wide);  line-height:var(--lh-tight); }
+.ps-h3 { font-family:var(--font-primary); font-size:var(--fs-h3); font-weight:var(--fw-bold);  letter-spacing:var(--ls-normal); line-height:var(--lh-normal); }
+.ps-h4 { font-family:var(--font-primary); font-size:var(--fs-h4); font-weight:var(--fw-medium); letter-spacing:var(--ls-wide);  line-height:var(--lh-normal); }
+
+/* Body */
+.ps-body        { font-family:var(--font-primary); font-size:var(--fs-body);  font-weight:var(--fw-regular); line-height:var(--lh-normal); }
+.ps-body-medium { font-family:var(--font-primary); font-size:var(--fs-body);  font-weight:var(--fw-medium);  line-height:var(--lh-normal); }
+.ps-small       { font-family:var(--font-primary); font-size:var(--fs-small); font-weight:var(--fw-regular); line-height:var(--lh-normal); }
+.ps-label       { font-family:var(--font-primary); font-size:var(--fs-tiny);  font-weight:var(--fw-medium);  letter-spacing:var(--ls-wider); text-transform:uppercase; }
+.ps-display     { font-family:var(--font-primary); font-size:var(--fs-display); font-weight:var(--fw-black); letter-spacing:var(--ls-widest); line-height:var(--lh-tight); }
